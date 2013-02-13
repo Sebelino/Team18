@@ -9,7 +9,12 @@ def move(x,y):
 
 pressad = True
 while True:
-    for i in range(25000): nop=0
+    delayfactor = 3000
+    if win32api.GetAsyncKeyState(ord('R')):
+        delayfactor = 300000
+    elif win32api.GetAsyncKeyState(ord('X')):
+        delayfactor = 30000
+    for i in range(delayfactor): nop=0
     if win32api.GetAsyncKeyState(win32con.VK_UP):
         tempx,tempy = win32api.GetCursorPos()
         win32api.SetCursorPos((tempx,tempy-1))
