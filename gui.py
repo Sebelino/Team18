@@ -1,3 +1,4 @@
+import kivy
 from kivy.app import App
 from kivy.uix.widget import Widget
 from kivy.uix.boxlayout import BoxLayout
@@ -11,6 +12,19 @@ from kivy.uix.dropdown import DropDown
 from kivy.uix.textinput import TextInput
 from kivy.uix.scrollview import ScrollView
 from kivy.uix.stencilview import StencilView
+from kivy.config import Config
+
+##################################################################
+#---------------------- Config ----------------------------------#
+##################################################################
+
+"""Create a small cute window, unresizeable"""
+
+Config.set('kivy','window_icon', 'smiley_ic.png')
+Config.set('graphics','fullscreen',0)
+Config.set('graphics','resizable',0)
+Config.set('graphics','width',650)
+Config.set('graphics','height',500)
 
 ##################################################################
 #-------------------- Load Images -------------------------------#
@@ -150,48 +164,84 @@ def removeMacro(macro):
 profileBarPosY = 0.65
 profileBarHeight = 0.25
 
-#Profile name box
-profileNameTextBox = TextInput( size_hint = (0.3, profileBarHeight),
-                                pos_hint = {'x':0.65, 'y':profileBarPosY},
-                                text = getCurrentProfile(),
-                                multiline = False
-                                )
+#Profile selection, is a boxlayout with 2 components:
+#1. a label with a static text saying "current profile"
+#2. A button with a dropdown Menu for the profile selection action
+profileSelection = BoxLayout(orientation='vertical',
+                             size_hint = (0.4,0.6),
+                             pos_hint = {'x':0.05,'y':0.3})
 
+profileSelection.add_widget(Label(text='[color=000000][b] Current profile' \
+                                        '[/b][/color]',
+                                  markup=True,
+                                  size_hint_y=0.35))
 
-
-#This is the profile selection thing.
-#currently, its a button that opens a drop down menu
-chooseProfileWidget = Button(text='flu',
-                        size_hint=(0.3,profileBarHeight),
-                        pos_hint={'x':.15, 'y':profileBarPosY})
+profileSelectionButton = Button(markup=True)
+def profileSelectionButtonTextSet(profileName):
+    btntext=kivy.utils.escape_markup(profileName)
+    profileSelectionButton.text = '[size=14][color=000000]' + \
+                                  btntext + '[/color][/size]'
+profileSelectionButtonTextSet(getCurrentProfile())
 
 d = DropDown(max_height=100, bar_width=15)
-
 for profile in getListOfProfiles():
     btn = Button(text=profile, color=(0,0,0,1), size_hint_y=None, height=20)
     btn.bind(on_release=lambda btn: d.select(btn.text))
     d.add_widget(btn)
 
-
-
-
-#add profile button
-createProfileButton = Button( size_hint = (0.05, profileBarHeight),
-                              pos_hint = {'x':0.5, 'y':profileBarPosY},
+profileSelection.add_widget(profileSelectionButton)
+                                 
+#add profile button, a simple button
+createProfileButton = Button( size_hint = (None,None),
+                              size = (40,40),
+                              pos_hint = {'x':0.48, 'y':0.35},
                               background_normal = 'pics/plus_btn_up.png',
                               background_down = 'pics/plus_btn_down.png')
 
+
+#Profile name box
+#Consists, like the profile selection, of a BoxLayout with 2 components,
+# a label with explanation text and the textbox
+
+profileNameBox = BoxLayout(orientation='vertical',
+                           size_hint = (0.37, 0.5),
+                           pos_hint = {'x':0.62, 'y':0.5})
+
+profileNameBox.add_widget(Label(text='[color=000000][b] Profile name' \
+                                        '[/b][/color]',
+                                  markup=True))
+                           
+profileNameTextBox = TextInput(multiline = False,
+                               font_size = 13)
+def profileNameTextBoxTextSet(profileName):
+    text=kivy.utils.escape_markup(profileName)
+    profileNameTextBox.text = text
+    
+profileNameTextBoxTextSet(getCurrentProfile())
+
+profileNameBox.add_widget(profileNameTextBox)
+
 #delete profile button
-deleteProfileButton = Button( size_hint = (0.05, profileBarHeight),
-                              pos_hint = {'x':0.75, 'y':0.3},
+deleteProfileButton = Button( size_hint = (None, None),
+                              size = (35,35),
+                              pos_hint = {'x':0.75, 'y':0.15},
                               background_normal = 'pics/cross_btn_up.png',
                               background_down = 'pics/cross_btn_down.png')
 
 #bind actions
 #updates both choose profiles text, and profile name bar.
 def updateTextBoxes(profileName):
-    chooseProfileWidget.text = profileName
-    profileNameTextBox.text = profileName
+    profileSelectionButtonTextSet(profileName)
+    profileNameTextBoxTextSet(profileName)
+    profileNameTextBox.cancel_selection()
+    profileNameTextBox.focus = False
+
+#profile chooser action
+profileSelectionButton.bind(on_release=d.open)
+def pickProf(inst, name):
+    updateTextBoxes(name)
+    selectProfile(name)
+d.bind(on_select=pickProf)
 
 #name text box action
 def profileNameTextBoxAction(txtbox):
@@ -206,13 +256,6 @@ def createProfileButtonAction(btn):
     profileNameTextBox.focus = True
     profileNameTextBox.select_all()
 createProfileButton.bind(on_release=createProfileButtonAction)
-
-#profile chooser action
-chooseProfileWidget.bind(on_release=d.open)
-def pickProf(inst, name):
-    updateTextBoxes(name)
-    selectProfile(name)
-d.bind(on_select=pickProf)
 
 #delete profile button
 def deleteProfileButtonAction(btn):
@@ -272,18 +315,20 @@ def removeButtonActions(index):
 ##################################################################
 # ------------------Main building class ------------------------_#
 ##################################################################
-class MainGUI(App):
+class GestureMapper(App):
 
     def build(self):
         root = BoxLayout(orientation='vertical')
         #top bar, choose profile bar
         #topBar = StencilView()
         topBar = FloatLayout(size_hint=(1,0.3))
-        topBar.add_widget(profileBarImg)
-        topBar.add_widget(chooseProfileWidget)
-        topBar.add_widget(profileNameTextBox)
-        topBar.add_widget(createProfileButton)
+        topBar.add_widget(profileBarImg)       #background image
+        topBar.add_widget(profileSelection)    #profile selection
+        topBar.add_widget(profileNameBox)      #profile renaming
+        topBar.add_widget(createProfileButton) #create profile button
+                               
         topBar.add_widget(deleteProfileButton)
+        
 
         #main area
         mainArea = FloatLayout()
@@ -301,4 +346,4 @@ class MainGUI(App):
 #and Main
 
 if __name__ == '__main__':
-    MainGUI().run()
+    GestureMapper().run()
