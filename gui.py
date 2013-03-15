@@ -26,6 +26,180 @@ Config.set('graphics','resizable',0)
 Config.set('graphics','width',650)
 Config.set('graphics','height',500)
 
+
+######################################################
+## -----------------------Mapping Display Class -----#
+######################################################
+"""
+OK, so, this class exists as a component that keeps all the
+mappings in a neat scrollable list. Because it might be a mess,
+and I might forget stuff, here are some important info about
+usage:
+
+1. When creating this object, MUST set the attributes size and
+   size_hint. Size will be the size of the widget, and size_hint
+   should be set to (None, None), otherwise the behavior is undefined.
+2. Attribute mappingHeight is the height of one mapping, it better be
+   set before adding mappings (althought it is set to 40 by default),
+   otherwise it will break.
+3. Attribute proportions are the sizes, in percentages, of each of the
+   five components of a mapping. Better also be changed before adding
+   mappings, otherwise will break (set by default though).
+4. There are lots of options for setting Images, attributes should have
+   (long :/) describing names. Set images before adding mappings.
+5. When adding a mapping, it should be in the format of a tuple with
+   two string attributes. Otherwise, might get exceptions.
+6. MappingDisplay is a FloatLayout with two children: a background
+   image and a ScrollView. If adding children directly, it will behave
+   like a FloatLayout. The ScrollView contains a BoxLayout with
+   vertical orientation. One annoying thing is that BoxLayout has its
+   children positioned from the bottom and up, while I want it the other
+   way. Anyway, its taken care of in the code. Just keep in mind for the
+   Controller, that when a mapping is created, put it last in the list.
+"""
+class MappingDisplay(FloatLayout):
+    #if have_background is true, a background image is set
+    have_background = False
+    mappingImagePath = None
+    deleteButtonImagePathUp = None
+    deleteButtonImagePathDown = None
+    layout = None
+    gestureEditButtonImageUp = None
+    gestureEditButtonImageDown = None
+    macroEditButtonImageUp = None
+    macroEditButtonImageDown = None
+    mappingHeight = 40
+    proportions = (0.08, 0.35, 0.11, 0.35, 0.11)
+    positions = [1,1,1,1,1]
+    sizes = [1,1,1,1,1]
+    
+    def __init__(self,**kwargs):
+        #call the constructor of the flowlayout
+        #this exists to keep the standard kivy syntax
+        super(MappingDisplay,self).__init__(**kwargs)
+
+        scroll = ScrollView(bar_width=15,
+                            do_scroll_y = True,
+                            do_scroll_x = False,
+                            pos_hint= {'x':0,'y':0},
+                            size_hint = (None,None),
+                            size = self.size)
+        
+        self.layout = BoxLayout(orientation='vertical',size_hint=(None,None),
+                                size = self.size)
+        scroll.add_widget(self.layout)
+        self.add_widget(scroll)
+        pos = 0
+        self.positions[0] = 0
+        self.sizes[0] = int(self.size[0] * self.proportions[0])
+        for i in range(1,5):
+            self.sizes[i] = int(self.size[0] * self.proportions[i])
+            self.positions[i] = self.proportions[i-1] + self.positions[i-1]     
+
+    def setBackgroundImage(self, image_widget):
+        lastIndex = len(self.children)
+        if self.have_background == False:
+            self.add_widget(image_widget, lastIndex)
+            self.have_background = True
+            
+    def addMapping(self, mapping):
+        mappingWidget = MappingInstance(size_hint = (None, None),
+                                        size = (self.size[0], self.mappingHeight))
+        mappingWidget.owner = self
+        
+        mappingWidget.add_widget(Image(allow_stretch=True, keep_ratio=False,
+                                       source=self.mappingImagePath,
+                                       size_hint=(None,None),
+                                       size = mappingWidget.size,
+                                       pos_hint={'x':0,'y':0}))
+        border = 2
+        border_y = 0.05
+        delBtn = Button(background_normal = self.deleteButtonImagePathUp,
+                        background_down = self.deleteButtonImagePathDown,
+                        pos_hint={'x':0.01, 'y':border_y},
+                        size_hint = (None,None),
+                        size = (self.sizes[0] - border*2, \
+                                self.mappingHeight - border*2)
+                        )
+        
+        gesture = Label(color = (0,0,0,1),
+                        text = mapping[0],
+                        bold = True,
+                        pos_hint = {'x':self.positions[1], 'y':border_y},
+                        size_hint = (None,None),
+                        size = (self.sizes[1] - border*2, \
+                                self.mappingHeight - border*2)
+                        )
+        
+        gestureInfoBtn = Button(background_normal = self.gestureEditButtonImageUp,
+                                background_down = self.gestureEditButtonImageDown,
+                                pos_hint = {'x':self.positions[2], 'y':border_y},
+                                size_hint = (None,None),
+                                size = (self.sizes[2] - border*2, \
+                                        self.mappingHeight - border*2)
+                                )
+        
+        macro = Label(color = (0,0,0,1),
+                      text = mapping[1],
+                      bold = True,
+                      pos_hint = {'x':self.positions[3], 'y':border_y},
+                      size_hint = (None,None),
+                      size = (self.sizes[3] - border*2, \
+                              self.mappingHeight - border*2)
+                      )
+        
+        macroInfoBtn = Button(background_normal = self.macroEditButtonImageUp,
+                              background_down = self.macroEditButtonImageDown,
+                              pos_hint = {'x':self.positions[4], 'y':border_y},
+                              size_hint = (None,None),
+                              size = (self.sizes[4] - border*2, \
+                                      self.mappingHeight - border*2)
+                              )
+        mappingWidget.add_widget(macroInfoBtn)
+        mappingWidget.add_widget(macro)
+        mappingWidget.add_widget(gestureInfoBtn)
+        mappingWidget.add_widget(gesture)
+        mappingWidget.add_widget(delBtn)
+        mappingWidget.bindButtons()
+        self.layout.add_widget(mappingWidget)
+        self.updateMappings()
+
+    def removeMapping(self, index):
+        i = len(self.layout.children) - 1 - index
+        self.layout.remove_widget(self.layout.children[i])
+        self.updateMappings()
+        removeMapping(index)
+
+    def updateMappings(self):
+        self.layout.size = (self.size[0], \
+                            len(self.layout.children)*self.mappingHeight)
+        for i in reversed(range(len(self.layout.children))):
+            self.layout.children[i].index = len(self.layout.children) - i - 1
+        
+
+class MappingInstance(FloatLayout):
+    index = 0
+    owner = None
+    
+    def __init__(self,**kwargs):
+        super(MappingInstance,self).__init__(**kwargs)
+
+    def __delBtn_callback(self,btn):
+        self.owner.removeMapping(self.index)
+
+    def __infoBtnGest_callback(self,btn):
+        print 'info of gesture nr ' + str(self.index)
+        pass #TODO
+
+    def __infoBtnMac_callback(self,btn):
+        print 'info of macro nr ' + str(self.index)
+        pass #TODO
+
+    def bindButtons(self):
+        self.children[0].bind(on_release=self.__delBtn_callback)
+        self.children[2].bind(on_release=self.__infoBtnGest_callback)
+        self.children[4].bind(on_release=self.__infoBtnMac_callback)
+
 ##################################################################
 #-------------------- Load Images -------------------------------#
 ##################################################################
@@ -113,9 +287,12 @@ def removeProfile(profileName):
     pass
 
 #------------- Mappings ----------------#
+jojo = 0
 def createMapping():
+    jojo = 0
     """ Creates a new mapping with default values."""
-    #TODO
+    mappingBox.addMapping(('Gesture' + str(jojo), 'Macro' + str(jojo)))
+    jojo += 1
     pass
 
 def editMapping(index, editGesture, editMacro, newGesture, newMacro):
@@ -134,6 +311,7 @@ def editMapping(index, editGesture, editMacro, newGesture, newMacro):
 
 def removeMapping(index):
     """ Removes the mapping with the given index."""
+    print 'removing mapping ' + str(index)
     #TODO
     pass
 
@@ -272,45 +450,29 @@ titleMappings = Label(text='[color=000000][b][size=36]Mappings[/size][/b][/color
                       pos_hint={'y':0.9},
                       markup = True)
 
-# mappings stuff
-mappingBox = ScrollView(do_scroll_x = False,
-                        size_hint=(1, 0.7),
-                        pos_hint={'y':0.1})
-mappingBoxContent = FloatLayout()
-mappingBoxContent.add_widget(blackBorderImg)
-mappingBox.add_widget(mappingBoxContent)
+# mapping thingy
 
+mappingBox = MappingDisplay(size = (500, 300), size_hint=(None,None),
+                            pos_hint = {'x':0.05,'y':0.1})
+#mappingBox.pos_hint = {'x':0.1,'y':0.1}
+                           # pos_hint={'x':0.2, 'y':0.2})
+mappingBox.mappingImagePath = 'pics/mapping_border.png'
+mappingBox.deleteButtonImagePathUp = 'pics/cross_btn_up.png'
+mappingBox.deleteButtonImagePathDown = 'pics/cross_btn_down.png'
+mappingBox.gestureEditButtonImageUp = 'pics/plus_btn_up.png'
+mappingBox.gestureEditButtonImageDown = 'pics/plus_btn_down.png'
+mappingBox.macroEditButtonImageUp = 'pics/plus_btn_up.png'
+mappingBox.macroEditButtonImageDown = 'pics/plus_btn_down.png'
+for mapp in getListOfMappings(getCurrentProfile()):
+    mappingBox.addMapping(mapp)
 
-heightOfAMapping = 32
-
-
-
-def updateMappings():
-    """ A general function for updating the shown mappings. """
-    mappingBoxContent.clear_widgets()
-    index = 0
-    for mapping in getListOfMappings(getCurrentProfile()):
-        boxBackground = FloatLayout(size_hint=(1,0.2))
-        box = BoxLayout(orientation='horizontal')#, height = heightOfAMapping)
-        boxBackground.add_widget(Image(allow_stretch=True, keep_ratio=False,
-                                       source='pics/mapping_border.png',
-                                       size_hint=(1,1),
-                                       pos_hint={'y':0}))
-        #create delete button
-        delButton = Button(size_hint=(0.05, 0.9),
-                           #pos_hint={'x':0.03 ,'y':0.05},
-                           background_normal='pics/cross_btn_up.png',
-                           background_down = 'pics/cross_btn_down.png')
-        delButton.bind(on_release=lambda btn: removeButtonActions(index))
-        box.add_widget(delButton)
-
-        boxBackground.add_widget(box)
-        mappingBoxContent.add_widget(boxBackground)
-        index += 1
-        
-def removeButtonActions(index):
-    removeMapping(index)
-    updateMappings()
+#add mapping button
+addMappingButton = Button(text = '[size=14][color=55ff55]Create Mapping',
+                          size_hint = (None,None),
+                          size = (120,30),
+                          pos_hint = {'x':0.75,'y':0.90},
+                          markup=True)
+addMappingButton.bind(on_release=lambda btn:createMapping())
 
 ##################################################################
 # ------------------Main building class ------------------------_#
@@ -335,11 +497,13 @@ class GestureMapper(App):
         mainArea.add_widget(mainBackgroundImg)
         mainArea.add_widget(titleMappings)
         mainArea.add_widget(mappingBox)
-        updateMappings()
+        mainArea.add_widget(addMappingButton)
+        #updateMappings()
        
         #add all to root
         root.add_widget(topBar)
         root.add_widget(mainArea)
+        
         return root
         
 
