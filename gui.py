@@ -3,15 +3,13 @@ from kivy.app import App
 from kivy.uix.widget import Widget
 from kivy.uix.boxlayout import BoxLayout
 from kivy.uix.floatlayout import FloatLayout
-from kivy.uix.gridlayout import GridLayout
 from kivy.uix.image import Image
 from kivy.uix.button import Button
-from kivy.graphics import Color, Ellipse, Line, Rectangle
 from kivy.uix.label import Label
 from kivy.uix.dropdown import DropDown
 from kivy.uix.textinput import TextInput
 from kivy.uix.scrollview import ScrollView
-from kivy.uix.stencilview import StencilView
+from kivy.uix.popup import Popup
 from kivy.config import Config
 
 ##################################################################
@@ -69,7 +67,7 @@ class MappingDisplay(FloatLayout):
     macroEditButtonImageUp = None
     macroEditButtonImageDown = None
     mappingHeight = 40
-    proportions = (0.08, 0.35, 0.11, 0.35, 0.11)
+    proportions = (0.08, 0.3, 0.11, 0.40, 0.11)
     positions = [1,1,1,1,1]
     sizes = [1,1,1,1,1]
     
@@ -118,7 +116,7 @@ class MappingDisplay(FloatLayout):
                         background_down = self.deleteButtonImagePathDown,
                         pos_hint={'x':0.01, 'y':border_y},
                         size_hint = (None,None),
-                        size = (self.sizes[0] - border*2, \
+                        size = (self.mappingHeight - border*2, \
                                 self.mappingHeight - border*2)
                         )
         
@@ -135,7 +133,7 @@ class MappingDisplay(FloatLayout):
                                 background_down = self.gestureEditButtonImageDown,
                                 pos_hint = {'x':self.positions[2], 'y':border_y},
                                 size_hint = (None,None),
-                                size = (self.sizes[2] - border*2, \
+                                size = (self.mappingHeight - border*2, \
                                         self.mappingHeight - border*2)
                                 )
         
@@ -152,7 +150,7 @@ class MappingDisplay(FloatLayout):
                               background_down = self.macroEditButtonImageDown,
                               pos_hint = {'x':self.positions[4], 'y':border_y},
                               size_hint = (None,None),
-                              size = (self.sizes[4] - border*2, \
+                              size = (self.mappingHeight - border*2, \
                                       self.mappingHeight - border*2)
                               )
         mappingWidget.add_widget(macroInfoBtn)
@@ -175,6 +173,17 @@ class MappingDisplay(FloatLayout):
                             len(self.layout.children)*self.mappingHeight)
         for i in reversed(range(len(self.layout.children))):
             self.layout.children[i].index = len(self.layout.children) - i - 1
+
+    def editMapping(self,index,gesture,macro):
+        i = len(self.layout.children) - index - 1
+        mapping = self.layout.children[i]
+        if gesture != None:
+            mapping.children[1].text = gesture
+        if macro != None:
+            mapping.children[3].text = macro
+
+    def showInfo(self,index,which):
+        displayEditMappingPopup(index, which)
         
 
 class MappingInstance(FloatLayout):
@@ -188,12 +197,10 @@ class MappingInstance(FloatLayout):
         self.owner.removeMapping(self.index)
 
     def __infoBtnGest_callback(self,btn):
-        print 'info of gesture nr ' + str(self.index)
-        pass #TODO
+        self.owner.showInfo(self.index, 'gesture')
 
     def __infoBtnMac_callback(self,btn):
-        print 'info of macro nr ' + str(self.index)
-        pass #TODO
+        self.owner.showInfo(self.index, 'macro')
 
     def bindButtons(self):
         self.children[0].bind(on_release=self.__delBtn_callback)
@@ -204,11 +211,11 @@ class MappingInstance(FloatLayout):
 #-------------------- Load Images -------------------------------#
 ##################################################################
 profileBarImg = Image(allow_stretch=True, keep_ratio=False,
-                      source='pics/happysign.png',
+                      source='pics/background_top.png',
                       size_hint=(1,1),
                       pos_hint={'y':0})
 mainBackgroundImg = Image(allow_stretch=True, keep_ratio=False,
-                          source='pics/art.png',
+                          source='pics/background_bot.png',
                           size_hint=(1,1),
                           pos_hint={'y':0})
 blackBorderImg = Image(allow_stretch=True, keep_ratio=False,
@@ -250,12 +257,18 @@ def getListOfMappings(profile):
 def getListOfGestures():
     """Returns a list of available Gestures, requested from Controller."""
     #TODO
-    return ['wave', 'punch', 'faint']
+    return [('wave', TextInput(text='WAVE\nJO\nNEJ\nblod',readonly = True)),
+            ('punch',TextInput(text='kALABALALAMMMMMMMMMMMMmmmASDN',readonly = True)),
+            ('faint', Image(source='pics/happysign.png', allow_stretch=True,
+                            keep_ratio=False))]
 
 def getListOfMacros():
     """Returns a list of Macros/Windows Functions, requested from Controller."""
     #TODO
-    return ['leftclick', 'rightclick', 'middleclick']
+    return [('leftclick', TextInput(text='U DUNNO WUT LEFTCLICK IS',readonly = True)),
+            ('rightclick',TextInput(text='RaaALABALALAMMMMMMMMMMMMMMMMMMMMMmmmASDN',readonly = True)),
+            ('faint', Image(source='pics/art.png', allow_stretch=True,
+                            keep_ratio=False))]
 
 
 #-------- Profile management ---------#
@@ -295,17 +308,17 @@ def createMapping():
     jojo += 1
     pass
 
-def editMapping(index, editGesture, editMacro, newGesture, newMacro):
+def editMapping(index, newGesture, newMacro):
     """ Edits the mapping with the given index.
 
     The parameters specify:
-    editGesture - boolean value, if the gesture is changing.
-    editMacro - boolean value, if the Windows macro/function is changing.
     newGesture - Gesture value, the new Gesture.
-                  (does nothing if editGesture is False).
     newMacro - Macro value, the new Windows Macro/Function.
-                   (does nothing if editMacro is False)."""
-    #TODO
+    If they are set to None, nothing will change.
+    """
+    print [index, newGesture, newMacro]
+    mappingBox.editMapping(index, newGesture, newMacro)
+    #TODO 
     #Change function parameters/arguments perhaps
     pass
 
@@ -354,7 +367,9 @@ profileSelection.add_widget(Label(text='[color=000000][b] Current profile' \
                                   markup=True,
                                   size_hint_y=0.35))
 
-profileSelectionButton = Button(markup=True)
+profileSelectionButton = Button(markup=True,
+                background_normal='pics/button_profile_selection_up.png',
+                background_down='pics/button_profile_selection_down.png'    )
 def profileSelectionButtonTextSet(profileName):
     btntext=kivy.utils.escape_markup(profileName)
     profileSelectionButton.text = '[size=14][color=000000]' + \
@@ -363,8 +378,9 @@ profileSelectionButtonTextSet(getCurrentProfile())
 
 d = DropDown(max_height=100, bar_width=15)
 for profile in getListOfProfiles():
-    btn = Button(text=profile, color=(0,0,0,1), size_hint_y=None, height=20)
-    btn.bind(on_release=lambda btn: d.select(btn.text))
+    btn = Button(text=profile, color=(0,0,0,1), size_hint_y=None, height=20,
+                 background_normal = 'pics/dropdown_choice.png')
+    btn.bind(on_press=lambda btn: d.select(btn.text))
     d.add_widget(btn)
 
 profileSelection.add_widget(profileSelectionButton)
@@ -391,20 +407,22 @@ profileNameBox.add_widget(Label(text='[color=000000][b] Profile name' \
                            
 profileNameTextBox = TextInput(multiline = False,
                                font_size = 13)
+
 def profileNameTextBoxTextSet(profileName):
     text=kivy.utils.escape_markup(profileName)
     profileNameTextBox.text = text
     
-profileNameTextBoxTextSet(getCurrentProfile())
+profileNameTextBoxTextSet(getCurrentProfile()) #TODO
 
 profileNameBox.add_widget(profileNameTextBox)
 
 #delete profile button
-deleteProfileButton = Button( size_hint = (None, None),
-                              size = (35,35),
-                              pos_hint = {'x':0.75, 'y':0.15},
-                              background_normal = 'pics/cross_btn_up.png',
-                              background_down = 'pics/cross_btn_down.png')
+deleteProfileButton = Button(size_hint = (None, None), size = (100,35),
+                            pos_hint = {'x':0.75, 'y':0.15},
+                            text='[color=443333]Delete profile',
+                            markup = True,
+                            background_normal = 'pics/button_profile_delete_up.png',
+                            background_down = 'pics/button_profile_delete_down.png')
 
 #bind actions
 #updates both choose profiles text, and profile name bar.
@@ -452,17 +470,17 @@ titleMappings = Label(text='[color=000000][b][size=36]Mappings[/size][/b][/color
 
 # mapping thingy
 
-mappingBox = MappingDisplay(size = (500, 300), size_hint=(None,None),
+mappingBox = MappingDisplay(size = (500, 275), size_hint=(None,None),
                             pos_hint = {'x':0.05,'y':0.1})
 #mappingBox.pos_hint = {'x':0.1,'y':0.1}
                            # pos_hint={'x':0.2, 'y':0.2})
 mappingBox.mappingImagePath = 'pics/mapping_border.png'
 mappingBox.deleteButtonImagePathUp = 'pics/cross_btn_up.png'
 mappingBox.deleteButtonImagePathDown = 'pics/cross_btn_down.png'
-mappingBox.gestureEditButtonImageUp = 'pics/plus_btn_up.png'
-mappingBox.gestureEditButtonImageDown = 'pics/plus_btn_down.png'
-mappingBox.macroEditButtonImageUp = 'pics/plus_btn_up.png'
-mappingBox.macroEditButtonImageDown = 'pics/plus_btn_down.png'
+mappingBox.gestureEditButtonImageUp = 'pics/info_btn_up.png'
+mappingBox.gestureEditButtonImageDown = 'pics/info_btn_down.png'
+mappingBox.macroEditButtonImageUp = 'pics/info_btn_up.png'
+mappingBox.macroEditButtonImageDown = 'pics/info_btn_down.png'
 for mapp in getListOfMappings(getCurrentProfile()):
     mappingBox.addMapping(mapp)
 
@@ -473,6 +491,70 @@ addMappingButton = Button(text = '[size=14][color=55ff55]Create Mapping',
                           pos_hint = {'x':0.75,'y':0.90},
                           markup=True)
 addMappingButton.bind(on_release=lambda btn:createMapping())
+
+#popups from infobutton
+
+class IndexButton(Button):
+    index = 0
+    def __init__(self,**kwargs):
+        super(IndexButton,self).__init__(**kwargs)
+
+#bind buttons to call these two functions
+def displayEditMappingPopup(index, gestOrMacro):
+    if gestOrMacro == 'gesture':
+        allEvents=getListOfGestures()
+    elif gestOrMacro == 'macro':
+        allEvents=getListOfMacros()
+    content = BoxLayout(orientation='vertical')
+    #Dropdown for choosing gesture/macro
+    pickEventBtn = Button(size_hint_y=0.25, text=allEvents[0][0])
+    dd = DropDown(max_height=100, bar_width=5)
+
+    i = 0
+    for eve in allEvents:
+        btn = IndexButton(text=eve[0], color=(0,0,0,1), size_hint_y=None, height=20)
+        btn.index = i
+        btn.bind(on_release=lambda btn: selectEvent(btn.index))
+        dd.add_widget(btn)
+        i += 1
+    def selectEvent(ind):
+        dd.select(ind)
+        pickEventBtn.text=allEvents[ind][0]
+        content.remove_widget(content.children[1])
+        widge = allEvents[ind][1]
+#        if isinstance(widge, TextInput):
+#            def unfocus(inst,touch):
+#                widge.focus = False
+#            widge.bind(on_touch_up=unfocus)
+#TODO move this binding to the gestListOfGestures method
+        content.add_widget(widge,1)
+    pickEventBtn.bind(on_release=dd.open)
+    
+#    dd.bind(on_select=pickGest)
+    #Button that signals you're done
+    doneBtn = Button(text='Done', size_hint_y=0.2)
+    def doneBtn_callback(btn):
+        if gestOrMacro == 'gesture':
+            editMapping(index, pickEventBtn.text, None)
+        elif gestOrMacro == 'macro':
+            editMapping(index, None, pickEventBtn.text)
+        popup.dismiss()
+    doneBtn.bind(on_release=doneBtn_callback)
+
+    #initialize starting values
+    content.add_widget(pickEventBtn)
+    content.add_widget(allEvents[0][1])
+    content.add_widget(doneBtn)
+
+    if gestOrMacro == 'gesture':
+        title = 'Set gesture'
+    elif gestOrMacro == 'macro':
+        title = 'Set Windows Function'
+    
+    popup = Popup(title=title,
+                  content=content,
+                  size_hint=(None, None), size=(400, 300))
+    popup.open()
 
 ##################################################################
 # ------------------Main building class ------------------------_#
