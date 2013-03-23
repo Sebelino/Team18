@@ -1,0 +1,317 @@
+<HTML>
+    <HEAD>
+        <TITLE>VideoCapture - A Win32 Python Extension for Accessing Video Devices (e.g. a USB WebCam, a TV-Card, ...)</TITLE>
+    </HEAD>
+
+    <BODY BGCOLOR=#ffffff>
+
+        <IMG SRC="Examples/test1.jpg" WIDTH="176" HEIGHT="132" ALIGN="right">
+        <H1><img SRC="html/logo.jpg" WIDTH="421" HEIGHT="84"
+        ALT="VideoCapture"></H1>
+        <H3>A Win32 Python Extension for Accessing Video Devices (e.g. a USB WebCam, a TV-Card, ...)</H3>
+        by Markus Gritsch (<IMG SRC="em.png" WIDTH="132" HEIGHT="16" ALIGN="top">)<BR>
+
+        <FONT COLOR="#FF8800"><B>I would like to put together a list of
+        Python-powered WebCam URLs, so please send me an email with the URL of
+        the plain image or the URL of the HTML page if you use
+        VideoCapture.</B></FONT>
+
+        <!-------------------------------------------------------------------->
+        <P><TABLE BGCOLOR=#dddddd CELLSPACING="0" CELLPADDING="0" BORDER="0" WIDTH="100%"><TR><TD WIDTH="100%">&nbsp;<B><a name="download">Download</a></B></TD></TR></TABLE>
+
+        <FONT COLOR="#FF0000"><B>PIL version 1.1.2 and below shows a memory
+        leak when using .gif fonts.  Remove the files 'helvB08.gif' and
+        'helvetica-10.gif' in the Lib folder of your Python installation if you
+        have used a version of VideoCapture prior to 0.7!!</B></FONT><BR>
+
+        [ <A
+        HREF="VideoCapture-0.9-5.zip"><B>VideoCapture-0.9-5.zip</B></A>
+        ]<BR> binaries, sourcecode, examples, and batteries included - no
+        warranty, no liability, provided 'as is'
+        <P>
+        A stand-alone binary of the included GUI tool 'webcam-watcher' is
+        available
+        <A HREF="webcam-watcher_2002-02-18_win32.zip"><B>here</B></A>.
+
+        <!-------------------------------------------------------------------->
+        <P><TABLE BGCOLOR=#dddddd CELLSPACING="0" CELLPADDING="0" BORDER="0" WIDTH="100%"><TR><TD WIDTH="100%">&nbsp;<B><a name="is">What it is</a></B></TD></TR></TABLE>
+
+        VideoCapture is a <A HREF="http://www.python.org/">Python</A> extension
+        for Win32 which makes it possible to access video-capture devices (e.g.
+        a USB webcam).  It consists of a low-level native module (vidcap.pyd)
+        and a high-level module written in Python (VideoCapture.py) which
+        should be used solely.
+        <P>
+        Also included are some tools which can be used to periodically upload a
+        WebCam-image to a WebServer, monitor and save a picture at a given URL
+        to the local disk, and so on.  Please refer to the README.txt file in
+        the 'Tools' folder for further details.
+
+        <!-------------------------------------------------------------------->
+        <P><TABLE BGCOLOR=#dddddd CELLSPACING="0" CELLPADDING="0" BORDER="0" WIDTH="100%"><TR><TD WIDTH="100%">&nbsp;<B><a name="action">In action</a></B></TD></TR></TABLE>
+
+        Here is a list of VideoCapture-powered WebCams:
+        <UL>
+            <LI>
+            <A HREF="http://www.patrickniemeyer.com/webcam.htm">http://www.patrickniemeyer.com/webcam.htm</A>
+            <LI>
+            <A HREF="http://www.lrz-muenchen.de/~Rodenacker/home/webcam.html">http://www.lrz-muenchen.de/~Rodenacker/home/webcam.html</A>
+            <LI>
+            <A HREF="http://www.cazabon.com/room.html">http://www.cazabon.com/room.html</A><BR>
+            <LI>
+            <A HREF="http://boerderie.hilvarenbeek.org/~whaley/webcam.html">http://boerderie.hilvarenbeek.org/~whaley/webcam.html</A>
+            <LI>
+            <A HREF="http://dddcam.klitsche.org/">http://dddcam.klitsche.org/</A>
+            <LI>
+            <A HREF="http://www.mepnet.de/index.php?content=Bild%20des%20Tages">http://www.mepnet.de/index.php?content=Bild%20des%20Tages</A>
+            <LI>
+            <A HREF="http://members.lycos.nl/struiver/">http://members.lycos.nl/struiver/</A>
+            <LI>
+            <A HREF="http://www.insanitech.com/timelapse/">http://www.insanitech.com/timelapse/</A>
+            <LI>
+            <A HREF="http://gumuz.looze.net/wordpress/index.php/archives/2005/06/06/python-webcam-fun-motion-detection/">http://gumuz.looze.net/wordpress/index.php/archives/2005/06/06/python-webcam-fun-motion-detection/</A>
+        </UL>
+
+        <!-------------------------------------------------------------------->
+        <P><TABLE BGCOLOR=#dddddd CELLSPACING="0" CELLPADDING="0" BORDER="0" WIDTH="100%"><TR><TD WIDTH="100%">&nbsp;<B><a name="need">What you need</a></B></TD></TR></TABLE>
+
+        Beside <A HREF="http://www.python.org/download/">Python</A> and the
+        VideoCapture module itself, you will need the following additional
+        components:
+        <UL>
+            <LI>
+            The low-level module uses DirectShow which is already included in
+            DirectX 8.0 and higher.  If you don't have DirectShow, download <A
+            HREF="http://www.microsoft.com/directx/homeuser/downloads/default.asp"><B>DirectX</B></A>
+            from Microsoft and install it.  Windows XP has DirectX included.
+            <LI>
+            The high-level module needs PIL to produce actual images from the
+            pixel-data.  <A
+            HREF="http://www.pythonware.com/products/pil/index.htm"><B>PIL</B></A>
+            can be downloaded from PythonWare.
+            <LI>
+            (optionally) If you want to use 'scp' as the transfer method in
+            webcam-uploader.py, you need either scp2.exe, which is included in
+            the installer available from <A
+            HREF="http://www.ssh.com/"><B>SSH</B></A>, or pscp.exe, which is
+            available bundled or separately at the <A
+            HREF="http://www.chiark.greenend.org.uk/~sgtatham/putty/"><B>PuTTY</B></A>
+            homepage.
+        </UL>
+
+        <!-------------------------------------------------------------------->
+        <P><TABLE BGCOLOR=#dddddd CELLSPACING="0" CELLPADDING="0" BORDER="0" WIDTH="100%"><TR><TD WIDTH="100%">&nbsp;<B><a name="install">How you install it</a></B></TD></TR></TABLE>
+
+        To make use of VideoCapture just copy the files from the 'PythonXX'
+        folder to the corresponding folders of your 'PythonXX' installation,
+        where XX must match with the version of Python you have installed on
+        your system.
+
+        <!-------------------------------------------------------------------->
+        <P><TABLE BGCOLOR=#dddddd CELLSPACING="0" CELLPADDING="0" BORDER="0" WIDTH="100%"><TR><TD WIDTH="100%">&nbsp;<B><a name="try">Trying it out</a></B></TD></TR></TABLE>
+
+        Taking a snapshot is as easy as
+        <PRE>
+            from VideoCapture import Device
+
+            cam = Device()
+            cam.saveSnapshot('image.jpg')
+        </PRE>
+
+        <UL>
+            <LI>
+            The 'Examples' folder contains simple examples which show how easy
+            it is to obtain images from a video device by using VideoCapture.
+            Refer to 'exa2_show-possibilities.py' for further details on
+            additional options available.
+            <LI>
+            Look at the <A HREF="html/VideoCapture.html"><B>module
+            documentation</B></A> for in-depth information.
+        </UL>
+
+        <!-------------------------------------------------------------------->
+        <P><TABLE BGCOLOR=#dddddd CELLSPACING="0" CELLPADDING="0" BORDER="0" WIDTH="100%"><TR><TD WIDTH="100%">&nbsp;<B><a name="short">Shortcomings (ToDo)</a></B></TD></TR></TABLE>
+
+        <!-- No limitations known. -->
+        <UL>
+            <LI>
+            setResolution() probably does not work on Devices where the
+            resolution is set in the CaptureFilterProperties.
+            <LI>
+            Some TV-cards forget the tuner (channel) settings after
+            TV-application termination, so VideoCapture should provide a method
+            to display the tuner's property page.
+        </UL>
+
+        <!-------------------------------------------------------------------->
+        <P><TABLE BGCOLOR=#dddddd CELLSPACING="0" CELLPADDING="0" BORDER="0" WIDTH="100%"><TR><TD WIDTH="100%">&nbsp;<B><a name="related">Related stuff</a></B></TD></TR></TABLE>
+
+        If you want to acquire pictures from a scanner or a digital camera
+        which supports the TWAIN protocol you can use Kevin Gill's excellent <A
+        HREF="http://twainmodule.sourceforge.net/">twainmodule</A>.
+
+        <!-------------------------------------------------------------------->
+        <P><TABLE BGCOLOR=#dddddd CELLSPACING="0" CELLPADDING="0" BORDER="0" WIDTH="100%"><TR><TD WIDTH="100%">&nbsp;<B><a name="history">Version history</a></B></TD></TR></TABLE>
+
+        <UL>(01.03.2012) <B>Version 0.9-5</B><BR>
+            <LI>
+            Added a new function to vidcapmodule.cpp to obtain the Windows
+            "friendly name" (e.g. "Microsoft Lifecam VX-4000") for an instantiated
+            device.  Contributed by Jeremy Mortis.
+        </UL>
+        <UL>(15.04.2011) <B>Version 0.9-4</B><BR>
+            <LI>
+            Included a precompiled binary of the low level module linked
+            against Python 2.7 64-bit contributed by Jurriaan Schreuder.
+        </UL>
+        <UL>(04.10.2010) <B>Version 0.9-3</B><BR>
+            <LI>
+            Included a precompiled binary of the low level module linked
+            against Python 2.7 contributed by Chris Spencer.
+        </UL>
+        <UL>(30.11.2008) <B>Version 0.9-2</B><BR>
+            <LI>
+            Included a precompiled binary of the low level module linked
+            against Python 2.6 contributed by Jim Gasbarro.
+        </UL>
+        <UL>(8.1.2007) <B>Version 0.9-1</B><BR>
+            <LI>
+            Included a precompiled binary of the low level module linked
+            against Python 2.5.
+        </UL>
+        <UL>(27.8.2005) <B>Version 0.9</B><BR>
+            <LI>
+            Jonathan Viney fixed a bug which had the potential of leading to
+            a crash when using the module without a camera connected.
+            <LI>
+            Included a precompiled binary of the low level module linked
+            against Python 2.4.
+        </UL>
+        <UL>(8.10.2003) <B>Version 0.8</B><BR>
+            <LI>
+            Added module documentation.
+            <LI>
+            Moved project to SourceForge.net.
+            <LI>
+            Included a precompiled binary of the low level module linked
+            against Python 2.3.
+            <LI>
+            Incorporated stand-alone webservers from Don Garrett and Don Kimber
+            (Tools\3rdParty).  The pushserver from Don Kimber is quite
+            interesting.  Now I can watch TV in a Mozilla window with 25 fps
+            :-)
+            <LI>
+            Added setResolution() method contributed by Don Kimber.  (Probably
+            works only on devices which have the resolution specified in the
+            CapturePinProperties.)
+            <LI>
+            Don Kimber fixed a small but serious inconsistency in
+            displayCapturePinProperties() with sometimes resulted in a
+            seg-fault.
+        </UL>
+        <UL>(4.3.2002) <B>Version 0.7</B><BR>
+            <LI>
+            Replaced the .gif fonts by .png fonts, since PIL version 1.1.2 and
+            below shows a memory leak when using .gif fonts.  Remove the files
+            'helvB08.gif' and 'helvetica-10.gif' in the Lib folder of your
+            Python installation if you have used a version of VideoCapture
+            prior to 0.7!!
+            <LI>
+            Replaced displayPropertyPage() by displayCaptureFilterProperties()
+            and displayCapturePinProperties().  This finally allows selecting
+            things like the video size used during capturing for every kind of
+            device-drivers (now also for WDM drivers, previously only for VfW
+            drivers).
+            <LI>
+            Since there were some memory-leak issues with some device drivers
+            when the filter graph was started and stopped for each capture, the
+            graph is now continuously running.  Beside solving the memory issue
+            this has the big advantage, that taking snapshots is *really* fast
+            now.  Taking 10 and more snapshots per second is no problem :-)
+            <LI>
+            scp can now also be performed with the pscp.exe program found in
+            the PuTTY distribution.
+            <LI>
+            Fixed a minor memory leak by freeing MediaType.pbFormat.
+            <LI>
+            Added the DirectShow AMCAP utility which can be used to check
+            whether the capture device is compatible with VideoCapture.
+        </UL>
+        <UL>(20.2.2002) <B>Version 0.6</B><BR>
+            <LI>
+            Included a precompiled binary of the low level module linked
+            against Python 2.2.
+            <LI>
+            Put a stand-alone executable of the GUI program 'webcam-watcher' on
+            the webpage.
+            <LI>
+            Added scp as an additional upload method for webcam-uploader
+            (additionally to ftp).
+            <LI>
+            Other minor enhancements to all the programs in the 'Tools' folder.
+            <LI>
+            The displayPropertyPage() dialog is displayed on top of all other
+            windows.
+            <LI>
+            The filtergraph is rebuild after calling displayPropertyPage().
+        </UL>
+        <UL>(08.12.2001) <B>Version 0.5</B><BR>
+            <LI>
+            Changed the filtergraph initialization to use the capture-pin
+            instead of the preview-pin of the video device filter.
+            This should resolve a strange timeout problem and it even allows me
+            to capture snapshots from my TV-card :-)
+            <LI>
+            Added a method displayPropertyPage() to the Device class which
+            displays a dialog-box containing the property pages of the capture
+            device.  This should allow selecting things like the video size
+            used during capturing.
+        </UL>
+        <UL>(10.7.2001) <B>Version 0.4</B><BR>
+            <LI>
+            Added a PyQt based program which periodically retrieves a picture
+            from the web and displays it in a GUI window.
+            <LI>
+            Several enhancements to webcam-uploader.  Now also a HTML file
+            which displays the uploaded image and periodically reloads itself
+            is placed together with the image on the WebServer.
+        </UL>
+        <UL>(28.6.2001) <B>Version 0.3</B><BR>
+            <LI>
+            Included a precompiled binary of the low level module linked
+            against Python 2.1 (in addition to the one which was already there
+            for Python 2.0).
+            <LI>
+            Added a tool to periodically upload a WebCam-image to a WebServer
+            via FTP.
+            <LI>
+            Added a tool to monitor (and save in case of a change) a Picture
+            located at a given URL.
+            <LI>
+            More than one Device instance can be held open at the same time.
+            <LI>
+            The location of the timestamp in the image is selectable.<BR>
+        </UL>
+        <UL>(24.6.2001) <B>Version 0.2</B><BR>
+            <LI>
+            Added extensive error checking after every system call.  In case
+            something goes wrong an exception is raised.<BR>
+            <LI>
+            Some enhancements to the high level interface like selectable
+            fontstyle, various shadow modes for better font legibility.<BR>
+            <LI>
+            The video-device that should be used can be specified.
+        </UL>
+        <UL>(18.6.2001) <B>Version 0.1</B><BR>
+            <LI>
+            Initial release.
+        </UL>
+
+        <P>Have fun!
+
+        <P><HR>
+        <A HREF="http://www.python.org/"><IMG SRC="html/PythonPowered.gif" WIDTH="110" HEIGHT="44" ALIGN="right" BORDER="0" ALT="PythonPowered Logo"></A>
+        <a href="http://sourceforge.net/projects/videocapture/"><img src="http://sourceforge.net/sflogo.php?group_id=66697&amp;type=2" width="125" height="37" border="0" alt="SourceForge.net Logo"></a>
+
+    </BODY>
+</HTML>

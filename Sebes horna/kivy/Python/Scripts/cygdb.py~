@@ -1,0 +1,8 @@
+#!C:\MinGW\msys\1.0\home\tito\code\Kivy-1.2.0-w32\Python\python.exe
+
+import sys
+
+from Cython.Debugger import Cygdb as cygdb
+
+if __name__ == '__main__':
+    cygdb.main()

@@ -1,0 +1,153 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html><head><title>Python: module VideoCapture</title>
+</head><body bgcolor="#f0f0f8">
+
+<table width="100%" cellspacing=0 cellpadding=2 border=0 summary="heading">
+<tr bgcolor="#7799ee">
+<td valign=bottom>&nbsp;<br>
+<font color="#ffffff" face="helvetica, arial">&nbsp;<br><big><big><strong>VideoCapture</strong></big></big></font></td
+><td align=right valign=bottom
+><font color="#ffffff" face="helvetica, arial"><a href=".">index</a><br><a href="file:///Z:/camvue/videocapture.py">z:\camvue\videocapture.py</a></font></td></tr></table>
+    <p><tt>VideoCapture.py<br>
+&nbsp;<br>
+by&nbsp;Markus&nbsp;Gritsch&nbsp;&lt;gritsch@iue.tuwien.ac.at&gt;</tt></p>
+<p>
+<table width="100%" cellspacing=0 cellpadding=2 border=0 summary="section">
+<tr bgcolor="#aa55cc">
+<td colspan=3 valign=bottom>&nbsp;<br>
+<font color="#ffffff" face="helvetica, arial"><big><strong>Modules</strong></big></font></td></tr>
+    
+<tr><td bgcolor="#aa55cc"><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</tt></td><td>&nbsp;</td>
+<td width="100%"><table width="100%" summary="list"><tr><td width="25%" valign=top><a href="PIL.Image.html">PIL.Image</a><br>
+<a href="PIL.ImageDraw.html">PIL.ImageDraw</a><br>
+</td><td width="25%" valign=top><a href="PIL.ImageFont.html">PIL.ImageFont</a><br>
+<a href="string.html">string</a><br>
+</td><td width="25%" valign=top><a href="time.html">time</a><br>
+<a href="vidcap.html">vidcap</a><br>
+</td><td width="25%" valign=top></td></tr></table></td></tr></table><p>
+<table width="100%" cellspacing=0 cellpadding=2 border=0 summary="section">
+<tr bgcolor="#ee77aa">
+<td colspan=3 valign=bottom>&nbsp;<br>
+<font color="#ffffff" face="helvetica, arial"><big><strong>Classes</strong></big></font></td></tr>
+    
+<tr><td bgcolor="#ee77aa"><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</tt></td><td>&nbsp;</td>
+<td width="100%"><dl>
+<dt><font face="helvetica, arial"><a href="VideoCapture.html#Device">Device</a>
+</font></dt></dl>
+ <p>
+<table width="100%" cellspacing=0 cellpadding=2 border=0 summary="section">
+<tr bgcolor="#ffc8d8">
+<td colspan=3 valign=bottom>&nbsp;<br>
+<font color="#000000" face="helvetica, arial"><a name="Device">class <strong>Device</strong></a></font></td></tr>
+    
+<tr bgcolor="#ffc8d8"><td rowspan=2><tt>&nbsp;&nbsp;&nbsp;</tt></td>
+<td colspan=2><tt>Create&nbsp;instances&nbsp;of&nbsp;this&nbsp;class&nbsp;which&nbsp;will&nbsp;then&nbsp;represent&nbsp;video&nbsp;devices.<br>
+&nbsp;<br>
+For&nbsp;the&nbsp;lifetime&nbsp;of&nbsp;the&nbsp;instance,&nbsp;the&nbsp;device&nbsp;is&nbsp;blocked,&nbsp;so&nbsp;it&nbsp;can&nbsp;not&nbsp;be<br>
+used&nbsp;by&nbsp;other&nbsp;applications&nbsp;(which&nbsp;is&nbsp;quite&nbsp;normal&nbsp;Windows&nbsp;behavior).<br>
+If&nbsp;you&nbsp;want&nbsp;to&nbsp;access&nbsp;the&nbsp;device&nbsp;from&nbsp;another&nbsp;program,&nbsp;you&nbsp;have&nbsp;to&nbsp;delete<br>
+the&nbsp;instance&nbsp;first&nbsp;(e.g.&nbsp;del&nbsp;cam).<br>&nbsp;</tt></td></tr>
+<tr><td>&nbsp;</td>
+<td width="100%">Methods defined here:<br>
+<dl><dt><a name="Device-__init__"><strong>__init__</strong></a>(self, devnum<font color="#909090">=0</font>, showVideoWindow<font color="#909090">=0</font>)</dt><dd><tt>devnum:&nbsp;&nbsp;VideoCapture&nbsp;enumerates&nbsp;the&nbsp;available&nbsp;video&nbsp;capture&nbsp;devices<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;on&nbsp;your&nbsp;system.&nbsp;&nbsp;If&nbsp;you&nbsp;have&nbsp;more&nbsp;than&nbsp;one&nbsp;device,&nbsp;specify<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;the&nbsp;desired&nbsp;one&nbsp;here.&nbsp;&nbsp;The&nbsp;device&nbsp;number&nbsp;starts&nbsp;from&nbsp;0.<br>
+&nbsp;<br>
+showVideoWindow:&nbsp;0&nbsp;...&nbsp;do&nbsp;not&nbsp;display&nbsp;a&nbsp;video&nbsp;window&nbsp;(the&nbsp;default)<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;1&nbsp;...&nbsp;display&nbsp;a&nbsp;video&nbsp;window<br>
+&nbsp;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Mainly&nbsp;used&nbsp;for&nbsp;debugging,&nbsp;since&nbsp;the&nbsp;video&nbsp;window<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;can&nbsp;not&nbsp;be&nbsp;closed&nbsp;or&nbsp;moved&nbsp;around.</tt></dd></dl>
+
+<dl><dt><a name="Device-displayCaptureFilterProperties"><strong>displayCaptureFilterProperties</strong></a>(self)</dt><dd><tt>Displays&nbsp;a&nbsp;dialog&nbsp;containing&nbsp;the&nbsp;property&nbsp;page&nbsp;of&nbsp;the&nbsp;capture&nbsp;filter.<br>
+&nbsp;<br>
+For&nbsp;VfW&nbsp;drivers&nbsp;you&nbsp;may&nbsp;find&nbsp;the&nbsp;option&nbsp;to&nbsp;select&nbsp;the&nbsp;resolution&nbsp;most<br>
+likele&nbsp;here.</tt></dd></dl>
+
+<dl><dt><a name="Device-displayCapturePinProperties"><strong>displayCapturePinProperties</strong></a>(self)</dt><dd><tt>Displays&nbsp;a&nbsp;dialog&nbsp;containing&nbsp;the&nbsp;property&nbsp;page&nbsp;of&nbsp;the&nbsp;capture&nbsp;pin.<br>
+&nbsp;<br>
+For&nbsp;WDM&nbsp;drivers&nbsp;you&nbsp;may&nbsp;find&nbsp;the&nbsp;option&nbsp;to&nbsp;select&nbsp;the&nbsp;resolution&nbsp;most<br>
+likele&nbsp;here.</tt></dd></dl>
+
+<dl><dt><a name="Device-displayPropertyPage"><strong>displayPropertyPage</strong></a>(self)</dt><dd><tt>deprecated<br>
+&nbsp;<br>
+Use&nbsp;the&nbsp;methods&nbsp;<a href="#Device-displayCaptureFilterProperties">displayCaptureFilterProperties</a>()&nbsp;and<br>
+<a href="#Device-displayCapturePinProperties">displayCapturePinProperties</a>()&nbsp;instead.</tt></dd></dl>
+
+<dl><dt><a name="Device-getBuffer"><strong>getBuffer</strong></a>(self)</dt><dd><tt>Returns&nbsp;a&nbsp;string&nbsp;containing&nbsp;the&nbsp;raw&nbsp;pixel&nbsp;data.<br>
+&nbsp;<br>
+You&nbsp;probably&nbsp;don't&nbsp;want&nbsp;to&nbsp;use&nbsp;this&nbsp;function,&nbsp;but&nbsp;rather&nbsp;<a href="#Device-getImage">getImage</a>()&nbsp;or<br>
+<a href="#Device-saveSnapshot">saveSnapshot</a>().</tt></dd></dl>
+
+<dl><dt><a name="Device-getDisplayName"><strong>getDisplayName</strong></a>(self)</dt><dd><tt>Gets&nbsp;the&nbsp;Windows&nbsp;"friendly&nbsp;name"&nbsp;for&nbsp;the&nbsp;device&nbsp;(for&nbsp;example&nbsp;"Microsoft&nbsp;LifeCam&nbsp;VX-1000")<br>
+&nbsp;<br>
+(contributed&nbsp;by&nbsp;Jeremy&nbsp;Mortis&nbsp;(mortis@tansay.ca)</tt></dd></dl>
+
+<dl><dt><a name="Device-getImage"><strong>getImage</strong></a>(self, timestamp<font color="#909090">=0</font>, boldfont<font color="#909090">=0</font>, textpos<font color="#909090">='bl'</font>)</dt><dd><tt>Returns&nbsp;a&nbsp;PIL&nbsp;Image&nbsp;instance.<br>
+&nbsp;<br>
+timestamp:&nbsp;&nbsp;0&nbsp;...&nbsp;no&nbsp;timestamp&nbsp;(the&nbsp;default)<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;1&nbsp;...&nbsp;simple&nbsp;timestamp<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;2&nbsp;...&nbsp;timestamp&nbsp;with&nbsp;shadow<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;3&nbsp;...&nbsp;timestamp&nbsp;with&nbsp;outline<br>
+&nbsp;<br>
+boldfont:&nbsp;&nbsp;&nbsp;0&nbsp;...&nbsp;normal&nbsp;font&nbsp;(the&nbsp;default)<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;1&nbsp;...&nbsp;bold&nbsp;font<br>
+&nbsp;<br>
+textpos:&nbsp;&nbsp;&nbsp;&nbsp;The&nbsp;position&nbsp;of&nbsp;the&nbsp;timestamp&nbsp;can&nbsp;be&nbsp;specified&nbsp;by&nbsp;a&nbsp;string<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;containing&nbsp;a&nbsp;combination&nbsp;of&nbsp;two&nbsp;characters.&nbsp;&nbsp;One&nbsp;character<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;must&nbsp;be&nbsp;either&nbsp;t&nbsp;or&nbsp;b,&nbsp;the&nbsp;other&nbsp;one&nbsp;either&nbsp;l,&nbsp;c&nbsp;or&nbsp;r.<br>
+&nbsp;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;t&nbsp;...&nbsp;top<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;b&nbsp;...&nbsp;bottom<br>
+&nbsp;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;l&nbsp;...&nbsp;left<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;c&nbsp;...&nbsp;center<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;r&nbsp;...&nbsp;right<br>
+&nbsp;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;The&nbsp;default&nbsp;value&nbsp;is&nbsp;'bl'</tt></dd></dl>
+
+<dl><dt><a name="Device-saveSnapshot"><strong>saveSnapshot</strong></a>(self, filename, timestamp<font color="#909090">=0</font>, boldfont<font color="#909090">=0</font>, textpos<font color="#909090">='bl'</font>, **keywords)</dt><dd><tt>Saves&nbsp;a&nbsp;snapshot&nbsp;to&nbsp;the&nbsp;harddisk.<br>
+&nbsp;<br>
+The&nbsp;filetype&nbsp;depends&nbsp;on&nbsp;the&nbsp;filename&nbsp;extension.&nbsp;&nbsp;Everything&nbsp;that&nbsp;PIL<br>
+can&nbsp;handle&nbsp;can&nbsp;be&nbsp;specified&nbsp;(foo.jpg,&nbsp;foo.gif,&nbsp;foo.bmp,&nbsp;...).<br>
+&nbsp;<br>
+filename:&nbsp;&nbsp;&nbsp;String&nbsp;containing&nbsp;the&nbsp;name&nbsp;of&nbsp;the&nbsp;resulting&nbsp;file.<br>
+&nbsp;<br>
+timestamp:&nbsp;&nbsp;see&nbsp;<a href="#Device-getImage">getImage</a>()<br>
+&nbsp;<br>
+boldfont:&nbsp;&nbsp;&nbsp;see&nbsp;<a href="#Device-getImage">getImage</a>()<br>
+&nbsp;<br>
+textpos:&nbsp;&nbsp;&nbsp;&nbsp;see&nbsp;<a href="#Device-getImage">getImage</a>()<br>
+&nbsp;<br>
+Additional&nbsp;keyword&nbsp;arguments&nbsp;can&nbsp;be&nbsp;give&nbsp;which&nbsp;are&nbsp;just&nbsp;passed&nbsp;to&nbsp;the<br>
+save()&nbsp;method&nbsp;of&nbsp;the&nbsp;Image&nbsp;class.&nbsp;&nbsp;For&nbsp;example&nbsp;you&nbsp;can&nbsp;specify&nbsp;the<br>
+compression&nbsp;level&nbsp;of&nbsp;a&nbsp;JPEG&nbsp;image&nbsp;by&nbsp;quality=75&nbsp;(which&nbsp;is&nbsp;the&nbsp;default<br>
+value&nbsp;anyway).</tt></dd></dl>
+
+<dl><dt><a name="Device-setResolution"><strong>setResolution</strong></a>(self, width, height)</dt><dd><tt>Sets&nbsp;the&nbsp;capture&nbsp;resolution.&nbsp;(without&nbsp;dialog)<br>
+&nbsp;<br>
+(contributed&nbsp;by&nbsp;Don&nbsp;Kimber&nbsp;&lt;kimber@fxpal.com&gt;)</tt></dd></dl>
+
+</td></tr></table></td></tr></table><p>
+<table width="100%" cellspacing=0 cellpadding=2 border=0 summary="section">
+<tr bgcolor="#eeaa77">
+<td colspan=3 valign=bottom>&nbsp;<br>
+<font color="#ffffff" face="helvetica, arial"><big><strong>Functions</strong></big></font></td></tr>
+    
+<tr><td bgcolor="#eeaa77"><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</tt></td><td>&nbsp;</td>
+<td width="100%"><dl><dt><a name="-now"><strong>now</strong></a>()</dt><dd><tt>Returns&nbsp;a&nbsp;string&nbsp;containing&nbsp;the&nbsp;current&nbsp;date&nbsp;and&nbsp;time.<br>
+&nbsp;<br>
+This&nbsp;function&nbsp;is&nbsp;used&nbsp;internally&nbsp;by&nbsp;VideoCapture&nbsp;to&nbsp;generate&nbsp;the&nbsp;timestamp<br>
+with&nbsp;which&nbsp;a&nbsp;snapshot&nbsp;can&nbsp;optionally&nbsp;be&nbsp;marked.</tt></dd></dl>
+</td></tr></table><p>
+<table width="100%" cellspacing=0 cellpadding=2 border=0 summary="section">
+<tr bgcolor="#55aa55">
+<td colspan=3 valign=bottom>&nbsp;<br>
+<font color="#ffffff" face="helvetica, arial"><big><strong>Data</strong></big></font></td></tr>
+    
+<tr><td bgcolor="#55aa55"><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</tt></td><td>&nbsp;</td>
+<td width="100%"><strong>default_textpos</strong> = 'bl'<br>
+<strong>shadowcolor</strong> = 0<br>
+<strong>textcolor</strong> = 16777215</td></tr></table>
+</body></html>

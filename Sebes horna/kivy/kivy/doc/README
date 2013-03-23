@@ -1,0 +1,19 @@
+Kivy - Documentation
+====================
+
+You can access the API documentation on web :
+  * last released version : http://kivy.org/docs/api-index.html
+
+
+How to build the documentation
+------------------------------
+
+You need to install :
+  * Python Sphinx (apt-get install python-sphinx)
+  * Latest kivy
+
+Generate documentation using make::
+  make html
+
+Documentation will be accessible in build/html/
+
