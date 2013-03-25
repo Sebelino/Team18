@@ -421,7 +421,7 @@ deleteProfileButton = Button(size_hint = (None, None), size = (100,35),
                             pos_hint = {'x':0.75, 'y':0.15},
                             text='[color=443333]Delete profile',
                             markup = True,
-                            background_normal = 'pics/button_profile_delete_up.png',
+                            background_normal = 'pics/button_delete_profile.png',
                             background_down = 'pics/button_profile_delete_down.png')
 
 #bind actions
@@ -485,11 +485,12 @@ for mapp in getListOfMappings(getCurrentProfile()):
     mappingBox.addMapping(mapp)
 
 #add mapping button
-addMappingButton = Button(text = '[size=14][color=55ff55]Create Mapping',
+addMappingButton = Button(text = '[size=14][color=000000]Create Mapping',
                           size_hint = (None,None),
                           size = (120,30),
                           pos_hint = {'x':0.75,'y':0.90},
-                          markup=True)
+                          markup=True,
+                          background_normal = 'pics/button_create_mapping.png')
 addMappingButton.bind(on_release=lambda btn:createMapping())
 
 #popups from infobutton
