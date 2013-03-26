@@ -4,5 +4,5 @@ class Command:
         self.description = "(No description)"
         self.script = script
 
-    def getScript():
+    def getScript(self):
         return self.script

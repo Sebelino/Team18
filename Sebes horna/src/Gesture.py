@@ -1,7 +1,7 @@
 class Gesture:
-    def __init__(stringRepresentation):
+    def __init__(self,stringRepresentation):
         self.name = "(Unnamed)"
         self.stringRepresentation = stringRepresentation
 
-    def toString():
+    def toString(self):
         return self.stringRepresentation

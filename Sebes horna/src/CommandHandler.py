@@ -148,6 +148,13 @@ VK_CODE = {'backspace':0x08,
            "'":0xDE,
            '`':0xC0}
 
+def execute(command):
+    script = command.getScript()
+    words = script.split()
+    time.sleep(3)
+    if words[0] == "presskey":
+        pressKey(VK_CODE[words[1]])
+
 def leftClick(x,y):
     win32api.mouse_event(win32con.MOUSEEVENTF_MOVE, x, y,0)
     win32api.mouse_event(win32con.MOUSEEVENTF_LEFTDOWN,x,y,0,0)
@@ -163,17 +170,16 @@ def scroll(x,y):
 
 def pressKey(w):
     win32api.keybd_event(w,0,0,0)
-	time.sleep(.05)
-	win32api.keybd_event(w,0 ,win32con.KEYEVENTF_KEYUP ,0)
+    win32api.keybd_event(w,0 ,win32con.KEYEVENTF_KEYUP ,0)
 
 
 
-rightClick(100,100)
-leftClick(200,200)
-scroll(100,100)
-scroll(100,100)
-scroll(100,100)
-scroll(100,100)
-scroll(100,100)
-pressKey(VK_CODE["z"])
-print(len(VK_CODE) , VK_CODE["z"])
+#irghtClick(100,100)
+#leftClick(200,200)
+#scroll(100,100)
+#scroll(100,100)
+#scroll(100,100)
+#scroll(100,100)
+#scroll(100,100)
+#pressKey(VK_CODE["z"])
+#print(len(VK_CODE) , VK_CODE["z"])

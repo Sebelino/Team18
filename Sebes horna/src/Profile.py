@@ -5,8 +5,11 @@ class Profile:
         self.name = "(Unnamed)"
         self.map = dict()    # Contains gesture -> command pairs.
 
-    def addMapping(gesture,command):
-        map[gesture] = command
+    def addMapping(self,gesture,command):
+        self.map[gesture] = command
 
-    def getSimilar(gesture):
-        return map[gesture]
+    def get(self,gesture):
+        return self.map[gesture]
+
+    def getSimilar(self,gesture):
+        return self.map[gesture]
