@@ -11,6 +11,7 @@ from kivy.uix.textinput import TextInput
 from kivy.uix.scrollview import ScrollView
 from kivy.uix.popup import Popup
 from kivy.config import Config
+from kivy.uix.slider import Slider
 
 ##################################################################
 #---------------------- Config ----------------------------------#
@@ -76,7 +77,9 @@ class MappingDisplay(FloatLayout):
         #this exists to keep the standard kivy syntax
         super(MappingDisplay,self).__init__(**kwargs)
 
-        scroll = ScrollView(bar_width=15,
+        scroll = ScrollViewFixed(bar_width=30,
+                            bar_margin=-30,
+                            bar_color=[0.8,.8,.8,.99],
                             do_scroll_y = True,
                             do_scroll_x = False,
                             pos_hint= {'x':0,'y':0},
@@ -92,7 +95,18 @@ class MappingDisplay(FloatLayout):
         self.sizes[0] = int(self.size[0] * self.proportions[0])
         for i in range(1,5):
             self.sizes[i] = int(self.size[0] * self.proportions[i])
-            self.positions[i] = self.proportions[i-1] + self.positions[i-1]     
+            self.positions[i] = self.proportions[i-1] + self.positions[i-1]
+
+        #now implement a scrollbar
+        s = Slider(orientation='vertical', value = 50, min=0, max=100,
+                   size_hint =(None,None), padding = 5,
+                   size = (30, self.size[1]), pos_hint = {'x':1, 'y':0})
+        scroll.slider = s
+        def scrollMoves(self,pos):
+            scroll.scroll_y = pos
+        s.bind(value_normalized=scrollMoves)
+        self.add_widget(s, 1)
+        
 
     def setBackgroundImage(self, image_widget):
         lastIndex = len(self.children)
@@ -206,6 +220,49 @@ class MappingInstance(FloatLayout):
         self.children[0].bind(on_release=self.__delBtn_callback)
         self.children[2].bind(on_release=self.__infoBtnGest_callback)
         self.children[4].bind(on_release=self.__infoBtnMac_callback)
+
+class ScrollViewFixed(ScrollView):
+    ''' This class is basically the same as a ScrollView,
+    except that the scrolling update method is overridden.
+    The difference is that four lines of code has been removed.
+    Those 4 lines made the scroll bar dissapear when not active for
+    a few seconds.
+
+    '''
+    slider = None
+
+    def __init__(self,**kwargs):
+        super(ScrollViewFixed,self).__init__(**kwargs)      
+
+    def update_from_scroll(self, *largs):
+        if not self._viewport:
+            return
+        vp = self._viewport
+
+        if self.do_scroll_x:
+            self.scroll_x = min(1, max(0, self.scroll_x))
+        if self.do_scroll_y:
+            self.scroll_y = min(1, max(0, self.scroll_y))
+
+        # update from size_hint
+        if vp.size_hint_x is not None:
+            vp.width = vp.size_hint_x * self.width
+        if vp.size_hint_y is not None:
+            vp.height = vp.size_hint_y * self.height
+
+        if vp.width > self.width:
+            sw = vp.width - self.width
+            x = self.x - self.scroll_x * sw
+        else:
+            x = self.x
+        if vp.height > self.height:
+            sh = vp.height - self.height
+            y = self.y - self.scroll_y * sh
+        else:
+            y = self.top - vp.height
+        vp.pos = x, y
+        if self.slider != None:
+            self.slider.value_normalized = self.scroll_y
 
 ##################################################################
 #-------------------- Load Images -------------------------------#
