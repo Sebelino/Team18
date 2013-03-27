@@ -151,7 +151,7 @@ VK_CODE = {'backspace':0x08,
 def execute(command):
     script = command.getScript()
     words = script.split()
-    time.sleep(3)
+   # time.sleep(3)
     if words[0] == "presskey":
         pressKey(VK_CODE[words[1]])
 

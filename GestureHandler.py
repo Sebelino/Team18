@@ -37,6 +37,7 @@ class TouchArea(FloatLayout):
 		
 		
 	def on_touch_move(self, touch):
+		touch.scale_for_screen(4096,2400)
 		x = touch.x
 		y = touch.y
 		dx = touch.dx
@@ -55,8 +56,8 @@ class TouchArea(FloatLayout):
 				print "Second touch point moved"
 			
 			
-			if abs(((touch.x-otherTouch.x)**2+(touch.y-otherTouch.y)**2)**0.5
-			- ((touch.px-otherTouch.x)**2+(touch.py-otherTouch.y)**2)**0.5) < 0.9:
+			if abs(((touch.sx-otherTouch.x)**2+(touch.y-otherTouch.y)**2)**0.5
+			- ((touch.px-otherTouch.sx)**2+(touch.py-otherTouch.y)**2)**0.5) < 0.9:
 				print "Same distance"
 				#Same distance indicates two-finger swipe or rotate
 				
