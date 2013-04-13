@@ -1,3 +1,0 @@
-LIBRARY instructions.pyd
-EXPORTS
-initinstructions

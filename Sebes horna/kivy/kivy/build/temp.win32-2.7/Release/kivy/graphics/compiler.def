@@ -1,3 +1,0 @@
-LIBRARY compiler.pyd
-EXPORTS
-initcompiler

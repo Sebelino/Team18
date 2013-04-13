@@ -1,3 +1,0 @@
-LIBRARY texture.pyd
-EXPORTS
-inittexture

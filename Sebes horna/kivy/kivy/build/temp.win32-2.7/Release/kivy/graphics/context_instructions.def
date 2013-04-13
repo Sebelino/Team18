@@ -1,3 +1,0 @@
-LIBRARY context_instructions.pyd
-EXPORTS
-initcontext_instructions

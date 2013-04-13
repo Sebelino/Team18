@@ -1,3 +1,0 @@
-LIBRARY opengl.pyd
-EXPORTS
-initopengl

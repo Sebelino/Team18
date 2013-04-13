@@ -23,10 +23,6 @@ GOAL_IMG = "Football_goal.png"
 MSG_IMG = "goal_msg.png"
 
 class Goal(FloatLayout):
-	"""
-	Football!
-	"""
-
 	def build(self):
 		print "build"
 	
@@ -68,14 +64,7 @@ class Goal(FloatLayout):
 			#d = 60.
 			#Ellipse(pos=(touch.x - d/2, touch.y - d/2), size=(d, d))
 		return True
-	
-	#def on_touch_move(self, touch):
-		# For later use
 
-	#def on_touch_up(self, touch):
-		#self.remove_widget(bimg)
-
-	
 class Football(App):
 	def build(self):
 		return Goal()

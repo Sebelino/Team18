@@ -1,3 +1,0 @@
-LIBRARY vbo.pyd
-EXPORTS
-initvbo

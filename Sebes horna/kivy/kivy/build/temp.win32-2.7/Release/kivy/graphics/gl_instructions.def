@@ -1,3 +1,0 @@
-LIBRARY gl_instructions.pyd
-EXPORTS
-initgl_instructions

@@ -1,3 +1,0 @@
-LIBRARY vertex_instructions.pyd
-EXPORTS
-initvertex_instructions

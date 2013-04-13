@@ -1,3 +1,0 @@
-LIBRARY _event.pyd
-EXPORTS
-init_event

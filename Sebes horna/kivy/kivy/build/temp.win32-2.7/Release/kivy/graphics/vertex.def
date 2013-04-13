@@ -1,3 +1,0 @@
-LIBRARY vertex.pyd
-EXPORTS
-initvertex

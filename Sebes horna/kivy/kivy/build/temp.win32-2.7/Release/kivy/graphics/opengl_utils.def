@@ -1,3 +1,0 @@
-LIBRARY opengl_utils.pyd
-EXPORTS
-initopengl_utils

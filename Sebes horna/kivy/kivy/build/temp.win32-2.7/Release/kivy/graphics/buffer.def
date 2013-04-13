@@ -1,3 +1,0 @@
-LIBRARY buffer.pyd
-EXPORTS
-initbuffer
