@@ -25,6 +25,7 @@ Config.set('graphics','resizable',0)
 Config.set('graphics','width',650)
 Config.set('graphics','height',500)
 
+PICPATH = '../pics'
 
 ######################################################
 ## -----------------------Mapping Display Class -----#
@@ -268,15 +269,15 @@ class ScrollViewFixed(ScrollView):
 #-------------------- Load Images -------------------------------#
 ##################################################################
 profileBarImg = Image(allow_stretch=True, keep_ratio=False,
-                      source='pics/background_top.png',
+                      source=PICPATH+'/background_top.png',
                       size_hint=(1,1),
                       pos_hint={'y':0})
 mainBackgroundImg = Image(allow_stretch=True, keep_ratio=False,
-                          source='pics/background_bot.png',
+                          source=PICPATH+'/background_bot.png',
                           size_hint=(1,1),
                           pos_hint={'y':0})
 blackBorderImg = Image(allow_stretch=True, keep_ratio=False,
-                       source='pics/black_border.png',
+                       source=PICPATH+'/black_border.png',
                        size_hint=(1,1),
                        pos_hint={'y':0})
 
@@ -316,7 +317,7 @@ def getListOfGestures():
     #TODO
     return [('wave', TextInput(text='WAVE\nJO\nNEJ\nblod',readonly = True)),
             ('punch',TextInput(text='kALABALALAMMMMMMMMMMMMmmmASDN',readonly = True)),
-            ('faint', Image(source='pics/happysign.png', allow_stretch=True,
+            ('faint', Image(source=PICPATH+'/happysign.png', allow_stretch=True,
                             keep_ratio=False))]
 
 def getListOfMacros():
@@ -324,7 +325,7 @@ def getListOfMacros():
     #TODO
     return [('leftclick', TextInput(text='U DUNNO WUT LEFTCLICK IS',readonly = True)),
             ('rightclick',TextInput(text='RaaALABALALAMMMMMMMMMMMMMMMMMMMMMmmmASDN',readonly = True)),
-            ('faint', Image(source='pics/art.png', allow_stretch=True,
+            ('faint', Image(source=PICPATH+'/art.png', allow_stretch=True,
                             keep_ratio=False))]
 
 
@@ -425,8 +426,8 @@ profileSelection.add_widget(Label(text='[color=000000][b] Current profile' \
                                   size_hint_y=0.35))
 
 profileSelectionButton = Button(markup=True,
-                background_normal='pics/button_profile_selection_up.png',
-                background_down='pics/button_profile_selection_down.png'    )
+                background_normal=PICPATH+'/button_profile_selection_up.png',
+                background_down=PICPATH+'/button_profile_selection_down.png'    )
 def profileSelectionButtonTextSet(profileName):
     btntext=kivy.utils.escape_markup(profileName)
     profileSelectionButton.text = '[size=14][color=000000]' + \
@@ -436,7 +437,7 @@ profileSelectionButtonTextSet(getCurrentProfile())
 d = DropDown(max_height=100, bar_width=15)
 for profile in getListOfProfiles():
     btn = Button(text=profile, color=(0,0,0,1), size_hint_y=None, height=20,
-                 background_normal = 'pics/dropdown_choice.png')
+                 background_normal = PICPATH+'/dropdown_choice.png')
     btn.bind(on_press=lambda btn: d.select(btn.text))
     d.add_widget(btn)
 
@@ -446,8 +447,8 @@ profileSelection.add_widget(profileSelectionButton)
 createProfileButton = Button( size_hint = (None,None),
                               size = (40,40),
                               pos_hint = {'x':0.48, 'y':0.35},
-                              background_normal = 'pics/plus_btn_up.png',
-                              background_down = 'pics/plus_btn_down.png')
+                              background_normal = PICPATH+'/plus_btn_up.png',
+                              background_down = PICPATH+'/plus_btn_down.png')
 
 
 #Profile name box
@@ -478,8 +479,8 @@ deleteProfileButton = Button(size_hint = (None, None), size = (100,35),
                             pos_hint = {'x':0.75, 'y':0.15},
                             text='[color=443333]Delete profile',
                             markup = True,
-                            background_normal = 'pics/button_delete_profile.png',
-                            background_down = 'pics/button_profile_delete_down.png')
+                            background_normal = PICPATH+'/button_delete_profile.png',
+                            background_down = PICPATH+'/button_profile_delete_down.png')
 
 #bind actions
 #updates both choose profiles text, and profile name bar.
@@ -531,13 +532,13 @@ mappingBox = MappingDisplay(size = (500, 275), size_hint=(None,None),
                             pos_hint = {'x':0.05,'y':0.1})
 #mappingBox.pos_hint = {'x':0.1,'y':0.1}
                            # pos_hint={'x':0.2, 'y':0.2})
-mappingBox.mappingImagePath = 'pics/mapping_border.png'
-mappingBox.deleteButtonImagePathUp = 'pics/cross_btn_up.png'
-mappingBox.deleteButtonImagePathDown = 'pics/cross_btn_down.png'
-mappingBox.gestureEditButtonImageUp = 'pics/info_btn_up.png'
-mappingBox.gestureEditButtonImageDown = 'pics/info_btn_down.png'
-mappingBox.macroEditButtonImageUp = 'pics/info_btn_up.png'
-mappingBox.macroEditButtonImageDown = 'pics/info_btn_down.png'
+mappingBox.mappingImagePath = PICPATH+'/mapping_border.png'
+mappingBox.deleteButtonImagePathUp = PICPATH+'/cross_btn_up.png'
+mappingBox.deleteButtonImagePathDown = PICPATH+'/cross_btn_down.png'
+mappingBox.gestureEditButtonImageUp = PICPATH+'/info_btn_up.png'
+mappingBox.gestureEditButtonImageDown = PICPATH+'/info_btn_down.png'
+mappingBox.macroEditButtonImageUp = PICPATH+'/info_btn_up.png'
+mappingBox.macroEditButtonImageDown = PICPATH+'/info_btn_down.png'
 for mapp in getListOfMappings(getCurrentProfile()):
     mappingBox.addMapping(mapp)
 
@@ -547,7 +548,7 @@ addMappingButton = Button(text = '[size=14][color=000000]Create Mapping',
                           size = (120,30),
                           pos_hint = {'x':0.75,'y':0.90},
                           markup=True,
-                          background_normal = 'pics/button_create_mapping.png')
+                          background_normal = PICPATH+'/button_create_mapping.png')
 addMappingButton.bind(on_release=lambda btn:createMapping())
 
 #popups from infobutton
