@@ -1,4 +1,3 @@
-
 import win32api, win32con,time
 
 VK_CODE = {'backspace':0x08,
@@ -172,6 +171,11 @@ def pressKey(w):
     win32api.keybd_event(w,0,0,0)
     win32api.keybd_event(w,0 ,win32con.KEYEVENTF_KEYUP ,0)
 
+def press2Key(w1,w2):
+    win32api.keybd_event(w1,0,0,0)
+    win32api.keybd_event(w2,0,0,0)
+    win32api.keybd_event(w1,0 ,win32con.KEYEVENTF_KEYUP ,0)
+    win32api.keybd_event(w2,0 ,win32con.KEYEVENTF_KEYUP ,0)
 
 
 #irghtClick(100,100)
