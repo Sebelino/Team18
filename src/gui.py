@@ -13,19 +13,21 @@ from kivy.uix.popup import Popup
 from kivy.config import Config
 from kivy.uix.slider import Slider
 
-#import Controller
 import thread
 import time
 import os
 import sys
+import DatabaseAdapter as db
 
 def executeController():
     time.sleep(1)
-    os.system("python Controller.py >> filc.txt")
+    os.system("python Controller.py")
 
 thread.start_new_thread(executeController,())
 
-os.system("python DatabaseAdapter.py -s")
+gestures = db.getGestures()
+print(gestures[0][0])
+print(gestures[1][0])
 
 ##################################################################
 #---------------------- Config ----------------------------------#
@@ -324,7 +326,7 @@ def getCurrentProfile():
 def getListOfMappings(profile):
     """Returns a list of mappings, requested from Controller."""
     #TODO
-    return [('yes','no'), ('click','boom')]
+    return db.getMappings()
 
 def getListOfGestures():
     """Returns a list of available Gestures, requested from Controller."""
@@ -372,12 +374,10 @@ def removeProfile(profileName):
     pass
 
 #------------- Mappings ----------------#
-jojo = 0
-def createMapping():
-    jojo = 0
+def createMapping(createCounter):
     """ Creates a new mapping with default values."""
-    mappingBox.addMapping(('Gesture' + str(jojo), 'Macro' + str(jojo)))
-    jojo += 1
+    mappingBox.addMapping(('Gesture' + str(createCounter[0]), 'Macro' + str(createCounter[0])))
+    createCounter[0] += 1
     pass
 
 def editMapping(index, newGesture, newMacro):
@@ -563,7 +563,8 @@ addMappingButton = Button(text = '[size=14][color=000000]Create Mapping',
                           pos_hint = {'x':0.75,'y':0.90},
                           markup=True,
                           background_normal = PICPATH+'/button_create_mapping.png')
-addMappingButton.bind(on_release=lambda btn:createMapping())
+counter = [1]
+addMappingButton.bind(on_release=lambda btn:createMapping(counter))
 
 #popups from infobutton
 

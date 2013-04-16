@@ -3,8 +3,6 @@ import sqlite3
 import os
 import sys
 
-database = '../resources/profiles.db'
-
 def leaf(path):
     return path.split('/')[-1]
 
@@ -39,30 +37,35 @@ def delete(c,condition):
     return 'Deletion successful.'
 
 # Returns the rows satisfying the condition.
-def select(c,condition):
+def select(c,condition,columns,table):
     if len(condition) == 0:
-        c.execute("SELECT * FROM gestures")
+        c.execute("SELECT %s FROM %s"% (columns,table))
     else:
-        c.execute("SELECT * FROM gestures WHERE %s"% condition[0])
-    return tableToString(c.fetchall())
+        c.execute("SELECT %s FROM %s WHERE %s"% (columns,table,condition[0]))
+    return c.fetchall()
 
-if len(sys.argv) <= 1:
-    print("Please apply some parameters.")
-    sys.exit()
+database = '../resources/profiles.db'
 
-conn = sqlite3.connect(database)
-c = conn.cursor()
+def getGestures():
+    conn = sqlite3.connect(database)
+    c = conn.cursor()
+    result = select(c,"","*","gestures")
+    conn.commit()
+    conn.close()
+    return result
 
-options = {
-    '-i' : insert,
-    '-d' : delete,
-    '-s' : select
-}
+def getScript(gesturename):
+    conn = sqlite3.connect(database)
+    c = conn.cursor()
+    result = select(c,"profiles.commandname = commands.name AND gesturename = %s AND profile.name='Sebbes profil'"% gesturename,"script","profiles,commands")
+    conn.commit()
+    conn.close()
+    return result[0][0]
 
-option = sys.argv[1]
-
-result = options[option](c,sys.argv[2:])
-print(result)
-
-conn.commit()
-conn.close()
+def getMappings():
+    conn = sqlite3.connect(database)
+    c = conn.cursor()
+    result = select(c,"","gesturename,commandname","profiles")
+    conn.commit()
+    conn.close()
+    return result

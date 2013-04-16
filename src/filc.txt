@@ -1,3 +1,17 @@
 GLEW initialization succeeded
 GLEW initialization succeeded
 GLEW initialization succeeded
+GLEW initialization succeeded
+GLEW initialization succeeded
+GLEW initialization succeeded
+GLEW initialization succeeded
+GLEW initialization succeeded
+GLEW initialization succeeded
+Purge log fired. Analysing...
+Purge 56 log files
+Purge finished !
+s
+srepresentant
+AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
+s
+srepresentant
