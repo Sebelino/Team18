@@ -1,0 +1,5 @@
+GLEW initialization succeeded
+[1, 'wave', None]
+GLEW initialization succeeded
+[1, 'wave', None]
+[1, 'wave', None]

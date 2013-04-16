@@ -13,6 +13,20 @@ from kivy.uix.popup import Popup
 from kivy.config import Config
 from kivy.uix.slider import Slider
 
+#import Controller
+import thread
+import time
+import os
+import sys
+
+def executeController():
+    time.sleep(1)
+    os.system("python Controller.py >> filc.txt")
+
+thread.start_new_thread(executeController,())
+
+os.system("python DatabaseAdapter.py -s")
+
 ##################################################################
 #---------------------- Config ----------------------------------#
 ##################################################################
