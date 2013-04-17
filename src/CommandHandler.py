@@ -150,8 +150,9 @@ VK_CODE = {'backspace':0x08,
 def execute(command):
     script = command.getScript()
     words = script.split()
-   # time.sleep(3)
+    time.sleep(3)
     if words[0] == "presskey":
+        print "Nu ska na't skrivas ut!!!!!111"
         pressKey(VK_CODE[words[1]])
 
 def leftClick(x,y):

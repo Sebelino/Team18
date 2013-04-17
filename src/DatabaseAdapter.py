@@ -33,7 +33,7 @@ def insert(c,args):
 
 # Deletes the rows satisfying the condition.
 def delete(c,condition):
-    c.execute("DELETE FROM gestures WHERE %s"% condition[0])
+    c.execute("DELETE FROM gestures WHERE %s"% condition)
     return 'Deletion successful.'
 
 # Returns the rows satisfying the condition.
@@ -41,7 +41,8 @@ def select(c,condition,columns,table):
     if len(condition) == 0:
         c.execute("SELECT %s FROM %s"% (columns,table))
     else:
-        c.execute("SELECT %s FROM %s WHERE %s"% (columns,table,condition[0]))
+        print("SELECT %s FROM %s WHERE %s"% (columns,table,condition))
+        c.execute("SELECT %s FROM %s WHERE %s"% (columns,table,condition))
     return c.fetchall()
 
 database = '../resources/profiles.db'
@@ -57,7 +58,7 @@ def getGestures():
 def getScript(gesturename):
     conn = sqlite3.connect(database)
     c = conn.cursor()
-    result = select(c,"profiles.commandname = commands.name AND gesturename = %s AND profile.name='Sebbes profil'"% gesturename,"script","profiles,commands")
+    result = select(c,"profiles.commandname = commands.name AND gesturename = '%s' AND profiles.name='Sebbes profil'"% gesturename,"script","profiles,commands")
     conn.commit()
     conn.close()
     return result[0][0]

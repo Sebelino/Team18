@@ -12,8 +12,8 @@ gdb.str_to_gesture('eNqlWFtuHEcS/J+LiD8mKl+VlRegfw3oAAtZIiTCtkSQtL2+/UZV1kz3cJrs
 kivygestures = dict()
 for row in db.getGestures():
     kivygestures.update({row[1]:row[0]})
-    g = gdb.str_to_gesture(row[1].encode("ascii"))
-    gdb.add_gesture(g)
+    gest = gdb.str_to_gesture(row[1].encode("ascii"))
+    gdb.add_gesture(gest)
 
 # add pre-recorded gestures to database
 
@@ -24,17 +24,23 @@ karta = {"s" : Command.Command("presskey s")}
 
 def getCommand(gesture):
 #    return Command.Command("presskey s")
-    print(gesture.toString())
-    print("CCCCCCCCCCCCCCCCCCCCCCCCCC")
     g = gdb.str_to_gesture(gesture.toString())
-    print "s:", g.get_score(s)
-    identifiedGesture = gdb.find(g, minscore=0.70)
+    print "i:", kivygestures.keys()[1]
+    #print "s:", g.get_score(gdb.str_to_gesture(kivygestures.keys()[0]))
+    #identifiedGesture = gdb.find(g, minscore=0.90)
+    identifiedGesture = None
+    current_max = 0
+    for gi in [gdb.str_to_gesture(st) for st in kivygestures.keys()]:
+        if(g.get_score(gi) > current_max):
+            current_max = g.get_score(gi)
+            identifiedGesture = gi
+
     if identifiedGesture != None:
-        print("AAAAAAAAAAAAAAAAAAAAAAAAAAAAA")
-        print(gdb.gesture_to_str(identifiedGesture))
-        print("BBBBBBBBBBBBBBBBBBBBBBBBBBBBB")
-        name = kivygestures[gdb.gesture_to_str(identifiedGesture)]
+        strang = gdb.gesture_to_str(identifiedGesture)
+        name = kivygestures[strang]
+        print("name"+name)
         script = db.getScript(name)
         return Command.Command(script)
+    print("NOP")
     return Command.Command("nop")
     #return currentProfile.get(OwnGesture.Gesture(gdb.gesture_to_str(identifiedGesture)))
