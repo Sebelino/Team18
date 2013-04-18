@@ -88,7 +88,26 @@ class MappingDisplay(FloatLayout):
     proportions = (0.08, 0.3, 0.11, 0.40, 0.11)
     positions = [1,1,1,1,1]
     sizes = [1,1,1,1,1]
+
+    '''On touch events'''
     
+    def on_touch_down(self, touch):
+        print "Touch down!"
+        print "Touch uid: " + str(touch.uid)
+
+        if len(EventLoop.touches) > 1:
+            print "Multi touch!"
+   
+    def on_touch_move(self, touch):
+        print "Touch move!"
+        print "uid: " + str(touch.uid)
+
+    def on_touch_up(self, touch):
+        print "Touch up!"
+        print "uid: " + str(touch.uid)
+  
+    '''End of on-touch events'''
+
     def __init__(self,**kwargs):
         #call the constructor of the flowlayout
         #this exists to keep the standard kivy syntax
