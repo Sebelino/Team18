@@ -1,6 +1,10 @@
 Team18
 ======
 
+!OBS!
+All aktuell kod ligger i mappen "Projekt". Gamla experiment och liknande ligger under "Gammalt".
+!!!!!
+
 MVK-projektet för Team 18.
 
 HERE WE GO!
