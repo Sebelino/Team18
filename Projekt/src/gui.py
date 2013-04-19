@@ -12,22 +12,7 @@ from kivy.uix.scrollview import ScrollView
 from kivy.uix.popup import Popup
 from kivy.config import Config
 from kivy.uix.slider import Slider
-
-import thread
-import time
-import os
-import sys
-import DatabaseAdapter as db
-
-def executeController():
-    time.sleep(1)
-    os.system("python Controller.py")
-
-thread.start_new_thread(executeController,())
-
-gestures = db.getGestures()
-print(gestures[0][0])
-print(gestures[1][0])
+from kivy.properties import NumericProperty
 
 ##################################################################
 #---------------------- Config ----------------------------------#
@@ -41,7 +26,7 @@ Config.set('graphics','resizable',0)
 Config.set('graphics','width',650)
 Config.set('graphics','height',500)
 
-PICPATH = '../pics'
+font = 'font/segoeui.ttf'
 
 ######################################################
 ## -----------------------Mapping Display Class -----#
@@ -80,34 +65,13 @@ class MappingDisplay(FloatLayout):
     deleteButtonImagePathUp = None
     deleteButtonImagePathDown = None
     layout = None
+    scroll = None
     gestureEditButtonImageUp = None
     gestureEditButtonImageDown = None
     macroEditButtonImageUp = None
     macroEditButtonImageDown = None
-    mappingHeight = 40
-    proportions = (0.08, 0.3, 0.11, 0.40, 0.11)
-    positions = [1,1,1,1,1]
-    sizes = [1,1,1,1,1]
-
-    '''On touch events'''
+    mappingHeight = 25
     
-    def on_touch_down(self, touch):
-        print "Touch down!"
-        print "Touch uid: " + str(touch.uid)
-
-        if len(EventLoop.touches) > 1:
-            print "Multi touch!"
-   
-    def on_touch_move(self, touch):
-        print "Touch move!"
-        print "uid: " + str(touch.uid)
-
-    def on_touch_up(self, touch):
-        print "Touch up!"
-        print "uid: " + str(touch.uid)
-  
-    '''End of on-touch events'''
-
     def __init__(self,**kwargs):
         #call the constructor of the flowlayout
         #this exists to keep the standard kivy syntax
@@ -125,20 +89,16 @@ class MappingDisplay(FloatLayout):
         self.layout = BoxLayout(orientation='vertical',size_hint=(None,None),
                                 size = self.size)
         scroll.add_widget(self.layout)
+        self.scroll = scroll
         self.add_widget(scroll)
-        pos = 0
-        self.positions[0] = 0
-        self.sizes[0] = int(self.size[0] * self.proportions[0])
-        for i in range(1,5):
-            self.sizes[i] = int(self.size[0] * self.proportions[i])
-            self.positions[i] = self.proportions[i-1] + self.positions[i-1]
 
         #now implement a scrollbar
-        s = Slider(orientation='vertical', value = 50, min=0, max=100,
-                   size_hint =(None,None), padding = 5,
+        s = Slider(orientation='vertical', value_normalized = 0.5, 
+                   size_hint =(None,None), padding = 20,
                    size = (30, self.size[1]), pos_hint = {'x':1, 'y':0})
+        print s.value_normalized
         scroll.slider = s
-        def scrollMoves(self,pos):
+        def scrollMoves(slid,pos):
             scroll.scroll_y = pos
         s.bind(value_normalized=scrollMoves)
         self.add_widget(s, 1)
@@ -161,47 +121,54 @@ class MappingDisplay(FloatLayout):
                                        size = mappingWidget.size,
                                        pos_hint={'x':0,'y':0}))
         border = 2
-        border_y = 0.05
+        border_y = 0.06
+        
         delBtn = Button(background_normal = self.deleteButtonImagePathUp,
                         background_down = self.deleteButtonImagePathDown,
-                        pos_hint={'x':0.01, 'y':border_y},
+                        pos_hint={'x':0.005, 'y':border_y},
                         size_hint = (None,None),
-                        size = (self.mappingHeight - border*2, \
-                                self.mappingHeight - border*2)
+                        size = (50, self.mappingHeight - border*2),
+                        font_name = font,
+                        text = '[color=000000][size=12]Remove', markup=True
                         )
         
         gesture = Label(color = (0,0,0,1),
                         text = mapping[0],
                         bold = True,
-                        pos_hint = {'x':self.positions[1], 'y':border_y},
+                        pos_hint = {'x':0.12, 'y':border_y},
                         size_hint = (None,None),
-                        size = (self.sizes[1] - border*2, \
-                                self.mappingHeight - border*2)
+                        size = (150, self.mappingHeight - border*2),
+                        font_name = font, halign = 'left',text_size=(150,None),
+                        font_size = 12
                         )
+       # gesture.text_size=(140,None)
         
         gestureInfoBtn = Button(background_normal = self.gestureEditButtonImageUp,
                                 background_down = self.gestureEditButtonImageDown,
-                                pos_hint = {'x':self.positions[2], 'y':border_y},
+                                pos_hint = {'x':0.43, 'y':border_y},
                                 size_hint = (None,None),
-                                size = (self.mappingHeight - border*2, \
-                                        self.mappingHeight - border*2)
+                                size = (40, self.mappingHeight - border*2),
+                                text = '[color=000000][size=12]Edit', markup=True,
+                                font_name = font
                                 )
         
         macro = Label(color = (0,0,0,1),
                       text = mapping[1],
                       bold = True,
-                      pos_hint = {'x':self.positions[3], 'y':border_y},
+                      pos_hint = {'x':0.61, 'y':border_y},
                       size_hint = (None,None),
-                      size = (self.sizes[3] - border*2, \
-                              self.mappingHeight - border*2)
+                      size = (150, self.mappingHeight - border*2),
+                      font_name = font, halign = 'left', text_size=(150, None),
+                      font_size = 12
                       )
         
         macroInfoBtn = Button(background_normal = self.macroEditButtonImageUp,
                               background_down = self.macroEditButtonImageDown,
-                              pos_hint = {'x':self.positions[4], 'y':border_y},
+                              pos_hint = {'x':0.915, 'y':border_y},
                               size_hint = (None,None),
-                              size = (self.mappingHeight - border*2, \
-                                      self.mappingHeight - border*2)
+                              size = (40, self.mappingHeight - border*2),
+                              text = '[color=000000][size=12]Edit', markup=True,
+                              font_name = font
                               )
         mappingWidget.add_widget(macroInfoBtn)
         mappingWidget.add_widget(macro)
@@ -297,22 +264,22 @@ class ScrollViewFixed(ScrollView):
         else:
             y = self.top - vp.height
         vp.pos = x, y
+        #own code for slider/scrollbar
         if self.slider != None:
             self.slider.value_normalized = self.scroll_y
-
 ##################################################################
 #-------------------- Load Images -------------------------------#
 ##################################################################
 profileBarImg = Image(allow_stretch=True, keep_ratio=False,
-                      source=PICPATH+'/background_top.png',
+                      source='pics/background_top.png',
                       size_hint=(1,1),
                       pos_hint={'y':0})
 mainBackgroundImg = Image(allow_stretch=True, keep_ratio=False,
-                          source=PICPATH+'/background_bot.png',
+                          source='pics/background_bot.png',
                           size_hint=(1,1),
                           pos_hint={'y':0})
 blackBorderImg = Image(allow_stretch=True, keep_ratio=False,
-                       source=PICPATH+'/black_border.png',
+                       source='pics/black_border.png',
                        size_hint=(1,1),
                        pos_hint={'y':0})
 
@@ -334,7 +301,8 @@ the specifics. See Controller for more info about the functions.
 def getListOfProfiles():
     """Returns a list of profiles, requested from Controller."""
     #TODO
-    return ['Hue','Boo','Traktor']
+    return ['HueZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZ','Boo','Traktor',
+            'Captain MintberryCrunch', 'Internet', 'Halo', 'Pale tree']
 
 def getCurrentProfile():
     """Returns the currently selected profile, requested from Controller."""
@@ -345,14 +313,14 @@ def getCurrentProfile():
 def getListOfMappings(profile):
     """Returns a list of mappings, requested from Controller."""
     #TODO
-    return db.getMappings()
+    return [('MMMMMMMMMMMMMMMM','MMMMMMMMMMMMMMMM'), ('click','boom')]
 
 def getListOfGestures():
     """Returns a list of available Gestures, requested from Controller."""
     #TODO
     return [('wave', TextInput(text='WAVE\nJO\nNEJ\nblod',readonly = True)),
             ('punch',TextInput(text='kALABALALAMMMMMMMMMMMMmmmASDN',readonly = True)),
-            ('faint', Image(source=PICPATH+'/happysign.png', allow_stretch=True,
+            ('faint', Image(source='pics/happysign.png', allow_stretch=True,
                             keep_ratio=False))]
 
 def getListOfMacros():
@@ -360,7 +328,7 @@ def getListOfMacros():
     #TODO
     return [('leftclick', TextInput(text='U DUNNO WUT LEFTCLICK IS',readonly = True)),
             ('rightclick',TextInput(text='RaaALABALALAMMMMMMMMMMMMMMMMMMMMMmmmASDN',readonly = True)),
-            ('faint', Image(source=PICPATH+'/art.png', allow_stretch=True,
+            ('faint', Image(source='pics/art.png', allow_stretch=True,
                             keep_ratio=False))]
 
 
@@ -393,10 +361,13 @@ def removeProfile(profileName):
     pass
 
 #------------- Mappings ----------------#
-def createMapping(createCounter):
+jojo = 0
+def createMapping():
+    jojo = 0
     """ Creates a new mapping with default values."""
-    mappingBox.addMapping(('Gesture' + str(createCounter[0]), 'Macro' + str(createCounter[0])))
-    createCounter[0] += 1
+    mappingBox.addMapping(('Gesture' + str(jojo), 'Macro' + str(jojo)))
+    mappingBox.scroll.scroll_y = 0
+    jojo += 1
     pass
 
 def editMapping(index, newGesture, newMacro):
@@ -443,45 +414,51 @@ def removeMacro(macro):
 
 #------------------ ProfileBar ----------------------------------#
 
-profileBarPosY = 0.65
-profileBarHeight = 0.25
-
 #Profile selection, is a boxlayout with 2 components:
 #1. a label with a static text saying "current profile"
 #2. A button with a dropdown Menu for the profile selection action
-profileSelection = BoxLayout(orientation='vertical',
-                             size_hint = (0.4,0.6),
-                             pos_hint = {'x':0.05,'y':0.3})
 
-profileSelection.add_widget(Label(text='[color=000000][b] Current profile' \
-                                        '[/b][/color]',
-                                  markup=True,
-                                  size_hint_y=0.35))
+profileSelectionLabel = Label(text='[color=000000][b]Select profile',
+                              markup=True,
+                              size_hint=(None, None),
+                              size = (250, 30),
+                              pos_hint = {'x':0.05, 'y':0.6})
 
-profileSelectionButton = Button(markup=True,
-                background_normal=PICPATH+'/button_profile_selection_up.png',
-                background_down=PICPATH+'/button_profile_selection_down.png'    )
+profileSelection = Button(markup=True,
+                background_normal='pics/button_up_dropdown.png',
+                background_down='pics/button_up_dropdown.png',
+                size_hint = (None, None),
+                size = (250, 30),
+                pos_hint = {'x':0.05, 'y':0.4},
+                halign = 'left',
+                text_size=(240,None),
+                  )
 def profileSelectionButtonTextSet(profileName):
     btntext=kivy.utils.escape_markup(profileName)
-    profileSelectionButton.text = '[size=14][color=000000]' + \
-                                  btntext + '[/color][/size]'
+    profileSelection.text = '[size=14][color=000000]' + \
+                                btntext + '[/color][/size]'
 profileSelectionButtonTextSet(getCurrentProfile())
 
-d = DropDown(max_height=100, bar_width=15)
+#For the dropdown, the max_height is set to 400.
+#This means, that up to 20 profiles can fit before scroll starts
+#being relevant.
+d = DropDown(max_height=410, bar_width=15)
 for profile in getListOfProfiles():
     btn = Button(text=profile, color=(0,0,0,1), size_hint_y=None, height=20,
-                 background_normal = PICPATH+'/dropdown_choice.png')
+                 background_normal = 'pics/dropdown_choice.png',
+                 halign = 'left', text_size = (240,None))
     btn.bind(on_press=lambda btn: d.select(btn.text))
     d.add_widget(btn)
-
-profileSelection.add_widget(profileSelectionButton)
                                  
 #add profile button, a simple button
 createProfileButton = Button( size_hint = (None,None),
-                              size = (40,40),
-                              pos_hint = {'x':0.48, 'y':0.35},
-                              background_normal = PICPATH+'/plus_btn_up.png',
-                              background_down = PICPATH+'/plus_btn_down.png')
+                              size = (120,25),
+                              pos_hint = {'x':0.03, 'y':0.1},
+                              background_normal = 'pics/button_up.png',
+                              background_down = 'pics/button_down.png',
+                              font_name = font,
+                              text = "[color=000000][size=15]New profile",
+                              markup=True)
 
 
 #Profile name box
@@ -489,12 +466,12 @@ createProfileButton = Button( size_hint = (None,None),
 # a label with explanation text and the textbox
 
 profileNameBox = BoxLayout(orientation='vertical',
-                           size_hint = (0.37, 0.5),
-                           pos_hint = {'x':0.62, 'y':0.5})
+                           size_hint = (0.4, 0.5),
+                           pos_hint = {'x':0.55, 'y':0.2})
 
-profileNameBox.add_widget(Label(text='[color=000000][b] Profile name' \
-                                        '[/b][/color]',
-                                  markup=True))
+profileNameBox.add_widget(Label(text='[color=000000][b]Change profile name',
+                                  markup=True,
+                                size_hint_y = 0.8))
                            
 profileNameTextBox = TextInput(multiline = False,
                                font_size = 13)
@@ -508,12 +485,12 @@ profileNameTextBoxTextSet(getCurrentProfile()) #TODO
 profileNameBox.add_widget(profileNameTextBox)
 
 #delete profile button
-deleteProfileButton = Button(size_hint = (None, None), size = (100,35),
-                            pos_hint = {'x':0.75, 'y':0.15},
-                            text='[color=443333]Delete profile',
+deleteProfileButton = Button(size_hint = (None, None), size = (120,25),
+                            pos_hint = {'x':0.25, 'y':0.1},
+                            text='[color=000000]Delete profile',
                             markup = True,
-                            background_normal = PICPATH+'/button_delete_profile.png',
-                            background_down = PICPATH+'/button_profile_delete_down.png')
+                            background_normal = 'pics/button_up.png',
+                            background_down = 'pics/button_down.png')
 
 #bind actions
 #updates both choose profiles text, and profile name bar.
@@ -522,9 +499,10 @@ def updateTextBoxes(profileName):
     profileNameTextBoxTextSet(profileName)
     profileNameTextBox.cancel_selection()
     profileNameTextBox.focus = False
+    titleMappings.text = '[color=000000][b][size=30]' + profileName
 
 #profile chooser action
-profileSelectionButton.bind(on_release=d.open)
+profileSelection.bind(on_release=d.open)
 def pickProf(inst, name):
     updateTextBoxes(name)
     selectProfile(name)
@@ -554,10 +532,25 @@ deleteProfileButton.bind(on_release = deleteProfileButtonAction)
 # -------------------Main Area -----------------------------#
 
 #main title
-titleMappings = Label(text='[color=000000][b][size=36]Mappings[/size][/b][/color]',
+titleMappings = Label(text='[color=000000][b][size=30]' + getCurrentProfile(),
                       size_hint=(1,0.1),
-                      pos_hint={'y':0.9},
+                      pos_hint={'y':0.91},
                       markup = True)
+
+#Labels for Gestures and Windows Functions
+gestureLabel = Label(text='[color=000000][b][size=16]Gesture',
+                     size_hint=(0.2,0.05),
+                     pos_hint={'x':0.16,'y':0.85},
+                     font_name = font,
+                     markup = True)
+
+macroLabel = Label(text='[color=000000][b][size=16]Windows Function',
+                   size_hint=(0.2,0.05),
+                   pos_hint={'x':0.52, 'y':0.85},
+                   font_name = font,
+                   markup = True)
+
+
 
 # mapping thingy
 
@@ -565,25 +558,25 @@ mappingBox = MappingDisplay(size = (500, 275), size_hint=(None,None),
                             pos_hint = {'x':0.05,'y':0.1})
 #mappingBox.pos_hint = {'x':0.1,'y':0.1}
                            # pos_hint={'x':0.2, 'y':0.2})
-mappingBox.mappingImagePath = PICPATH+'/mapping_border.png'
-mappingBox.deleteButtonImagePathUp = PICPATH+'/cross_btn_up.png'
-mappingBox.deleteButtonImagePathDown = PICPATH+'/cross_btn_down.png'
-mappingBox.gestureEditButtonImageUp = PICPATH+'/info_btn_up.png'
-mappingBox.gestureEditButtonImageDown = PICPATH+'/info_btn_down.png'
-mappingBox.macroEditButtonImageUp = PICPATH+'/info_btn_up.png'
-mappingBox.macroEditButtonImageDown = PICPATH+'/info_btn_down.png'
+mappingBox.mappingImagePath = 'pics/mapping_border.png'
+mappingBox.deleteButtonImagePathUp = 'pics/button_up.png'
+mappingBox.deleteButtonImagePathDown = 'pics/button_down.png'
+mappingBox.gestureEditButtonImageUp = 'pics/button_up.png'
+mappingBox.gestureEditButtonImageDown = 'pics/button_down.png'
+mappingBox.macroEditButtonImageUp = 'pics/button_up.png'
+mappingBox.macroEditButtonImageDown = 'pics/button_down.png'
 for mapp in getListOfMappings(getCurrentProfile()):
     mappingBox.addMapping(mapp)
 
 #add mapping button
-addMappingButton = Button(text = '[size=14][color=000000]Create Mapping',
+addMappingButton = Button(text = '[size=14][color=000000]New Mapping',
                           size_hint = (None,None),
-                          size = (120,30),
-                          pos_hint = {'x':0.75,'y':0.90},
+                          size = (110,20),
+                          pos_hint = {'x':0.8,'y':0.85},
                           markup=True,
-                          background_normal = PICPATH+'/button_create_mapping.png')
-counter = [1]
-addMappingButton.bind(on_release=lambda btn:createMapping(counter))
+                          background_normal = 'pics/button_up.png',
+                          background_down = 'pics/button_down.png')
+addMappingButton.bind(on_release=lambda btn:createMapping())
 
 #popups from infobutton
 
@@ -661,16 +654,29 @@ class GestureMapper(App):
         topBar = FloatLayout(size_hint=(1,0.3))
         topBar.add_widget(profileBarImg)       #background image
         topBar.add_widget(profileSelection)    #profile selection
+        topBar.add_widget(profileSelectionLabel) #profile selection title label
         topBar.add_widget(profileNameBox)      #profile renaming
         topBar.add_widget(createProfileButton) #create profile button
-                               
         topBar.add_widget(deleteProfileButton)
+
+        #this part below does so that when the user clicks somewhere
+        #on the topbar which is not in the profile name text box.
+        #In that case, the action is the same as normal press of "enter".
+        #Its a small but convinient quality change
+        def touch_unfocus_profileNameBox(self, touch):
+            if not profileNameTextBox.collide_point(touch.x, touch.y) \
+               and profileNameTextBox.focus == True:
+            
+                profileNameTextBoxAction(profileNameTextBox)
         
+        topBar.bind(on_touch_down = touch_unfocus_profileNameBox)
 
         #main area
         mainArea = FloatLayout()
         mainArea.add_widget(mainBackgroundImg)
         mainArea.add_widget(titleMappings)
+        mainArea.add_widget(macroLabel)
+        mainArea.add_widget(gestureLabel)
         mainArea.add_widget(mappingBox)
         mainArea.add_widget(addMappingButton)
         #updateMappings()
