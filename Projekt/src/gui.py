@@ -12,6 +12,7 @@ from kivy.uix.scrollview import ScrollView
 from kivy.uix.popup import Popup
 from kivy.config import Config
 from kivy.uix.slider import Slider
+from kivy.base import EventLoop
 
 import thread
 import time
@@ -21,7 +22,7 @@ import DatabaseAdapter as db
 
 def executeController():
     time.sleep(1)
-    os.system("python Controller.py")
+    #os.system("python Controller.py")
 
 thread.start_new_thread(executeController,())
 
@@ -88,7 +89,26 @@ class MappingDisplay(FloatLayout):
     proportions = (0.08, 0.3, 0.11, 0.40, 0.11)
     positions = [1,1,1,1,1]
     sizes = [1,1,1,1,1]
+
+    '''On touch events'''
     
+    def on_touch_down(self, touch):
+        print "Touch down!"
+        print "Touch uid: " + str(touch.uid)
+
+        if len(EventLoop.touches) > 1:
+            print "Multi touch!"
+   
+    def on_touch_move(self, touch):
+        print "Touch move!"
+        print "uid: " + str(touch.uid)
+
+    def on_touch_up(self, touch):
+        print "Touch up!"
+        print "uid: " + str(touch.uid)
+  
+    '''End of on-touch events'''
+
     def __init__(self,**kwargs):
         #call the constructor of the flowlayout
         #this exists to keep the standard kivy syntax
@@ -215,6 +235,8 @@ class MappingDisplay(FloatLayout):
 
     def showInfo(self,index,which):
         displayEditMappingPopup(index, which)
+
+
         
 
 class MappingInstance(FloatLayout):
@@ -310,6 +332,7 @@ Note that it is not possible to specify exactly what the function
 is supposed to do here in the GUI, because the GUI does not know
 the specifics. See Controller for more info about the functions.
 """
+
 
 #-------- Requests -------------------#
 def getListOfProfiles():
@@ -630,10 +653,13 @@ def displayEditMappingPopup(index, gestOrMacro):
                   size_hint=(None, None), size=(400, 300))
     popup.open()
 
+
+
 ##################################################################
 # ------------------Main building class ------------------------_#
 ##################################################################
 class GestureMapper(App):
+
 
     def build(self):
         root = BoxLayout(orientation='vertical')
