@@ -93,24 +93,17 @@ class MappingDisplay(FloatLayout):
     #TODO - solve this somehow.
     #Buttons in the scrollview dont work if this part below
     # is not commented away
-    '''On touch events
+    '''On touch events'''
     
     def on_touch_down(self, touch):
-        print "Touch down!"
-        print "Touch uid: " + str(touch.uid)
-
-        if len(EventLoop.touches) > 1:
-            print "Multi touch!"
-   
-    def on_touch_move(self, touch):
-        print "Touch move!"
-        print "uid: " + str(touch.uid)
-
-    def on_touch_up(self, touch):
-        print "Touch up!"
-        print "uid: " + str(touch.uid)
+        print str(touch.device)
+        if str(touch.device) == "multitouchtable":
+            print "touch"
+        elif str(touch.device) == "mouse":
+            print "mouse click"
+            super(MappingDisplay, self).on_touch_down(touch)
   
-    End of on-touch events'''
+    '''End of on-touch events'''
 
     def __init__(self,**kwargs):
         #call the constructor of the flowlayout
