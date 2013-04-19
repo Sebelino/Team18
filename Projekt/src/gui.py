@@ -744,3 +744,4 @@ class GestureMapper(App):
 
 if __name__ == '__main__':
     GestureMapper().run()
+#testkommentar
