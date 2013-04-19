@@ -350,9 +350,10 @@ def getListOfMappings(profile):
 def getListOfGestures():
     """Returns a list of available Gestures, requested from Controller."""
     #TODO
-    return [('wave', TextInput(text='WAVE\nJO\nNEJ\nblod',readonly = True)),
+    return [('KameHameHA', TextInput(text='WAVE\nJO\nNEJ\nblod',readonly = True)),
             ('punch',TextInput(text='kALABALALAMMMMMMMMMMMMmmmASDN',readonly = True)),
-            ('faint', Image(source=PICPATH+'/happysign.png', allow_stretch=True,
+            ('Hadoken',TextInput(text='kALABALALAMMMMMMMMMMMMmmmASDN',readonly = True)),
+            ('Two-finger swipe', Image(source=PICPATH+'/two_swipe.gif', allow_stretch=True,
                             keep_ratio=False))]
 
 def getListOfMacros():
