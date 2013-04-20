@@ -151,21 +151,19 @@ def execute(command):
     script = command.getScript()
     words = script.split()
     time.sleep(3)
-    if words[0] == "presskey":
-        print "Nu ska na't skrivas ut!!!!!111"
+    parser(words)
+
+def parser(words):
+    if words[0] == "pressKey":
         pressKey(VK_CODE[words[1]])
     if words[0] == "leftClick":
-        print "Nu ska na't skrivas ut!!!!!111"
         leftClick(words[1],words[2])
     if words[0] == "rightClick":
-        print "Nu ska na't skrivas ut!!!!!111"
         rightClick(words[1],words[2])
-    if words[0] == "press2key":
-        print "Nu ska na't skrivas ut!!!!!111"
-        press2Key(VK_CODE[words[1]],VK_CODE[words[2]])
+    if words[0] == "press2Keys":
+        press2Keys(VK_CODE[words[1]],VK_CODE[words[2]])
     if words[0] == "scroll":
-        print "Nu ska na't skrivas ut!!!!!111"
-        press2Key(words[1],words[2])
+        press2Keys(words[1],words[2])
 
 def leftClick(x,y):
     win32api.mouse_event(win32con.MOUSEEVENTF_MOVE, x, y,0)
@@ -184,7 +182,7 @@ def pressKey(w):
     win32api.keybd_event(w,0,0,0)
     win32api.keybd_event(w,0 ,win32con.KEYEVENTF_KEYUP ,0)
 
-def press2key(w1,w2):
+def press2Keys(w1,w2):
     win32api.keybd_event(w1,0,0,0)
     win32api.keybd_event(w2,0,0,0)
     win32api.keybd_event(w1,0 ,win32con.KEYEVENTF_KEYUP ,0)
