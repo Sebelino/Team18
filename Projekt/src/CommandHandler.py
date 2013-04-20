@@ -152,17 +152,22 @@ def execute(command):
     words = script.split()
     time.sleep(3)
     parser(words)
+    
+def testExecuteString(command):
+    words = command.split()
+    time.sleep(3)
+    parser(words)
 
 def parser(words):
-    if words[0] == "pressKey":
+    if words[0].lower() == "presskey":
         pressKey(VK_CODE[words[1]])
-    if words[0] == "leftClick":
+    if words[0].lower() == "leftclick":
         leftClick(words[1],words[2])
-    if words[0] == "rightClick":
+    if words[0].lower() == "rightclick":
         rightClick(words[1],words[2])
-    if words[0] == "press2Keys":
+    if words[0].lower() == "press2keys":
         press2Keys(VK_CODE[words[1]],VK_CODE[words[2]])
-    if words[0] == "scroll":
+    if words[0].lower() == "scroll":
         press2Keys(words[1],words[2])
 
 def leftClick(x,y):
@@ -198,3 +203,7 @@ def press2Keys(w1,w2):
 #scroll(100,100)
 #pressKey(VK_CODE["z"])
 #print(len(VK_CODE) , VK_CODE["z"])
+#testExecuteString("Press2Keys left_control c")
+#testExecuteString("preSs2kEys left_control v")
+#testExecuteString("press2keys left_control v")
+#testExecuteString("press2keys left_control v")
