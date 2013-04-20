@@ -1,0 +1,13 @@
+Funktionellt:
+- Ska vara möjligt att skapa ny gesture.
+- Ska vara möjligt att skapa nytt makro.
+
+Misc:
+- Snyggare om ramarna är rektangelformade/rundade i hörnen.
+- Nå'n får rita en fin GestureMapper-header.
+- Redundans: Namnet på nuvarande Profile finner man på 3 ställen.
+- Dropdown-symbol när man väljer gesture behövs.
+- Rank-symbol istället för tringelsymbol på dropdowns?
+- Man borde kanske inte kunna byta namn på framsidan; känns inte som en vanlig operation.
+Skulle minska redundansen.
+- Lite för lätt att radera en Profile, särskilt med tanke på placeringen av knappen.
