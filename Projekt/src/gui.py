@@ -22,15 +22,18 @@ import sys
 import DatabaseAdapter as db
 from kivy.base import EventLoop
 
-def executeController():
-    time.sleep(1)
-    os.system("python Controller.py")
+#def executeController():
+#    time.sleep(1)
+#    os.system("python Controller.py")
+#
+#thread.start_new_thread(executeController,())
 
-thread.start_new_thread(executeController,())
-
-gestures = db.getGestures()
-print(gestures[0][0])
-print(gestures[1][0])
+#gestures = db.getGestures()
+#print("AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA")
+#print(gestures)
+#print(gestures[0][0])
+#print(gestures[1][0])
+#print("BBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBB")
 
 ##################################################################
 #---------------------- Config ----------------------------------#
@@ -44,8 +47,8 @@ Config.set('graphics','resizable',0)
 Config.set('graphics','width',650)
 Config.set('graphics','height',500)
 
-PICPATH = '../pics'
-font = '../font/segoeui.ttf'
+PICPATH = '../resources/pics'
+font = '../resources/font/segoeui.ttf'
 
 ######################################################
 ## -----------------------Mapping Display Class -----#
@@ -349,12 +352,13 @@ def getListOfMappings(profile):
 
 def getListOfGestures():
     """Returns a list of available Gestures, requested from Controller."""
-    #TODO
-    return [('KameHameHA', TextInput(text='WAVE\nJO\nNEJ\nblod',readonly = True)),
-            ('punch',TextInput(text='kALABALALAMMMMMMMMMMMMmmmASDN',readonly = True)),
-            ('Hadoken',TextInput(text='kALABALALAMMMMMMMMMMMMmmmASDN',readonly = True)),
-            ('Two-finger swipe', Image(source=PICPATH+'/two_swipe.gif', allow_stretch=True,
-                            keep_ratio=False))]
+    table = db.getGestures()
+    return [(r[0],TextInput(text=('' if r[1] is None else r[1]),readonly=True)) for r in table]
+#    return [('KameHameHA', TextInput(text='WAVE\nJO\nNEJ\nblod',readonly = True)),
+#            ('punch',TextInput(text='kALABALALAMMMMMMMMMMMMmmmASDN',readonly = True)),
+#            ('Hadoken',TextInput(text='kALABALALAMMMMMMMMMMMMmmmASDN',readonly = True)),
+#            ('Two-finger swipe', Image(source=PICPATH+'/two_swipe.gif', allow_stretch=True,
+#                            keep_ratio=False))]
 
 def getListOfMacros():
     """Returns a list of Macros/Windows Functions, requested from Controller."""
@@ -372,24 +376,24 @@ def createProfile(profileName):
 
     Must return the name of the newly created profile."""
     #TODO
-    print "creating profile " + profileName
+    print "Creating profile " + profileName
     return profileName
 
 def editProfile(oldProfileName, newProfileName):
     """ Changes the name of a profile to the new name."""
-    print "changing name from " + oldProfileName + " to " + newProfileName 
+    print "Changing name from " + oldProfileName + " to " + newProfileName 
     #TODO
     pass
 
 def selectProfile(profileName):
     """ Selects the profile with the given name."""
-    print "selecting profile " + profileName
+    print "Selecting profile " + profileName
     #TODO
     pass
 
 def removeProfile(profileName):
     """ Removes the profile with the given name."""
-    print "removing profile " + profileName
+    print "Removing profile " + profileName
     #TODO
     pass
 

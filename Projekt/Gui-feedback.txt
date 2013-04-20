@@ -11,3 +11,4 @@ Misc:
 - Man borde kanske inte kunna byta namn på framsidan; känns inte som en vanlig operation.
 Skulle minska redundansen.
 - Lite för lätt att radera en Profile, särskilt med tanke på placeringen av knappen.
+- Kanske fler Cancel-knappar vore nå't? T.ex. när man väljer Edit Gesture.
