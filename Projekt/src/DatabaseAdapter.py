@@ -55,6 +55,14 @@ def getGestures():
     conn.close()
     return result
 
+def getCommands():
+    conn = sqlite3.connect(database)
+    c = conn.cursor()
+    result = select(c,"","*","commands")
+    conn.commit()
+    conn.close()
+    return result
+
 def getScript(gesturename):
     conn = sqlite3.connect(database)
     c = conn.cursor()

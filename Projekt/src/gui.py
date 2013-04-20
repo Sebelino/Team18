@@ -362,11 +362,12 @@ def getListOfGestures():
 
 def getListOfMacros():
     """Returns a list of Macros/Windows Functions, requested from Controller."""
-    #TODO
-    return [('leftclick', TextInput(text='U DUNNO WUT LEFTCLICK IS',readonly = True)),
-            ('rightclick',TextInput(text='RaaALABALALAMMMMMMMMMMMMMMMMMMMMMmmmASDN',readonly = True)),
-            ('faint', Image(source=PICPATH+'/art.png', allow_stretch=True,
-                            keep_ratio=False))]
+    table = db.getCommands()
+    return [(r[0],TextInput(text=('' if r[1] is None else r[1]),readonly=True)) for r in table]
+#    return [('leftclick', TextInput(text='U DUNNO WUT LEFTCLICK IS',readonly = True)),
+#            ('rightclick',TextInput(text='RaaALABALALAMMMMMMMMMMMMMMMMMMMMMmmmASDN',readonly = True)),
+#            ('faint', Image(source=PICPATH+'/art.png', allow_stretch=True,
+#                            keep_ratio=False))]
 
 
 #-------- Profile management ---------#
