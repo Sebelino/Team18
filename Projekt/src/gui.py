@@ -169,7 +169,7 @@ class MappingDisplay(FloatLayout):
         
         gesture = Label(color = (0,0,0,1),
                         text = mapping[0],
-                        bold = True,
+                        bold = True, markup= True,
                         pos_hint = {'x':0.12, 'y':border_y},
                         size_hint = (None,None),
                         size = (150, self.mappingHeight - border*2),
@@ -188,7 +188,7 @@ class MappingDisplay(FloatLayout):
         
         macro = Label(color = (0,0,0,1),
                       text = mapping[1],
-                      bold = True,
+                      bold = True, markup = True,
                       pos_hint = {'x':0.61, 'y':border_y},
                       size_hint = (None,None),
                       size = (150, self.mappingHeight - border*2),
@@ -301,6 +301,172 @@ class ScrollViewFixed(ScrollView):
         #own code for slider/scrollbar
         if self.slider != None:
             self.slider.value_normalized = self.scroll_y
+
+##################################################################
+#-------------------- Event Popup Class -------------------------#
+##################################################################
+class EventPopup(Popup):
+    '''A class which is a very specialized popup.
+
+    To use, simply initiate an instance with one parameter, which is a
+    string and should be set to either 'gesture' or 'macro'. Call
+    setDropdownWithExplanation to update the list of gestures or windows
+    functions. Call open(index) to open the popup. The index should be
+    the index of the mapping where the popup was summoned from.
+    '''
+    
+    container = None
+    gestureOrMacro = 'gesture'
+    index = 0
+    
+    def __init__(self, gestureOrMacro, **kwargs):
+        super(EventPopup,self).__init__(**kwargs)
+        self.container = FloatLayout()
+        self.gestureOrMacro = gestureOrMacro
+        self.size=(400,300)
+        self.size_hint=(None, None)
+        self.auto_dismiss = False
+        self.separator_color = (0.625, 0.625, 0.625, 1)
+        self.separator_height = 1
+        self.__setTitle()
+        self.__addCancelAcceptButtons()
+        self.__addCreateEventButton()
+        self.container.add_widget(Widget())
+        self.container.add_widget(Widget())
+        #these two widgets are placeholders.
+        self.content = self.container
+
+    def open(self, index):
+        '''Override open method.
+
+        Call it lite Popup's open, but with an index signaling
+        which mapping (by index) the popup is for'''
+        self.index = index
+        super(EventPopup, self).open()
+
+    # Now comes some private methods to keep the contructor clean.
+    # Note that these methods are called once from the __init__
+    # method, please do not call them
+     
+    def __setTitle(self):
+        ''' Set the title of the popup.
+
+        Note that this method is called once from the __init__
+        method, please do not call it.'''
+        if self.gestureOrMacro == 'gesture':
+            self.background = PICPATH+'/set_gesture_popup.png'
+        elif self.gestureOrMacro == 'macro':
+            self.background = PICPATH+'/set_macro_popup.png'
+
+    def __addCancelAcceptButtons(self):
+        '''Private method to set buttons.'''
+
+        #Button that signals cancel
+        cancelBtn = Button(text='[color=000000]Cancel', markup=True,
+                           size_hint=(None,None), size = (140, 25),
+                           pos_hint = {'x':0.02, 'y':0},
+                           background_normal = PICPATH+'/button_up.png',
+                           background_down = PICPATH+'/button_down.png')
+
+        cancelBtn.bind(on_release= lambda btn: self.dismiss())
+        
+        #Button that signals accept
+        doneBtn = Button(text='[color=000000]Accept', markup=True,
+                         size_hint=(None,None), size = (140, 25),
+                         pos_hint = {'right':0.98, 'y':0},
+                         background_normal = PICPATH+'/button_up.png',
+                         background_down = PICPATH+'/button_down.png')
+    
+        def doneBtn_callback(btn):
+            if self.gestureOrMacro == 'gesture':
+                editMapping(self.index, self.container.children[1].text, None)
+            elif self.gestureOrMacro == 'macro':
+                editMapping(self.index, None, self.container.children[1].text)
+            self.dismiss()
+        doneBtn.bind(on_release=doneBtn_callback)
+
+        #add buttons to container
+        self.container.add_widget(cancelBtn)
+        self.container.add_widget(doneBtn)
+
+    def __addCreateEventButton(self):
+        '''private method to create createEvent button'''
+
+        eventBtn = Button(markup=True,
+                          size_hint=(None,None), size = (95, 32),
+                          pos_hint = {'right':0.99, 'top':0.97},
+                          background_normal = PICPATH+'/button_up.png',
+                          background_down = PICPATH+'/button_down.png')
+        
+        if self.gestureOrMacro == 'gesture':
+            eventBtn.text = '[color=000000][font='+font+'][size=11]'+ \
+                            'Manage custom\n      gestures'
+            def eventBtn_callback(btn):
+                manageGestures()
+                #self.dismiss() TODO
+            eventBtn.bind(on_release=eventBtn_callback)
+        elif self.gestureOrMacro == 'macro':
+            eventBtn.text = '[color=000000][font='+font+'][size=11]'+ \
+                            'Manage custom\n       macros'
+            def eventBtn_callback(btn):
+                manageGestures()
+                #self.dismiss() TODO
+            eventBtn.bind(on_release=eventBtn_callback)
+                          
+        self.container.add_widget(eventBtn)
+
+    def setDropdownWithExplanation(self, allEvents):
+
+        #remove the previous widgets
+        self.container.remove_widget(self.children[0])
+        self.container.remove_widget(self.children[0])
+
+        #make sure all widgets are correct size
+        for eve in allEvents:
+            w = eve[1]
+            w.size_hint = (0.95, 0.6)
+            w.pos_hint = {'x':0.025, 'y':0.2}
+
+        pickEventBtn = Button(text='[color=000000]'+allEvents[0][0], 
+                          markup=True, size_hint=(0.7,0.12),
+                          pos_hint = {'x':0.01, 'y': 0.85},
+                          background_normal = PICPATH+'/button_up_dropdown.png',
+                          background_down = PICPATH+'/button_down_dropdown.png',
+                          text_size = (250,None), halign='left',
+                          font_size = 13
+                          )
+
+        dd = DropDown(max_height=250, bar_width=5)
+
+        i = 0
+        for eve in allEvents:
+            btn = IndexButton(text=eve[0], color=(0,0,0,1),
+                         size_hint_y=None, height=20,
+                         background_normal = PICPATH+'/dropdown_choice.png',
+                         text_size = (250,None), halign='left')
+            btn.index = i
+            btn.bind(on_release=lambda btn: selectEvent(btn.index))
+            dd.add_widget(btn)
+            i += 1
+                
+        def selectEvent(ind):
+            dd.select(ind)
+            pickEventBtn.text='[color=000000]'  \
+                                        + allEvents[ind][0]
+            self.container.remove_widget(self.container.children[0])
+            self.container.add_widget(allEvents[ind][1])
+       
+        pickEventBtn.bind(on_release=dd.open)
+        self.container.add_widget(pickEventBtn)
+        self.container.add_widget(allEvents[0][1])
+    
+class IndexButton(Button):
+    '''Helper class for EventPopup.
+
+    Is a simple button with an extra variable'''
+    index = 0
+    def __init__(self,**kwargs):
+        super(IndexButton,self).__init__(**kwargs)
 
 ##################################################################
 #-------------------- Load Images -------------------------------#
@@ -611,68 +777,29 @@ counter = [1]
 addMappingButton.bind(on_release=lambda btn:createMapping(counter))
 
 #popups from infobutton
-
-class IndexButton(Button):
-    index = 0
-    def __init__(self,**kwargs):
-        super(IndexButton,self).__init__(**kwargs)
+gesturePopup = EventPopup('gesture')
+macroPopup = EventPopup('macro')
 
 #bind buttons to call these two functions
 def displayEditMappingPopup(index, gestOrMacro):
     if gestOrMacro == 'gesture':
         allEvents=getListOfGestures()
+        gesturePopup.setDropdownWithExplanation(allEvents)
+        gesturePopup.open(index)
     elif gestOrMacro == 'macro':
         allEvents=getListOfMacros()
-    content = BoxLayout(orientation='vertical')
-    #Dropdown for choosing gesture/macro
-    pickEventBtn = Button(size_hint_y=0.25, text=allEvents[0][0])
-    dd = DropDown(max_height=100, bar_width=5)
+        macroPopup.setDropdownWithExplanation(allEvents)
+        macroPopup.open(index)
 
-    i = 0
-    for eve in allEvents:
-        btn = IndexButton(text=eve[0], color=(0,0,0,1), size_hint_y=None, height=20)
-        btn.index = i
-        btn.bind(on_release=lambda btn: selectEvent(btn.index))
-        dd.add_widget(btn)
-        i += 1
-    def selectEvent(ind):
-        dd.select(ind)
-        pickEventBtn.text=allEvents[ind][0]
-        content.remove_widget(content.children[1])
-        widge = allEvents[ind][1]
-#        if isinstance(widge, TextInput):
-#            def unfocus(inst,touch):
-#                widge.focus = False
-#            widge.bind(on_touch_up=unfocus)
-#TODO move this binding to the gestListOfGestures method
-        content.add_widget(widge,1)
-    pickEventBtn.bind(on_release=dd.open)
-    
-#    dd.bind(on_select=pickGest)
-    #Button that signals you're done
-    doneBtn = Button(text='Done', size_hint_y=0.2)
-    def doneBtn_callback(btn):
-        if gestOrMacro == 'gesture':
-            editMapping(index, pickEventBtn.text, None)
-        elif gestOrMacro == 'macro':
-            editMapping(index, None, pickEventBtn.text)
-        popup.dismiss()
-    doneBtn.bind(on_release=doneBtn_callback)
+############
+# Manage custom events
+############
 
-    #initialize starting values
-    content.add_widget(pickEventBtn)
-    content.add_widget(allEvents[0][1])
-    content.add_widget(doneBtn)
+def manageGestures():
+    pass
 
-    if gestOrMacro == 'gesture':
-        title = 'Set gesture'
-    elif gestOrMacro == 'macro':
-        title = 'Set Windows Function'
-    
-    popup = Popup(title=title,
-                  content=content,
-                  size_hint=(None, None), size=(400, 300))
-    popup.open()
+def manageMacros():
+    pass
 
 ##################################################################
 # ------------------Main building class ------------------------_#
