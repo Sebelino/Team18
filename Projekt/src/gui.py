@@ -14,26 +14,18 @@ from kivy.uix.popup import Popup
 from kivy.config import Config
 from kivy.uix.slider import Slider
 from kivy.properties import NumericProperty
+from kivy.graphics import Color,Ellipse,Line
+from kivy.gesture import Gesture,GestureDatabase
+import Gesture as OwnGesture
 
 import thread
 import time
 import os
 import sys
-import DatabaseAdapter as db
+import DatabaseAdapter as db                     #Spaghetti-dependency. Fixa!
+import GestureHandler
 from kivy.base import EventLoop
-
-#def executeController():
-#    time.sleep(1)
-#    os.system("python Controller.py")
-#
-#thread.start_new_thread(executeController,())
-
-#gestures = db.getGestures()
-#print("AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA")
-#print(gestures)
-#print(gestures[0][0])
-#print(gestures[1][0])
-#print("BBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBB")
+import Queue
 
 ##################################################################
 #---------------------- Config ----------------------------------#
@@ -56,14 +48,14 @@ font = '../resources/font/segoeui.ttf'
 """
 OK, so, this class exists as a component that keeps all the
 mappings in a neat scrollable list. Because it might be a mess,
-and I might forget stuff, here are some important info about
+and I might forget stuff, here is some important info about
 usage:
 
-1. When creating this object, MUST set the attributes size and
+1. When creating this object, you MUST set the attributes size and
    size_hint. Size will be the size of the widget, and size_hint
    should be set to (None, None), otherwise the behavior is undefined.
 2. Attribute mappingHeight is the height of one mapping, it better be
-   set before adding mappings (althought it is set to 40 by default),
+   set before adding mappings (although it is set to 40 by default),
    otherwise it will break.
 3. Attribute proportions are the sizes, in percentages, of each of the
    five components of a mapping. Better also be changed before adding
@@ -78,8 +70,17 @@ usage:
    vertical orientation. One annoying thing is that BoxLayout has its
    children positioned from the bottom and up, while I want it the other
    way. Anyway, its taken care of in the code. Just keep in mind for the
-   Controller, that when a mapping is created, put it last in the list.
+   Controller, that when a mapping is created, append it to the list.
 """
+def simplegesture(name, point_list):
+    """
+    A simple helper function
+    """
+    g = Gesture()
+    g.add_stroke(point_list)
+    g.normalize()
+    g.name = name
+    return g
 class MappingDisplay(FloatLayout):
     #if have_background is true, a background image is set
     have_background = False
@@ -93,10 +94,10 @@ class MappingDisplay(FloatLayout):
     macroEditButtonImageDown = None
     mappingHeight = 25
 
-    #TODO - solve this somehow.
     #Buttons in the scrollview dont work if this part below
     # is not commented away
     '''On touch events'''
+    queue = Queue.Queue()
     
     def on_touch_down(self, touch):
         print str(touch.device)
@@ -105,6 +106,49 @@ class MappingDisplay(FloatLayout):
         elif str(touch.device) == "mouse":
             print "mouse click"
             super(MappingDisplay, self).on_touch_down(touch)
+        # start collecting points in touch.ud
+        # create a line to display the points
+        userdata = touch.ud
+        with self.canvas:
+            Color(1, 1, 0)
+            d = 30.
+            Ellipse(pos=(touch.x - d/2, touch.y - d/2), size=(d, d))
+            userdata['line'] = Line(points=(touch.x, touch.y))
+
+    def on_touch_move(self, touch):
+        # store points of the touch movement
+        try:
+            touch.ud['line'].points += [touch.x, touch.y]
+            return True
+        except (KeyError), e:
+            pass
+
+    def containsGesture():
+        return not queue.empty()
+
+    def poll():
+        return queue.get()
+
+    def on_touch_up(self, touch):
+        # touch is over, display informations, and check if it matches some
+        # known gesture.
+        g = simplegesture(
+                '',
+                zip(touch.ud['line'].points[::2], touch.ud['line'].points[1::2])
+                )
+        # print the gesture representation, you can use that to add
+        # gestures to my_gestures.py
+        print "gesture representation:", self.gdb.gesture_to_str(g)
+
+        gesture = OwnGesture.Gesture(self.gdb.gesture_to_str(g))
+        self.queue.put(gesture)
+
+        # erase the lines on the screen, this is a bit quick&dirty, since we
+        # can have another touch event on the way...
+        self.canvas.clear()
+
+    def containsGesture():
+        return not queue.empty()
   
     '''End of on-touch events'''
 
@@ -127,6 +171,7 @@ class MappingDisplay(FloatLayout):
         scroll.add_widget(self.layout)
         self.scroll = scroll
         self.add_widget(scroll)
+        self.gdb = GestureDatabase()
 
         #now implement a scrollbar
         s = Slider(orientation='vertical', value_normalized = 0.5, 

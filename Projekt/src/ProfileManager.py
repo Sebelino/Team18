@@ -11,8 +11,8 @@ gdb.str_to_gesture('eNqlWFtuHEcS/J+LiD8mKl+VlRegfw3oAAtZIiTCtkSQtL2+/UZV1kz3cJrs
 
 kivygestures = dict()
 for row in db.getGestures():
-    kivygestures.update({row[1]:row[0]})
-    gest = gdb.str_to_gesture(row[1].encode("ascii"))
+    kivygestures.update({row[2]:row[0]})
+    gest = gdb.str_to_gesture(row[2].encode("ascii"))
     gdb.add_gesture(gest)
 
 # add pre-recorded gestures to database

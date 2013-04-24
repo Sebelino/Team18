@@ -192,18 +192,3 @@ def press2Keys(w1,w2):
     win32api.keybd_event(w2,0,0,0)
     win32api.keybd_event(w1,0 ,win32con.KEYEVENTF_KEYUP ,0)
     win32api.keybd_event(w2,0 ,win32con.KEYEVENTF_KEYUP ,0)
-
-
-#irghtClick(100,100)
-#leftClick(200,200)
-#scroll(100,100)
-#scroll(100,100)
-#scroll(100,100)
-#scroll(100,100)
-#scroll(100,100)
-#pressKey(VK_CODE["z"])
-#print(len(VK_CODE) , VK_CODE["z"])
-#testExecuteString("Press2Keys left_control c")
-#testExecuteString("preSs2kEys left_control v")
-#testExecuteString("press2keys left_control v")
-#testExecuteString("press2keys left_control v")
