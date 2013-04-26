@@ -111,7 +111,7 @@ class MappingDisplay(FloatLayout):
         userdata = touch.ud
         with self.canvas:
             Color(1, 0, 0)
-            d = 30.
+            d = 10.
             Ellipse(pos=(touch.x - d/2, touch.y - d/2), size=(d, d))
             userdata['line'] = Line(points=(touch.x, touch.y))
 
@@ -416,7 +416,7 @@ class EventPopup(Popup):
         cancelBtn.bind(on_release= lambda btn: self.dismiss())
         
         #Button that signals accept
-        doneBtn = Button(text='[color=000000]Accept', markup=True,
+        doneBtn = Button(text='[color=000000]Ok', markup=True,
                          size_hint=(None,None), size = (140, 25),
                          pos_hint = {'right':0.98, 'y':0},
                          background_normal = PICPATH+'/button_up.png',
@@ -438,21 +438,21 @@ class EventPopup(Popup):
         '''private method to create createEvent button'''
 
         eventBtn = Button(markup=True,
-                          size_hint=(None,None), size = (95, 32),
+                          size_hint=(None,None), size = (95, 28),
                           pos_hint = {'right':0.99, 'top':0.97},
                           background_normal = PICPATH+'/button_up.png',
                           background_down = PICPATH+'/button_down.png')
         
         if self.gestureOrMacro == 'gesture':
             eventBtn.text = '[color=000000][font='+font+'][size=11]'+ \
-                            'Manage custom\n      gestures'
+                            'Customize'
             def eventBtn_callback(btn):
                 manageGestures()
                 #self.dismiss() TODO
             eventBtn.bind(on_release=eventBtn_callback)
         elif self.gestureOrMacro == 'macro':
             eventBtn.text = '[color=000000][font='+font+'][size=11]'+ \
-                            'Manage custom\n       macros'
+                            'Customize'
             def eventBtn_callback(btn):
                 manageGestures()
                 #self.dismiss() TODO
