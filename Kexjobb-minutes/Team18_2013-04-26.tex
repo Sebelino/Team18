@@ -1,0 +1,81 @@
+% @author Sebastian Olsson
+%
+% Anv: 294 142 104
+% Psw: 2nzp19
+%
+% quad-bild i team18/kivy/untitled.png
+% activate-grej i program files/code laboratories/cl-eye platform sdk
+
+\documentclass[a4paper,12pt]{article}
+\usepackage[utf8]{inputenc}
+\usepackage[swedish]{babel}
+\usepackage[parfill]{parskip}
+\usepackage{tikz}
+
+\author{Sebastian Olsson}
+\title{DD143X: RADD Finalizing Phase}
+\date{22 april 2013}
+\begin{document}
+\maketitle
+\begin{abstract}
+    Mötesanteckningar från mötet 130422, 12:00-15:10.
+\end{abstract}
+
+\section{Mötet börjar}
+Sebastian förklarar mötet öppnat.
+
+Närvarande:
+\begin{itemize}
+\item Sebastian Olsson
+\item Chjun-Chi Chiu
+\item Andrew Saka
+\end{itemize}
+Frånvarande:
+\begin{itemize}
+\item Kristoffer Hallqvist
+\item Dmitrij Lioubartsev
+\item Jonatan Åkesson
+\end{itemize}
+
+Ordförande: Sebastian Olsson
+
+Sekreterare: Sebastian Olsson
+
+Mötesplats: Voljären.
+
+\section{Föregående protokoll}
+Referens: Finalizing the Architecture.
+
+\begin{enumerate}
+\item Verkställd.
+\item Verkställd.
+\end{enumerate}
+
+\section{Diskussionsteman}
+\begin{itemize}
+\item GUI:t
+\item Skript för makron
+\item Manualen
+\item Kalibrering
+\item RADD: arbetsuppdelning och arbetstider
+\end{itemize}
+
+\section{Beslut}
+\begin{itemize}
+\item Sebastian färdigställer kopplingen från GUI:t till databasen (via Controllern).
+\item Dmitrij lägger till knappar för att lägga till/ta bort gester och makron från GUI:t.
+\item Chjun-chi implementerar åtminstone 10 olika kommandon i CommandHandlern, inklusive:
+\begin{itemize}
+\item \texttt{open <path>} för att öppna en valfri mapp/program
+\item \texttt{keypress <key>} för tangenttryckning
+\item \texttt{leftclick} för vänstermusklickning
+\item \texttt{rightclick} för högermusklickning
+\item \texttt{scroll <px>} för att scrolla uppåt eller nedåt
+\item \texttt{sleep <ms>} för att vänta en bestämd tid innan nästa kommando exekveras.
+\end{itemize}
+\item Jonatan bokar en ny session med Henrik nästa vecka.
+\end{itemize}
+
+\section{Nästa möte}
+Vid experimentomgången nästa vecka, i Voljären.
+\end{document}

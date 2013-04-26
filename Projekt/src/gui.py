@@ -110,7 +110,7 @@ class MappingDisplay(FloatLayout):
         # create a line to display the points
         userdata = touch.ud
         with self.canvas:
-            Color(1, 1, 0)
+            Color(1, 0, 0)
             d = 30.
             Ellipse(pos=(touch.x - d/2, touch.y - d/2), size=(d, d))
             userdata['line'] = Line(points=(touch.x, touch.y))
@@ -145,7 +145,7 @@ class MappingDisplay(FloatLayout):
 
         # erase the lines on the screen, this is a bit quick&dirty, since we
         # can have another touch event on the way...
-        self.canvas.clear()
+        #self.canvas.clear()
 
     def containsGesture():
         return not queue.empty()
