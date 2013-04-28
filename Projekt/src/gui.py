@@ -97,7 +97,7 @@ class MappingDisplay(FloatLayout):
     #Buttons in the scrollview dont work if this part below
     # is not commented away
     '''On touch events'''
-    queue = Queue.Queue()
+    """    queue = Queue.Queue()
     
     def on_touch_down(self, touch):
         print str(touch.device)
@@ -114,6 +114,7 @@ class MappingDisplay(FloatLayout):
             d = 10.
             Ellipse(pos=(touch.x - d/2, touch.y - d/2), size=(d, d))
             userdata['line'] = Line(points=(touch.x, touch.y))
+
 
     def on_touch_move(self, touch):
         # store points of the touch movement
@@ -149,7 +150,7 @@ class MappingDisplay(FloatLayout):
 
     def containsGesture():
         return not queue.empty()
-  
+    """  
     '''End of on-touch events'''
 
     def __init__(self,**kwargs):
@@ -384,7 +385,7 @@ class EventPopup(Popup):
     def open(self, index):
         '''Override open method.
 
-        Call it lite Popup's open, but with an index signaling
+        Call it like Popup's open, but with an index signaling
         which mapping (by index) the popup is for'''
         self.index = index
         super(EventPopup, self).open()
@@ -409,7 +410,7 @@ class EventPopup(Popup):
         #Button that signals cancel
         cancelBtn = Button(text='[color=000000]Cancel', markup=True,
                            size_hint=(None,None), size = (140, 25),
-                           pos_hint = {'x':0.02, 'y':0},
+                           pos_hint = {'right':0.98, 'y':0},
                            background_normal = PICPATH+'/button_up.png',
                            background_down = PICPATH+'/button_down.png')
 
@@ -418,7 +419,7 @@ class EventPopup(Popup):
         #Button that signals accept
         doneBtn = Button(text='[color=000000]Ok', markup=True,
                          size_hint=(None,None), size = (140, 25),
-                         pos_hint = {'right':0.98, 'y':0},
+                         pos_hint = {'x':0.02, 'y':0},
                          background_normal = PICPATH+'/button_up.png',
                          background_down = PICPATH+'/button_down.png')
     
@@ -513,6 +514,92 @@ class IndexButton(Button):
     def __init__(self,**kwargs):
         super(IndexButton,self).__init__(**kwargs)
 
+
+##################################################################
+#-------------- Confirm Popup Class and function-----------------#
+##################################################################
+'''
+This is the class ConfirmPopup. It is used for creating a popup to
+confirm a specific action. Usage:
+
+An object is already created and there is no need to create more.
+The object is called simply "confirm" (see beneath class definition).
+There is only one method: open(title, function, *args).
+ - title should be a string, it will be the title of the popup.
+ - function is the function to call if the user confirms the action.
+ - *args is a list of arguments. It is the Python way of having
+   multiple arguments in a list. These are the arguments that will go
+   into function. Note that currently only up to three arguments are
+   supported, but it is fairly simply (but tedious) to add support
+   for more.
+
+Example 1 argument: confirm.open("Are you sure you want to delete profile?",
+                      deleteProfileAction,
+                      getCurrentProfile())
+
+Example 3 args: confirm.open("Are you sure you want to print this?",
+                              evilPrintFunc,
+                              page1, page2, page3)
+
+Example no args: confirm.open("Are you sure you want to close the program?",
+                               exit)
+'''
+
+
+
+class ConfirmPopup(Popup):
+    function = None
+    args = []
+    
+    def __init__(self,**kwargs):
+        super(ConfirmPopup,self).__init__(**kwargs)
+        container = FloatLayout()
+        self.size=(350,120)
+        self.size_hint=(None, None)
+        self.auto_dismiss = False
+        self.separator_color = (0.625, 0.625, 0.625, 1)
+        self.separator_height = 1
+        self.title_size = '10sp'
+        #self.background=PICPATH+'/white_background.png'
+        btnsize = (100, 27)
+        yesBtn = Button(size_hint = (None,None), size = btnsize,
+                        text = "[color=000000]Accept", markup = True,
+                        pos_hint = {'x':0.05, 'y':0.05}, 
+                        background_normal = PICPATH+'/button_up.png',
+                        background_down = PICPATH+'/button_down.png')
+        yesBtn.bind(on_release = self.callFunction)
+        noBtn = Button(size_hint = (None,None), size = btnsize,
+                        text = "[color=000000]Cancel", markup = True,
+                        pos_hint = {'right':0.95, 'y':0.05}, 
+                        background_normal = PICPATH+'/button_up.png',
+                        background_down = PICPATH+'/button_down.png')        
+        noBtn.bind(on_release = lambda(btn): self.dismiss())
+
+        container.add_widget(yesBtn)
+        container.add_widget(noBtn)
+        self.content = container
+
+    def open(self, title, function, *args):
+        self.title = title
+        self.function = function
+        self.args = args
+        super(ConfirmPopup,self).open()
+
+    def callFunction(self, btn):
+        argc = len(self.args)
+        if(argc == 0):
+            self.function()
+        elif(argc == 1):
+            self.function(args[0])
+        elif(argc == 2):
+            self.function(args[0], args[1])
+        elif(argc == 3):
+            self.function(args[0], args[1], args[2])
+        self.dismiss()
+
+confirm = ConfirmPopup()
+
+
 ##################################################################
 #-------------------- Load Images -------------------------------#
 ##################################################################
@@ -553,7 +640,7 @@ def getListOfProfiles():
 def getCurrentProfile():
     """Returns the currently selected profile, requested from Controller."""
     #TODO
-    return getListOfProfiles()[0]
+    return getListOfProfiles()[4]
     
 
 def getListOfMappings(profile):
@@ -768,6 +855,10 @@ createProfileButton.bind(on_release=createProfileButtonAction)
 
 #delete profile button
 def deleteProfileButtonAction(btn):
+    confirm.open("Are you sure you want to delete profile\n" +
+                 getCurrentProfile() + "?", delProf)
+
+def delProf():
     removeProfile(getCurrentProfile())
     updateTextBoxes(getCurrentProfile())
     
@@ -835,6 +926,10 @@ def displayEditMappingPopup(index, gestOrMacro):
         allEvents=getListOfMacros()
         macroPopup.setDropdownWithExplanation(allEvents)
         macroPopup.open(index)
+
+
+
+
 
 ############
 # Manage custom events
