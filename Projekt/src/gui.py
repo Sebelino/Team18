@@ -623,11 +623,10 @@ def getListOfGestures():
 #            ('Two-finger swipe', Image(source=PICPATH+'/two_swipe.gif', allow_stretch=True,
 #                            keep_ratio=False))]
 
-'''def getListOfCustomGestures():
+def getListOfCustomGestures():
     """Returns a list of all Custom gestures"""
-    table = db.getGestures()
-    return [(r[0],TextInput(text=('' if r[1] is None else r[1]),readonly=True))
-  '''          
+    return ["RAH", "BLO", "PATETISK" ]
+
 def getListOfMacros():
     """Returns a list of Macros/Windows Functions, requested from Controller."""
     table = db.getCommands()
@@ -636,12 +635,11 @@ def getListOfMacros():
 #            ('rightclick',TextInput(text='RaaALABALALAMMMMMMMMMMMMMMMMMMMMMmmmASDN',readonly = True)),
 #            ('faint', Image(source=PICPATH+'/art.png', allow_stretch=True,
 #                            keep_ratio=False))]
-'''
+
 def getListOfCustomMacros():
     """Returns a list of all Custom gestures"""
-    table = db.getCommands()
-    return [(r[0],TextInput(text=('' if r[1] is None else r[1]),readonly=True))
-  '''          
+    return ["RAH", "BLO", "PATETISKMACRO" ]    
+           
 #-------- Profile management ---------#
 
 def createProfile(profileName):
@@ -962,7 +960,7 @@ class CustomizeEventPopup(Popup):
         content.add_widget(createBtn)
         self.container = ListView(25, size_hint = (None, None),
                                     size = (380, 300),
-                                    pos_hint = {'x':0.01, 'y':0.2}))
+                                    pos_hint = {'x':0.01, 'y':0.2})
         content.add_widget(self.container)
 
         self.refresh()
@@ -977,26 +975,36 @@ class CustomizeEventPopup(Popup):
         i = 0
         for event in eventList:
             if self.gestureOrMacro == 'gesture':
-                self.container.add_widget(CustomMacroWidget(i))
+                self.container.add_widget(CustomMacroWidget(i, self, event))
             else:
-                self.container.add_widget(CustomGestureWidget(i))
+                self.container.add_widget(CustomGestureWidget(i, self, event))
             i += 1
-            
-        
 
 class CustomMacroWidget(FloatLayout):
     index = 0
+    owner = None
+    name = "My macro"
     
-    def __init__(self, index, **kwargs):
+    def __init__(self, index, owner, name, **kwargs):
         super(CustomMacroWidget, self).__init__(**kwargs)
         self.index = index
+        self.owner = owner
+        self.name = name
+        self.add_widget(Button(text=name))
 
 class CustomGestureWidget(FloatLayout):
     index = 0
+    owner = None
+    name = "My gesture"
     
-    def __init__(self, index, **kwargs):
+    def __init__(self, index, owner, name, **kwargs):
         super(CustomGestureWidget, self).__init__(**kwargs)
         self.index = index
+        self.owner = owner
+        self.name = name
+        self.add_widget(Button(text=name))
+
+    
 
 def createGesture():
     pass;
