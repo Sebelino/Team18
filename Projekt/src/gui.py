@@ -17,6 +17,7 @@ from kivy.properties import NumericProperty
 from kivy.graphics import Color,Ellipse,Line
 from kivy.gesture import Gesture,GestureDatabase
 import Gesture as OwnGesture
+from listview import ListView, ScrollViewFixed
 
 import thread
 import time
@@ -303,50 +304,6 @@ class MappingInstance(FloatLayout):
         self.children[0].bind(on_release=self.__delBtn_callback)
         self.children[2].bind(on_release=self.__infoBtnGest_callback)
         self.children[4].bind(on_release=self.__infoBtnMac_callback)
-
-class ScrollViewFixed(ScrollView):
-    ''' This class is basically the same as a ScrollView,
-    except that the scrolling update method is overridden.
-    The difference is that four lines of code has been removed.
-    Those 4 lines made the scroll bar dissapear when not active for
-    a few seconds.
-
-    '''
-    slider = None
-
-    def __init__(self,**kwargs):
-        super(ScrollViewFixed,self).__init__(**kwargs)      
-
-    def update_from_scroll(self, *largs):
-        if not self._viewport:
-            return
-        vp = self._viewport
-
-        if self.do_scroll_x:
-            self.scroll_x = min(1, max(0, self.scroll_x))
-        if self.do_scroll_y:
-            self.scroll_y = min(1, max(0, self.scroll_y))
-
-        # update from size_hint
-        if vp.size_hint_x is not None:
-            vp.width = vp.size_hint_x * self.width
-        if vp.size_hint_y is not None:
-            vp.height = vp.size_hint_y * self.height
-
-        if vp.width > self.width:
-            sw = vp.width - self.width
-            x = self.x - self.scroll_x * sw
-        else:
-            x = self.x
-        if vp.height > self.height:
-            sh = vp.height - self.height
-            y = self.y - self.scroll_y * sh
-        else:
-            y = self.top - vp.height
-        vp.pos = x, y
-        #own code for slider/scrollbar
-        if self.slider != None:
-            self.slider.value_normalized = self.scroll_y
 
 ##################################################################
 #-------------------- Event Popup Class -------------------------#
@@ -658,6 +615,11 @@ def getListOfGestures():
 #            ('Two-finger swipe', Image(source=PICPATH+'/two_swipe.gif', allow_stretch=True,
 #                            keep_ratio=False))]
 
+'''def getListOfCustomGestures():
+    """Returns a list of all Custom gestures"""
+    table = db.getGestures()
+    return [(r[0],TextInput(text=('' if r[1] is None else r[1]),readonly=True))
+  '''          
 def getListOfMacros():
     """Returns a list of Macros/Windows Functions, requested from Controller."""
     table = db.getCommands()
@@ -666,8 +628,12 @@ def getListOfMacros():
 #            ('rightclick',TextInput(text='RaaALABALALAMMMMMMMMMMMMMMMMMMMMMmmmASDN',readonly = True)),
 #            ('faint', Image(source=PICPATH+'/art.png', allow_stretch=True,
 #                            keep_ratio=False))]
-
-
+'''
+def getListOfCustomMacros():
+    """Returns a list of all Custom gestures"""
+    table = db.getCommands()
+    return [(r[0],TextInput(text=('' if r[1] is None else r[1]),readonly=True))
+  '''          
 #-------- Profile management ---------#
 
 def createProfile(profileName):
@@ -935,8 +901,99 @@ def displayEditMappingPopup(index, gestOrMacro):
 # Manage custom events
 ############
 
+class CustomizeEventPopup(Popup):
+    gestureOrMacro = "gesture"
+    container = None
+
+    def __init__(self, gestureOrMacro, **kwargs):
+        super(CustomizeEventPopup, self).__init__(**kwargs)
+        self.size_hint = (None, None)
+        self.size = (400, 400)
+        self.auto_dismiss = False
+        self.gestureOrMacro = gestureOrMacro
+        content = FloatLayout()
+        self.container = content
+
+        #set create button
+        createBtn = Button(size_hint = (None, None), size = (100, 30),
+                           pos_hint = {'x': 0.1, 'y': 0.03}, markup = True,
+                           background_normal = PICPATH+'/button_up.png',
+                           background_down = PICPATH+'/button_down.png')
+        def createBtn_callback(btn):
+            self.refresh()
+            if gestureOrMacro == 'gesture':
+                createGesture()
+            else:
+                createMacro()
+        createBtn.bind(on_release=createBtn_callback)
+        
+        #set done button
+        doneBtn = Button(size_hint = (None, None), size = (100, 30),
+                         text = "[color=000000]Done", markup = True,
+                         pos_hint = {'right': 0.9, 'y': 0.03},
+                         background_normal = PICPATH+'/button_up.png',
+                         background_down = PICPATH+'/button_down.png')
+        doneBtn.bind(on_release=lambda(btn):self.dismiss())
+        
+
+        #Do some event-specific stuff
+        if gestureOrMacro == "gesture":
+            self.title = "Manage Custom Gestures"
+            createBtn.text = "[color=000000]Create new gesture"
+        else:
+            self.title = "Manage Custom Macros"
+            createBtn.text = "[color=000000]Create new macro"
+
+        #add widgets
+        content.add_widget(doneBtn)
+        content.add_widget(createBtn)
+        self.container = ListView(25, size_hint = (None, None),
+                                    size = (380, 300),
+                                    pos_hint = {'x':0.01, 'y':0.2}))
+        content.add_widget(self.container)
+
+        self.refresh()
+        
+    def refresh():
+        while len(self.container.box.children) > 0:
+            self.container.remove_widget(self.container.box.children[0])
+        if self.gestureOrMacro == 'gesture':
+            eventList = getListOfCustomGestures()
+        else:
+            eventList = getListOfCustomMacros()
+        i = 0
+        for event in eventList:
+            if self.gestureOrMacro == 'gesture':
+                self.container.add_widget(CustomMacroWidget(i))
+            else:
+                self.container.add_widget(CustomGestureWidget(i))
+            i += 1
+            
+        
+
+class CustomMacroWidget(FloatLayout):
+    index = 0
+    
+    def __init__(self, index, **kwargs):
+        super(CustomMacroWidget, self).__init__(**kwargs)
+        self.index = index
+
+class CustomGestureWidget(FloatLayout):
+    index = 0
+    
+    def __init__(self, index, **kwargs):
+        super(CustomGestureWidget, self).__init__(**kwargs)
+        self.index = index
+
+def createGesture():
+    pass;
+
+def createMacro():
+    pass;
+
 def manageGestures():
     pass
+    #manageEventsPopup.open()
 
 def manageMacros():
     pass
