@@ -4,7 +4,7 @@ import CommandHandler
 import thread
 import time
 
-def initialisera():
+def initialize():
     thread.start_new_thread(GestureHandler.initialisera,())
     while True:
         if not GestureHandler.containsGestureii():
@@ -13,4 +13,7 @@ def initialisera():
         gesture = GestureHandler.pollii()
         command = ProfileManager.getCommand(gesture)
         CommandHandler.execute(command)
-initialisera()
+initialize()
+
+def getListOfMappings():
+    ProfileManager.getMappings()
