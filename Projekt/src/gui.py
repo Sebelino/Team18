@@ -17,9 +17,8 @@ from kivy.properties import NumericProperty
 from kivy.graphics import Color,Ellipse,Line
 from kivy.gesture import Gesture,GestureDatabase
 import Gesture as OwnGesture
-import Controller
 from listview import ListView, ScrollViewFixed
-
+# import Controller
 
 import thread
 import time
@@ -315,96 +314,10 @@ class MappingInstance(FloatLayout):
         self.children[2].bind(on_release=self.__infoBtnGest_callback)
         self.children[4].bind(on_release=self.__infoBtnMac_callback)
 
-
-class ScrollViewFixed(ScrollView):
-    ''' This class is basically the same as a ScrollView,
-    except that the scrolling update method is overridden.
-    The difference is that four lines of code has been removed.
-    Those 4 lines made the scroll bar dissapear when not active for
-    a few seconds.
-
-    '''
-    slider = None
-
-    def __init__(self,**kwargs):
-        super(ScrollViewFixed,self).__init__(**kwargs)      
-
-    def update_from_scroll(self, *largs):
-        if not self._viewport:
-            return
-        vp = self._viewport
-
-        if self.do_scroll_x:
-            self.scroll_x = min(1, max(0, self.scroll_x))
-        if self.do_scroll_y:
-            self.scroll_y = min(1, max(0, self.scroll_y))
-
-        # update from size_hint
-        if vp.size_hint_x is not None:
-            vp.width = vp.size_hint_x * self.width
-        if vp.size_hint_y is not None:
-            vp.height = vp.size_hint_y * self.height
-
-        if vp.width > self.width:
-            sw = vp.width - self.width
-            x = self.x - self.scroll_x * sw
-        else:
-            x = self.x
-        if vp.height > self.height:
-            sh = vp.height - self.height
-            y = self.y - self.scroll_y * sh
-        else:
-            y = self.top - vp.height
-        vp.pos = x, y
-        #own code for slider/scrollbar
-        if self.slider != None:
-            self.slider.value_normalized = self.scroll_y
-
-
-
-
-
-
-
-
-
-
-##################################################################
-#-------------------- touch block Popup Class -------------------#
-##################################################################
-
-#This class disables touch on popups
-
-class touchBlockedPopup(Popup):
-    #On touch events
-    def on_touch_down(self, touch):
-        print "Touch down!"
-        print "Touch uid: " + str(touch.uid)
-
-        if len(EventLoop.touches) > 1:
-            print "Multi touch!"
-        
-        if str(touch.device) == "mouse":
-            super(touchBlockedPopup, self).on_touch_down(touch)
-
-    def on_touch_move(self, touch):
-        print "Touch move!"
-        print "uid: " + str(touch.uid)
-        if str(touch.device) == "mouse":
-            super(touchBlockedPopup, self).on_touch_move(touch)
-
-    def on_touch_up(self, touch):
-        print "Touch up!"
-        print "uid: " + str(touch.uid)
-        if str(touch.device) == "mouse":
-            super(touchBlockedPopup, self).on_touch_up(touch)
-
-
-
 ##################################################################
 #-------------------- Event Popup Class -------------------------#
 ##################################################################
-class EventPopup(touchBlockedPopup):
+class EventPopup(Popup):
     '''A class which is a very specialized popup.
 
     To use, simply initiate an instance with one parameter, which is a
@@ -600,7 +513,7 @@ Example no args: confirm.open("Are you sure you want to close the program?",
 
 
 
-class ConfirmPopup(touchBlockedPopup):
+class ConfirmPopup(Popup):
     function = None
     args = []
     
@@ -793,12 +706,17 @@ def removeGesture(gesture):
     pass
 
 #-------------- Macros/Windows functions ------------------#
-def createMacro(macro):
+def createMacro():
     """ Creates a new Macro. """
     pass
 
+def editMacro(macro, newScript, descType, desc):
+    """edits macro 'macro' from the script newScript,
+       to description desc, which is of type descType"""
+
 def removeMacro(macro):
     """ Removes the specified Macro. """
+    print "removing macro ", macro
     pass
 
 ##################################################################
@@ -1019,11 +937,11 @@ class CustomizeEventPopup(Popup):
                            background_normal = PICPATH+'/button_up.png',
                            background_down = PICPATH+'/button_down.png')
         def createBtn_callback(btn):
-            self.refresh()
             if gestureOrMacro == 'gesture':
-                createGesture()
+                createGestureCallback()
             else:
                 createMacro()
+                self.refresh()
         createBtn.bind(on_release=createBtn_callback)
         
         #set done button
@@ -1064,12 +982,9 @@ class CustomizeEventPopup(Popup):
         i = 0
         for event in eventList:
             if self.gestureOrMacro == 'gesture':
-                #self.container.add_widget(Button(text=event))
-                #self.container.add_widget(MacroCreator())
-                self.container.add_widget(CustomMacroWidget(i, self, event))
-            else:
-                #self.container.add_widget(Button(text=event))
                 self.container.add_widget(CustomGestureWidget(i, self, event))
+            else:
+                self.container.add_widget(CustomMacroWidget(i, self, event))
             i += 1
 
 class CustomGestureWidget(BoxLayout):
@@ -1079,21 +994,28 @@ class CustomGestureWidget(BoxLayout):
     
     def __init__(self, index, owner, name, **kwargs):
         super(CustomGestureWidget, self).__init__(**kwargs)
+        #set various variables
         self.index = index
         self.owner = owner
         self.name = name
         self.spacing = 3
+        #now create button
+        delBtn = Button(text='Delete', font_size = 12, color = (0,0,0,1),
+                        background_normal = PICPATH+'/button_up.png',
+                        background_down = PICPATH+'/button_down.png')
+        #bind button
+        def delBtn_callback(btn):
+            removeGesture(name)
+            owner.refresh()
+            print "Removing gesture ", name
+        delBtn.bind(on_release=delBtn_callback)
+        #build self
         self.add_widget(Button(text=name, color = (0,0,0,1),
-                        text_size = (220,None), halign='left',
+                        text_size = (260,None), halign='left',
                         size_hint_x = 4.5, font_size = 12,
                         background_normal = PICPATH+'/dropdown_choice.png',
                         background_down = PICPATH+'/dropdown_choice.png'))
-        self.add_widget(Button(text='Edit', font_size = 12, color = (0,0,0,1),
-                        background_normal = PICPATH+'/button_up.png',
-                        background_down = PICPATH+'/button_down.png'))
-        self.add_widget(Button(text='Delete', font_size = 12, color = (0,0,0,1),
-                        background_normal = PICPATH+'/button_up.png',
-                        background_down = PICPATH+'/button_down.png'))
+        self.add_widget(delBtn)
 
 class CustomMacroWidget(BoxLayout):
     index = 0
@@ -1102,27 +1024,40 @@ class CustomMacroWidget(BoxLayout):
     
     def __init__(self, index, owner, name, **kwargs):
         super(CustomMacroWidget, self).__init__(**kwargs)
+        #set various variables
         self.index = index
         self.owner = owner
         self.name = name
         self.spacing = 3
+        #now create buttons
+        editBtn = Button(text='Edit', font_size = 12, color = (0,0,0,1),
+                         background_normal = PICPATH+'/button_up.png',
+                         background_down = PICPATH+'/button_down.png')
+        delBtn = Button(text='Delete', font_size = 12, color = (0,0,0,1),
+                        background_normal = PICPATH+'/button_up.png',
+                        background_down = PICPATH+'/button_down.png')
+
+        #bind buttons
+        editBtn.bind(on_release=lambda(btn):editMacroCallback(name))
+        def delBtn_callback(btn):
+            print "Removing macro ", name
+            removeMacro(name)
+            owner.refresh()
+        delBtn.bind(on_release=delBtn_callback)
+        
+        #build self
         self.add_widget(Button(text=name, color = (0,0,0,1),
                         text_size = (220,None), halign='left',
                         size_hint_x = 4.5, font_size = 12,
                         background_normal = PICPATH+'/dropdown_choice.png',
                         background_down = PICPATH+'/dropdown_choice.png'))
-        self.add_widget(Button(text='Delete', font_size = 12, color = (0,0,0,1),
-                        background_normal = PICPATH+'/button_up.png',
-                        background_down = PICPATH+'/button_down.png'))
+        self.add_widget(editBtn)
+        self.add_widget(delBtn)
+
+#### End classes
 
 cepg = CustomizeEventPopup('gesture')
 cepm = CustomizeEventPopup('macro')
-
-def createGesture():
-    pass;
-
-def createMacro():
-    pass;
 
 def manageGestures():
     cepg.open()
@@ -1130,15 +1065,30 @@ def manageGestures():
 def manageMacros():
     cepm.open()
 
+#####################################################
+## Create events functions, classes and popups here
+#####################################################
+
+######## Edit macros
+def editMacroCallback(macro):
+    print "Will now edit macro ", macro
+    pass
+
+def createGestureCallback():
+    print "Will now open create gesture popup"
+    pass;
+
+#def createMacro():
+#    pass;
+
+
 ##################################################################
 # ------------------Main building class ------------------------_#
 ##################################################################
 class GestureMapper(App):
 
-    
-
     def build(self):
-        root = TouchArea(orientation='vertical')
+        root = BoxLayout(orientation='vertical')
         #top bar, choose profile bar
         #topBar = StencilView()
         topBar = FloatLayout(size_hint=(1,0.3))
@@ -1170,12 +1120,6 @@ class GestureMapper(App):
         mainArea.add_widget(mappingBox)
         #mainArea.add_widget(mcreator)
         mainArea.add_widget(addMappingButton)
-        mainArea.add_widget(TouchArea())
-        
-        '''root.add_widget(gesturePopup)
-        root.add_widget(macroPopup)
-        root.add_widget(confirm)'''
-        
         #updateMappings()
        
         #add all to root
@@ -1184,47 +1128,6 @@ class GestureMapper(App):
         
         return root
         
-
-
-
-class TouchArea(BoxLayout):
-
-    #On touch events
-    def on_touch_down(self, touch):
-        print "Touch down!"
-        print "Touch uid: " + str(touch.uid)
-
-        if len(EventLoop.touches) > 1:
-            print "Multi touch!"
-        
-        if str(touch.device) == "mouse":
-            super(TouchArea, self).on_touch_down(touch)
-        elif str(touch.device) == "multitouchtable":
-            Controller.on_touch_down(touch)
-        
-
-    def on_touch_move(self, touch):
-        print "Touch move!"
-        print "uid: " + str(touch.uid)
-        if str(touch.device) == "mouse":
-            super(TouchArea, self).on_touch_move(touch)
-        elif str(touch.device) == "multitouchtable":
-            Controller.on_touch_down(touch)
-        
-
-    def on_touch_up(self, touch):
-        print "Touch up!"
-        print "uid: " + str(touch.uid)
-        if str(touch.device) == "mouse":
-            super(TouchArea, self).on_touch_up(touch)
-        elif str(touch.device) == "multitouchtable":
-            Controller.on_touch_down(touch)
-
-
-
-
-
-
 
 #and Main
 
