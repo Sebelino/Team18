@@ -710,8 +710,13 @@ def createMacro():
     """ Creates a new Macro. """
     pass
 
+def editMacro(macro, newScript, descType, desc):
+    """edits macro 'macro' from the script newScript,
+       to description desc, which is of type descType"""
+
 def removeMacro(macro):
     """ Removes the specified Macro. """
+    print "removing macro ", macro
     pass
 
 ##################################################################
@@ -933,10 +938,10 @@ class CustomizeEventPopup(Popup):
                            background_down = PICPATH+'/button_down.png')
         def createBtn_callback(btn):
             if gestureOrMacro == 'gesture':
-                createGesture()
+                createGestureCallback()
             else:
                 createMacro()
-            self.refresh()
+                self.refresh()
         createBtn.bind(on_release=createBtn_callback)
         
         #set done button
@@ -977,12 +982,9 @@ class CustomizeEventPopup(Popup):
         i = 0
         for event in eventList:
             if self.gestureOrMacro == 'gesture':
-                #self.container.add_widget(Button(text=event))
-                #self.container.add_widget(MacroCreator())
-                self.container.add_widget(CustomMacroWidget(i, self, event))
-            else:
-                #self.container.add_widget(Button(text=event))
                 self.container.add_widget(CustomGestureWidget(i, self, event))
+            else:
+                self.container.add_widget(CustomMacroWidget(i, self, event))
             i += 1
 
 class CustomGestureWidget(BoxLayout):
@@ -992,21 +994,28 @@ class CustomGestureWidget(BoxLayout):
     
     def __init__(self, index, owner, name, **kwargs):
         super(CustomGestureWidget, self).__init__(**kwargs)
+        #set various variables
         self.index = index
         self.owner = owner
         self.name = name
         self.spacing = 3
+        #now create button
+        delBtn = Button(text='Delete', font_size = 12, color = (0,0,0,1),
+                        background_normal = PICPATH+'/button_up.png',
+                        background_down = PICPATH+'/button_down.png')
+        #bind button
+        def delBtn_callback(btn):
+            removeGesture(name)
+            owner.refresh()
+            print "Removing gesture ", name
+        delBtn.bind(on_release=delBtn_callback)
+        #build self
         self.add_widget(Button(text=name, color = (0,0,0,1),
-                        text_size = (220,None), halign='left',
+                        text_size = (260,None), halign='left',
                         size_hint_x = 4.5, font_size = 12,
                         background_normal = PICPATH+'/dropdown_choice.png',
                         background_down = PICPATH+'/dropdown_choice.png'))
-        self.add_widget(Button(text='Edit', font_size = 12, color = (0,0,0,1),
-                        background_normal = PICPATH+'/button_up.png',
-                        background_down = PICPATH+'/button_down.png'))
-        self.add_widget(Button(text='Delete', font_size = 12, color = (0,0,0,1),
-                        background_normal = PICPATH+'/button_up.png',
-                        background_down = PICPATH+'/button_down.png'))
+        self.add_widget(delBtn)
 
 class CustomMacroWidget(BoxLayout):
     index = 0
@@ -1015,20 +1024,37 @@ class CustomMacroWidget(BoxLayout):
     
     def __init__(self, index, owner, name, **kwargs):
         super(CustomMacroWidget, self).__init__(**kwargs)
+        #set various variables
         self.index = index
         self.owner = owner
         self.name = name
         self.spacing = 3
+        #now create buttons
+        editBtn = Button(text='Edit', font_size = 12, color = (0,0,0,1),
+                         background_normal = PICPATH+'/button_up.png',
+                         background_down = PICPATH+'/button_down.png')
+        delBtn = Button(text='Delete', font_size = 12, color = (0,0,0,1),
+                        background_normal = PICPATH+'/button_up.png',
+                        background_down = PICPATH+'/button_down.png')
+
+        #bind buttons
+        editBtn.bind(on_release=lambda(btn):editMacroCallback(name))
+        def delBtn_callback(btn):
+            print "Removing macro ", name
+            removeMacro(name)
+            owner.refresh()
+        delBtn.bind(on_release=delBtn_callback)
+        
+        #build self
         self.add_widget(Button(text=name, color = (0,0,0,1),
                         text_size = (220,None), halign='left',
                         size_hint_x = 4.5, font_size = 12,
                         background_normal = PICPATH+'/dropdown_choice.png',
                         background_down = PICPATH+'/dropdown_choice.png'))
-        self.add_widget(Button(text='Delete', font_size = 12, color = (0,0,0,1),
-                        background_normal = PICPATH+'/button_up.png',
-                        background_down = PICPATH+'/button_down.png'))
+        self.add_widget(editBtn)
+        self.add_widget(delBtn)
 
-
+#### End classes
 
 cepg = CustomizeEventPopup('gesture')
 cepm = CustomizeEventPopup('macro')
@@ -1043,12 +1069,17 @@ def manageMacros():
 ## Create events functions, classes and popups here
 #####################################################
 
-def createGesture():
+######## Edit macros
+def editMacroCallback(macro):
+    print "Will now edit macro ", macro
+    pass
+
+def createGestureCallback():
+    print "Will now open create gesture popup"
     pass;
 
-def createMacro():
-    p = Popup)
-    pass;
+#def createMacro():
+#    pass;
 
 
 ##################################################################
