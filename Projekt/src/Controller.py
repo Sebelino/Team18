@@ -15,7 +15,7 @@ def on_touch_down(self, touch):
     if g == None:
         pass
     else:
-        getListOfMappings().[slå upp gesten och returnera kommando]
+        getListOfMappings().[sla upp gesten och returnera kommando]
     '''
     
 
