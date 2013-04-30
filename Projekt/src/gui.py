@@ -18,6 +18,8 @@ from kivy.graphics import Color,Ellipse,Line
 from kivy.gesture import Gesture,GestureDatabase
 import Gesture as OwnGesture
 import Controller
+from listview import ListView, ScrollViewFixed
+
 
 import thread
 import time
@@ -312,6 +314,7 @@ class MappingInstance(FloatLayout):
         self.children[2].bind(on_release=self.__infoBtnGest_callback)
         self.children[4].bind(on_release=self.__infoBtnMac_callback)
 
+
 class ScrollViewFixed(ScrollView):
     ''' This class is basically the same as a ScrollView,
     except that the scrolling update method is overridden.
@@ -394,10 +397,6 @@ class touchBlockedPopup(Popup):
         print "uid: " + str(touch.uid)
         if str(touch.device) == "mouse":
             super(touchBlockedPopup, self).on_touch_up(touch)
-
-
-
-
 
 
 
@@ -711,6 +710,10 @@ def getListOfGestures():
 #            ('Two-finger swipe', Image(source=PICPATH+'/two_swipe.gif', allow_stretch=True,
 #                            keep_ratio=False))]
 
+def getListOfCustomGestures():
+    """Returns a list of all Custom gestures"""
+    return ["RAH", "BLO", "PATETISK" ]
+
 def getListOfMacros():
     """Returns a list of Macros/Windows Functions, requested from Controller."""
     table = db.getCommands()
@@ -720,7 +723,10 @@ def getListOfMacros():
 #            ('faint', Image(source=PICPATH+'/art.png', allow_stretch=True,
 #                            keep_ratio=False))]
 
-
+def getListOfCustomMacros():
+    """Returns a list of all Custom gestures"""
+    return ["RAH", "BLO", "PATETISKMACRO" ]    
+           
 #-------- Profile management ---------#
 
 def createProfile(profileName):
@@ -992,6 +998,106 @@ def displayEditMappingPopup(index, gestOrMacro):
 ############
 # Manage custom events
 ############
+
+class CustomizeEventPopup(Popup):
+    gestureOrMacro = "gesture"
+    container = None
+
+    def __init__(self, gestureOrMacro, **kwargs):
+        super(CustomizeEventPopup, self).__init__(**kwargs)
+        self.size_hint = (None, None)
+        self.size = (400, 400)
+        self.auto_dismiss = False
+        self.gestureOrMacro = gestureOrMacro
+        content = FloatLayout()
+        self.container = content
+
+        #set create button
+        createBtn = Button(size_hint = (None, None), size = (100, 30),
+                           pos_hint = {'x': 0.1, 'y': 0.03}, markup = True,
+                           background_normal = PICPATH+'/button_up.png',
+                           background_down = PICPATH+'/button_down.png')
+        def createBtn_callback(btn):
+            self.refresh()
+            if gestureOrMacro == 'gesture':
+                createGesture()
+            else:
+                createMacro()
+        createBtn.bind(on_release=createBtn_callback)
+        
+        #set done button
+        doneBtn = Button(size_hint = (None, None), size = (100, 30),
+                         text = "[color=000000]Done", markup = True,
+                         pos_hint = {'right': 0.9, 'y': 0.03},
+                         background_normal = PICPATH+'/button_up.png',
+                         background_down = PICPATH+'/button_down.png')
+        doneBtn.bind(on_release=lambda(btn):self.dismiss())
+        
+
+        #Do some event-specific stuff
+        if gestureOrMacro == "gesture":
+            self.title = "Manage Custom Gestures"
+            createBtn.text = "[color=000000]Create new gesture"
+        else:
+            self.title = "Manage Custom Macros"
+            createBtn.text = "[color=000000]Create new macro"
+
+        #add widgets
+        content.add_widget(doneBtn)
+        content.add_widget(createBtn)
+        self.container = ListView(25, size_hint = (None, None),
+                                    size = (380, 300),
+                                    pos_hint = {'x':0.01, 'y':0.2})
+        content.add_widget(self.container)
+
+        self.refresh()
+        
+    def refresh():
+        while len(self.container.box.children) > 0:
+            self.container.remove_widget(self.container.box.children[0])
+        if self.gestureOrMacro == 'gesture':
+            eventList = getListOfCustomGestures()
+        else:
+            eventList = getListOfCustomMacros()
+        i = 0
+        for event in eventList:
+            if self.gestureOrMacro == 'gesture':
+                self.container.add_widget(CustomMacroWidget(i, self, event))
+            else:
+                self.container.add_widget(CustomGestureWidget(i, self, event))
+            i += 1
+
+class CustomMacroWidget(FloatLayout):
+    index = 0
+    owner = None
+    name = "My macro"
+    
+    def __init__(self, index, owner, name, **kwargs):
+        super(CustomMacroWidget, self).__init__(**kwargs)
+        self.index = index
+        self.owner = owner
+        self.name = name
+        self.add_widget(Button(text=name))
+
+class CustomGestureWidget(FloatLayout):
+    index = 0
+    owner = None
+    name = "My gesture"
+    
+    def __init__(self, index, owner, name, **kwargs):
+        super(CustomGestureWidget, self).__init__(**kwargs)
+        self.index = index
+        self.owner = owner
+        self.name = name
+        self.add_widget(Button(text=name))
+
+    
+
+def createGesture():
+    pass;
+
+def createMacro():
+    pass;
 
 def manageGestures():
     print "Här ska manageras gester; hihi!"
