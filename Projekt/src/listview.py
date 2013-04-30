@@ -50,7 +50,7 @@ class ListView(FloatLayout):
 
     def add_widget(self, widget, index = 0):
         #first, make sure the widget size is correct.
-        widget.size_hint = (None, None)
+        #widget.size_hint = (None, None)
         widget.size = (self.size[0], self.__childHeight)
         
         self.childc += 1
@@ -59,7 +59,7 @@ class ListView(FloatLayout):
 
     def remove_widget(self, widget):
         self.box.remove_widget(widget)
-        childc -= 1
+        self.childc -= 1
         self.box.size = (self.box.size[0],self.childc * self.__childHeight)
     
 class ScrollViewFixed(ScrollView):

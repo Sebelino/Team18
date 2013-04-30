@@ -290,7 +290,8 @@ class MacroCreator(FloatLayout):
         super(MacroCreator,self).__init__(**kwargs)
         self.layout = BoxLayout(orientation='vertical',size_hint=(None,None),size = (100,100))
         nameBox = TextInput(multiline = False,font_size = 13)
-        nameBox.add_widget(self.layout)
+        #nameBox.add_widget(self.layout)
+        self.add_widget(nameBox)
 
 class MappingInstance(FloatLayout):
     index = 0
@@ -420,7 +421,7 @@ class EventPopup(Popup):
             eventBtn.text = '[color=000000][font='+font+'][size=11]'+ \
                             'Customize'
             def eventBtn_callback(btn):
-                manageGestures()
+                manageMacros()
                 #self.dismiss() TODO
             eventBtn.bind(on_release=eventBtn_callback)
                           
@@ -926,8 +927,8 @@ class CustomizeEventPopup(Popup):
         self.container = content
 
         #set create button
-        createBtn = Button(size_hint = (None, None), size = (100, 30),
-                           pos_hint = {'x': 0.1, 'y': 0.03}, markup = True,
+        createBtn = Button(size_hint = (None, None), size = (150, 25),
+                           pos_hint = {'x': 0.05, 'y': 0.03}, markup = True,
                            background_normal = PICPATH+'/button_up.png',
                            background_down = PICPATH+'/button_down.png')
         def createBtn_callback(btn):
@@ -939,13 +940,12 @@ class CustomizeEventPopup(Popup):
         createBtn.bind(on_release=createBtn_callback)
         
         #set done button
-        doneBtn = Button(size_hint = (None, None), size = (100, 30),
+        doneBtn = Button(size_hint = (None, None), size = (150, 25),
                          text = "[color=000000]Done", markup = True,
-                         pos_hint = {'right': 0.9, 'y': 0.03},
+                         pos_hint = {'right': 0.95, 'y': 0.03},
                          background_normal = PICPATH+'/button_up.png',
                          background_down = PICPATH+'/button_down.png')
         doneBtn.bind(on_release=lambda(btn):self.dismiss())
-        
 
         #Do some event-specific stuff
         if gestureOrMacro == "gesture":
@@ -959,13 +959,15 @@ class CustomizeEventPopup(Popup):
         content.add_widget(doneBtn)
         content.add_widget(createBtn)
         self.container = ListView(25, size_hint = (None, None),
-                                    size = (380, 300),
-                                    pos_hint = {'x':0.01, 'y':0.2})
+                                    size = (340, 260),
+                                    pos_hint = {'x':0, 'y':0.2})
         content.add_widget(self.container)
+        self.content = content
+        
 
         self.refresh()
         
-    def refresh():
+    def refresh(self):
         while len(self.container.box.children) > 0:
             self.container.remove_widget(self.container.box.children[0])
         if self.gestureOrMacro == 'gesture':
@@ -975,24 +977,15 @@ class CustomizeEventPopup(Popup):
         i = 0
         for event in eventList:
             if self.gestureOrMacro == 'gesture':
+                #self.container.add_widget(Button(text=event))
+                #self.container.add_widget(MacroCreator())
                 self.container.add_widget(CustomMacroWidget(i, self, event))
             else:
+                #self.container.add_widget(Button(text=event))
                 self.container.add_widget(CustomGestureWidget(i, self, event))
             i += 1
 
-class CustomMacroWidget(FloatLayout):
-    index = 0
-    owner = None
-    name = "My macro"
-    
-    def __init__(self, index, owner, name, **kwargs):
-        super(CustomMacroWidget, self).__init__(**kwargs)
-        self.index = index
-        self.owner = owner
-        self.name = name
-        self.add_widget(Button(text=name))
-
-class CustomGestureWidget(FloatLayout):
+class CustomGestureWidget(BoxLayout):
     index = 0
     owner = None
     name = "My gesture"
@@ -1002,9 +995,41 @@ class CustomGestureWidget(FloatLayout):
         self.index = index
         self.owner = owner
         self.name = name
-        self.add_widget(Button(text=name))
+        self.spacing = 3
+        self.add_widget(Button(text=name, color = (0,0,0,1),
+                        text_size = (220,None), halign='left',
+                        size_hint_x = 4.5, font_size = 12,
+                        background_normal = PICPATH+'/dropdown_choice.png',
+                        background_down = PICPATH+'/dropdown_choice.png'))
+        self.add_widget(Button(text='Edit', font_size = 12, color = (0,0,0,1),
+                        background_normal = PICPATH+'/button_up.png',
+                        background_down = PICPATH+'/button_down.png'))
+        self.add_widget(Button(text='Delete', font_size = 12, color = (0,0,0,1),
+                        background_normal = PICPATH+'/button_up.png',
+                        background_down = PICPATH+'/button_down.png'))
 
+class CustomMacroWidget(BoxLayout):
+    index = 0
+    owner = None
+    name = "My macro"
     
+    def __init__(self, index, owner, name, **kwargs):
+        super(CustomMacroWidget, self).__init__(**kwargs)
+        self.index = index
+        self.owner = owner
+        self.name = name
+        self.spacing = 3
+        self.add_widget(Button(text=name, color = (0,0,0,1),
+                        text_size = (220,None), halign='left',
+                        size_hint_x = 4.5, font_size = 12,
+                        background_normal = PICPATH+'/dropdown_choice.png',
+                        background_down = PICPATH+'/dropdown_choice.png'))
+        self.add_widget(Button(text='Delete', font_size = 12, color = (0,0,0,1),
+                        background_normal = PICPATH+'/button_up.png',
+                        background_down = PICPATH+'/button_down.png'))
+
+cepg = CustomizeEventPopup('gesture')
+cepm = CustomizeEventPopup('macro')
 
 def createGesture():
     pass;
@@ -1013,10 +1038,10 @@ def createMacro():
     pass;
 
 def manageGestures():
-    print "Här ska manageras gester; hihi!"
+    cepg.open()
 
 def manageMacros():
-    print "Här ska manageras makron; hihi!"
+    cepm.open()
 
 ##################################################################
 # ------------------Main building class ------------------------_#
@@ -1054,7 +1079,7 @@ class GestureMapper(App):
         mainArea.add_widget(macroLabel)
         mainArea.add_widget(gestureLabel)
         mainArea.add_widget(mappingBox)
-        mainArea.add_widget(mcreator)
+        #mainArea.add_widget(mcreator)
         mainArea.add_widget(addMappingButton)
         #updateMappings()
        
