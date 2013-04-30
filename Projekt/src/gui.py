@@ -17,7 +17,7 @@ from kivy.properties import NumericProperty
 from kivy.graphics import Color,Ellipse,Line
 from kivy.gesture import Gesture,GestureDatabase
 import Gesture as OwnGesture
-# import Controller
+import Controller
 
 import thread
 import time
@@ -1068,19 +1068,26 @@ class TouchArea(BoxLayout):
         
         if str(touch.device) == "mouse":
             super(TouchArea, self).on_touch_down(touch)
+        elif str(touch.device) == "multitouchtable":
+            Controller.on_touch_down(touch)
+        
 
     def on_touch_move(self, touch):
         print "Touch move!"
         print "uid: " + str(touch.uid)
         if str(touch.device) == "mouse":
             super(TouchArea, self).on_touch_move(touch)
+        elif str(touch.device) == "multitouchtable":
+            Controller.on_touch_down(touch)
+        
 
     def on_touch_up(self, touch):
         print "Touch up!"
         print "uid: " + str(touch.uid)
         if str(touch.device) == "mouse":
             super(TouchArea, self).on_touch_up(touch)
-
+        elif str(touch.device) == "multitouchtable":
+            Controller.on_touch_down(touch)
 
 
 
