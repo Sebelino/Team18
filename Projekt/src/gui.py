@@ -94,65 +94,6 @@ class MappingDisplay(FloatLayout):
     macroEditButtonImageDown = None
     mappingHeight = 25
 
-    #Buttons in the scrollview dont work if this part below
-    # is not commented away
-    '''On touch events'''
-    """    queue = Queue.Queue()
-    
-    def on_touch_down(self, touch):
-        print str(touch.device)
-        if str(touch.device) == "multitouchtable":
-            print "touch"
-        elif str(touch.device) == "mouse":
-            print "mouse click"
-            super(MappingDisplay, self).on_touch_down(touch)
-        # start collecting points in touch.ud
-        # create a line to display the points
-        userdata = touch.ud
-        with self.canvas:
-            Color(1, 0, 0)
-            d = 10.
-            Ellipse(pos=(touch.x - d/2, touch.y - d/2), size=(d, d))
-            userdata['line'] = Line(points=(touch.x, touch.y))
-
-
-    def on_touch_move(self, touch):
-        # store points of the touch movement
-        try:
-            touch.ud['line'].points += [touch.x, touch.y]
-            return True
-        except (KeyError), e:
-            pass
-
-    def containsGesture():
-        return not queue.empty()
-
-    def poll():
-        return queue.get()
-
-    def on_touch_up(self, touch):
-        # touch is over, display informations, and check if it matches some
-        # known gesture.
-        g = simplegesture(
-                '',
-                zip(touch.ud['line'].points[::2], touch.ud['line'].points[1::2])
-                )
-        # print the gesture representation, you can use that to add
-        # gestures to my_gestures.py
-        print "gesture representation:", self.gdb.gesture_to_str(g)
-
-        gesture = OwnGesture.Gesture(self.gdb.gesture_to_str(g))
-        self.queue.put(gesture)
-
-        # erase the lines on the screen, this is a bit quick&dirty, since we
-        # can have another touch event on the way...
-        #self.canvas.clear()
-
-    def containsGesture():
-        return not queue.empty()
-    """  
-    '''End of on-touch events'''
-
     def __init__(self,**kwargs):
         #call the constructor of the flowlayout
         #this exists to keep the standard kivy syntax
@@ -172,7 +113,6 @@ class MappingDisplay(FloatLayout):
         scroll.add_widget(self.layout)
         self.scroll = scroll
         self.add_widget(scroll)
-        self.gdb = GestureDatabase()
 
         #now implement a scrollbar
         s = Slider(orientation='vertical', value_normalized = 0.5, 
@@ -282,6 +222,65 @@ class MappingDisplay(FloatLayout):
     def showInfo(self,index,which):
         displayEditMappingPopup(index, which)
         
+class GestureCreator(FloatLayout):
+    '''On touch events'''
+    queue = Queue.Queue()
+
+    def __init__(self,**kwargs):
+        super(GestureCreator,self).__init__(**kwargs)
+        self.gdb = GestureDatabase()
+    
+    def on_touch_down(self, touch):
+        print str(touch.device)
+        if str(touch.device) == "multitouchtable":
+            print "touch"
+        elif str(touch.device) == "mouse":
+            print "mouse click"
+        # start collecting points in touch.ud
+        # create a line to display the points
+        userdata = touch.ud
+        with self.canvas:
+            Color(1, 0, 0)
+            d = 10.
+            Ellipse(pos=(touch.x - d/2, touch.y - d/2), size=(d, d))
+            userdata['line'] = Line(points=(touch.x, touch.y))
+
+    def on_touch_move(self, touch):
+        # store points of the touch movement
+        try:
+            touch.ud['line'].points += [touch.x, touch.y]
+            return True
+        except (KeyError), e:
+            pass
+
+    def containsGesture():
+        return not queue.empty()
+
+    def poll():
+        return queue.get()
+
+    def on_touch_up(self, touch):
+        # touch is over, display informations, and check if it matches some
+        # known gesture.
+        g = simplegesture(
+                '',
+                zip(touch.ud['line'].points[::2], touch.ud['line'].points[1::2])
+                )
+        # print the gesture representation, you can use that to add
+        # gestures to my_gestures.py
+        print "gesture representation:", self.gdb.gesture_to_str(g)
+
+        gesture = OwnGesture.Gesture(self.gdb.gesture_to_str(g))
+        self.queue.put(gesture)
+
+        # erase the lines on the screen, this is a bit quick&dirty, since we
+        # can have another touch event on the way...
+        #self.canvas.clear()
+
+    def containsGesture():
+        return not queue.empty()
+    '''End of on-touch events'''
+
 
 class MappingInstance(FloatLayout):
     index = 0
@@ -936,10 +935,10 @@ def displayEditMappingPopup(index, gestOrMacro):
 ############
 
 def manageGestures():
-    pass
+    print "Här ska manageras gester; hihi!"
 
 def manageMacros():
-    pass
+    print "Här ska manageras makron; hihi!"
 
 ##################################################################
 # ------------------Main building class ------------------------_#
