@@ -18,6 +18,7 @@ from kivy.graphics import Color,Ellipse,Line
 from kivy.gesture import Gesture,GestureDatabase
 import Gesture as OwnGesture
 from listview import ListView, ScrollViewFixed
+# import Controller
 
 import thread
 import time
@@ -64,7 +65,7 @@ usage:
 4. There are lots of options for setting Images, attributes should have
    (long :/) describing names. Set images before adding mappings.
 5. When adding a mapping, it should be in the format of a tuple with
-   two string attributes. Otherwise, might get exceptions.
+   two string attributes. Otherwise, might get exceptions
 6. MappingDisplay is a FloatLayout with two children: a background
    image and a ScrollView. If adding children directly, it will behave
    like a FloatLayout. The ScrollView contains a BoxLayout with
@@ -95,65 +96,6 @@ class MappingDisplay(FloatLayout):
     macroEditButtonImageDown = None
     mappingHeight = 25
 
-    #Buttons in the scrollview dont work if this part below
-    # is not commented away
-    '''On touch events'''
-    """    queue = Queue.Queue()
-    
-    def on_touch_down(self, touch):
-        print str(touch.device)
-        if str(touch.device) == "multitouchtable":
-            print "touch"
-        elif str(touch.device) == "mouse":
-            print "mouse click"
-            super(MappingDisplay, self).on_touch_down(touch)
-        # start collecting points in touch.ud
-        # create a line to display the points
-        userdata = touch.ud
-        with self.canvas:
-            Color(1, 0, 0)
-            d = 10.
-            Ellipse(pos=(touch.x - d/2, touch.y - d/2), size=(d, d))
-            userdata['line'] = Line(points=(touch.x, touch.y))
-
-
-    def on_touch_move(self, touch):
-        # store points of the touch movement
-        try:
-            touch.ud['line'].points += [touch.x, touch.y]
-            return True
-        except (KeyError), e:
-            pass
-
-    def containsGesture():
-        return not queue.empty()
-
-    def poll():
-        return queue.get()
-
-    def on_touch_up(self, touch):
-        # touch is over, display informations, and check if it matches some
-        # known gesture.
-        g = simplegesture(
-                '',
-                zip(touch.ud['line'].points[::2], touch.ud['line'].points[1::2])
-                )
-        # print the gesture representation, you can use that to add
-        # gestures to my_gestures.py
-        print "gesture representation:", self.gdb.gesture_to_str(g)
-
-        gesture = OwnGesture.Gesture(self.gdb.gesture_to_str(g))
-        self.queue.put(gesture)
-
-        # erase the lines on the screen, this is a bit quick&dirty, since we
-        # can have another touch event on the way...
-        #self.canvas.clear()
-
-    def containsGesture():
-        return not queue.empty()
-    """  
-    '''End of on-touch events'''
-
     def __init__(self,**kwargs):
         #call the constructor of the flowlayout
         #this exists to keep the standard kivy syntax
@@ -173,7 +115,6 @@ class MappingDisplay(FloatLayout):
         scroll.add_widget(self.layout)
         self.scroll = scroll
         self.add_widget(scroll)
-        self.gdb = GestureDatabase()
 
         #now implement a scrollbar
         s = Slider(orientation='vertical', value_normalized = 0.5, 
@@ -283,6 +224,73 @@ class MappingDisplay(FloatLayout):
     def showInfo(self,index,which):
         displayEditMappingPopup(index, which)
         
+class GestureCreator(FloatLayout):
+    '''On touch events'''
+    queue = Queue.Queue()
+
+    def __init__(self,**kwargs):
+        super(GestureCreator,self).__init__(**kwargs)
+        self.gdb = GestureDatabase()
+    
+    def on_touch_down(self, touch):
+        print str(touch.device)
+        if str(touch.device) == "multitouchtable":
+            print "touch"
+        elif str(touch.device) == "mouse":
+            print "mouse click"
+        # start collecting points in touch.ud
+        # create a line to display the points
+        userdata = touch.ud
+        with self.canvas:
+            Color(1, 0, 0)
+            d = 10.
+            Ellipse(pos=(touch.x - d/2, touch.y - d/2), size=(d, d))
+            userdata['line'] = Line(points=(touch.x, touch.y))
+
+    def on_touch_move(self, touch):
+        # store points of the touch movement
+        try:
+            touch.ud['line'].points += [touch.x, touch.y]
+            return True
+        except (KeyError), e:
+            pass
+
+    def containsGesture():
+        return not queue.empty()
+
+    def poll():
+        return queue.get()
+
+    def on_touch_up(self, touch):
+        # touch is over, display informations, and check if it matches some
+        # known gesture.
+        g = simplegesture(
+                '',
+                zip(touch.ud['line'].points[::2], touch.ud['line'].points[1::2])
+                )
+        # print the gesture representation, you can use that to add
+        # gestures to my_gestures.py
+        print "gesture representation:", self.gdb.gesture_to_str(g)
+
+        gesture = OwnGesture.Gesture(self.gdb.gesture_to_str(g))
+        self.queue.put(gesture)
+
+        # erase the lines on the screen, this is a bit quick&dirty, since we
+        # can have another touch event on the way...
+        #self.canvas.clear()
+
+    def containsGesture():
+        return not queue.empty()
+    '''End of on-touch events'''
+
+
+class MacroCreator(FloatLayout):
+    layout = None
+    def __init__(self,**kwargs):
+        super(MacroCreator,self).__init__(**kwargs)
+        self.layout = BoxLayout(orientation='vertical',size_hint=(None,None),size = (100,100))
+        nameBox = TextInput(multiline = False,font_size = 13)
+        nameBox.add_widget(self.layout)
 
 class MappingInstance(FloatLayout):
     index = 0
@@ -851,6 +859,11 @@ macroLabel = Label(text='[color=000000][b][size=16]Windows Function',
                    font_name = font,
                    markup = True)
 
+mcreator = MacroCreator(size = (200, 75), size_hint=(None,None),
+                            pos_hint = {'x':0.02,'y':0.04})
+
+#gcreator = GestureCreator(size = (200, 75), size_hint=(None,None),
+#                            pos_hint = {'x':0.02,'y':0.04})
 # mapping thingy
 
 mappingBox = MappingDisplay(size = (500, 275), size_hint=(None,None),
@@ -992,11 +1005,10 @@ def createMacro():
     pass;
 
 def manageGestures():
-    pass
-    #manageEventsPopup.open()
+    print "Här ska manageras gester; hihi!"
 
 def manageMacros():
-    pass
+    print "Här ska manageras makron; hihi!"
 
 ##################################################################
 # ------------------Main building class ------------------------_#
@@ -1034,6 +1046,7 @@ class GestureMapper(App):
         mainArea.add_widget(macroLabel)
         mainArea.add_widget(gestureLabel)
         mainArea.add_widget(mappingBox)
+        mainArea.add_widget(mcreator)
         mainArea.add_widget(addMappingButton)
         #updateMappings()
        
