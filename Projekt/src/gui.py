@@ -17,9 +17,8 @@ from kivy.properties import NumericProperty
 from kivy.graphics import Color,Ellipse,Line
 from kivy.gesture import Gesture,GestureDatabase
 import Gesture as OwnGesture
-import Controller
 from listview import ListView, ScrollViewFixed
-
+# import Controller
 
 import thread
 import time
@@ -315,96 +314,10 @@ class MappingInstance(FloatLayout):
         self.children[2].bind(on_release=self.__infoBtnGest_callback)
         self.children[4].bind(on_release=self.__infoBtnMac_callback)
 
-
-class ScrollViewFixed(ScrollView):
-    ''' This class is basically the same as a ScrollView,
-    except that the scrolling update method is overridden.
-    The difference is that four lines of code has been removed.
-    Those 4 lines made the scroll bar dissapear when not active for
-    a few seconds.
-
-    '''
-    slider = None
-
-    def __init__(self,**kwargs):
-        super(ScrollViewFixed,self).__init__(**kwargs)      
-
-    def update_from_scroll(self, *largs):
-        if not self._viewport:
-            return
-        vp = self._viewport
-
-        if self.do_scroll_x:
-            self.scroll_x = min(1, max(0, self.scroll_x))
-        if self.do_scroll_y:
-            self.scroll_y = min(1, max(0, self.scroll_y))
-
-        # update from size_hint
-        if vp.size_hint_x is not None:
-            vp.width = vp.size_hint_x * self.width
-        if vp.size_hint_y is not None:
-            vp.height = vp.size_hint_y * self.height
-
-        if vp.width > self.width:
-            sw = vp.width - self.width
-            x = self.x - self.scroll_x * sw
-        else:
-            x = self.x
-        if vp.height > self.height:
-            sh = vp.height - self.height
-            y = self.y - self.scroll_y * sh
-        else:
-            y = self.top - vp.height
-        vp.pos = x, y
-        #own code for slider/scrollbar
-        if self.slider != None:
-            self.slider.value_normalized = self.scroll_y
-
-
-
-
-
-
-
-
-
-
-##################################################################
-#-------------------- touch block Popup Class -------------------#
-##################################################################
-
-#This class disables touch on popups
-
-class touchBlockedPopup(Popup):
-    #On touch events
-    def on_touch_down(self, touch):
-        print "Touch down!"
-        print "Touch uid: " + str(touch.uid)
-
-        if len(EventLoop.touches) > 1:
-            print "Multi touch!"
-        
-        if str(touch.device) == "mouse":
-            super(touchBlockedPopup, self).on_touch_down(touch)
-
-    def on_touch_move(self, touch):
-        print "Touch move!"
-        print "uid: " + str(touch.uid)
-        if str(touch.device) == "mouse":
-            super(touchBlockedPopup, self).on_touch_move(touch)
-
-    def on_touch_up(self, touch):
-        print "Touch up!"
-        print "uid: " + str(touch.uid)
-        if str(touch.device) == "mouse":
-            super(touchBlockedPopup, self).on_touch_up(touch)
-
-
-
 ##################################################################
 #-------------------- Event Popup Class -------------------------#
 ##################################################################
-class EventPopup(touchBlockedPopup):
+class EventPopup(Popup):
     '''A class which is a very specialized popup.
 
     To use, simply initiate an instance with one parameter, which is a
@@ -600,7 +513,7 @@ Example no args: confirm.open("Are you sure you want to close the program?",
 
 
 
-class ConfirmPopup(touchBlockedPopup):
+class ConfirmPopup(Popup):
     function = None
     args = []
     
@@ -793,7 +706,7 @@ def removeGesture(gesture):
     pass
 
 #-------------- Macros/Windows functions ------------------#
-def createMacro(macro):
+def createMacro():
     """ Creates a new Macro. """
     pass
 
@@ -1019,11 +932,11 @@ class CustomizeEventPopup(Popup):
                            background_normal = PICPATH+'/button_up.png',
                            background_down = PICPATH+'/button_down.png')
         def createBtn_callback(btn):
-            self.refresh()
             if gestureOrMacro == 'gesture':
                 createGesture()
             else:
                 createMacro()
+            self.refresh()
         createBtn.bind(on_release=createBtn_callback)
         
         #set done button
@@ -1115,14 +1028,10 @@ class CustomMacroWidget(BoxLayout):
                         background_normal = PICPATH+'/button_up.png',
                         background_down = PICPATH+'/button_down.png'))
 
+
+
 cepg = CustomizeEventPopup('gesture')
 cepm = CustomizeEventPopup('macro')
-
-def createGesture():
-    pass;
-
-def createMacro():
-    pass;
 
 def manageGestures():
     cepg.open()
@@ -1130,15 +1039,25 @@ def manageGestures():
 def manageMacros():
     cepm.open()
 
+#####################################################
+## Create events functions, classes and popups here
+#####################################################
+
+def createGesture():
+    pass;
+
+def createMacro():
+    p = Popup)
+    pass;
+
+
 ##################################################################
 # ------------------Main building class ------------------------_#
 ##################################################################
 class GestureMapper(App):
 
-    
-
     def build(self):
-        root = TouchArea(orientation='vertical')
+        root = BoxLayout(orientation='vertical')
         #top bar, choose profile bar
         #topBar = StencilView()
         topBar = FloatLayout(size_hint=(1,0.3))
@@ -1170,12 +1089,6 @@ class GestureMapper(App):
         mainArea.add_widget(mappingBox)
         #mainArea.add_widget(mcreator)
         mainArea.add_widget(addMappingButton)
-        mainArea.add_widget(TouchArea())
-        
-        '''root.add_widget(gesturePopup)
-        root.add_widget(macroPopup)
-        root.add_widget(confirm)'''
-        
         #updateMappings()
        
         #add all to root
@@ -1184,47 +1097,6 @@ class GestureMapper(App):
         
         return root
         
-
-
-
-class TouchArea(BoxLayout):
-
-    #On touch events
-    def on_touch_down(self, touch):
-        print "Touch down!"
-        print "Touch uid: " + str(touch.uid)
-
-        if len(EventLoop.touches) > 1:
-            print "Multi touch!"
-        
-        if str(touch.device) == "mouse":
-            super(TouchArea, self).on_touch_down(touch)
-        elif str(touch.device) == "multitouchtable":
-            Controller.on_touch_down(touch)
-        
-
-    def on_touch_move(self, touch):
-        print "Touch move!"
-        print "uid: " + str(touch.uid)
-        if str(touch.device) == "mouse":
-            super(TouchArea, self).on_touch_move(touch)
-        elif str(touch.device) == "multitouchtable":
-            Controller.on_touch_down(touch)
-        
-
-    def on_touch_up(self, touch):
-        print "Touch up!"
-        print "uid: " + str(touch.uid)
-        if str(touch.device) == "mouse":
-            super(TouchArea, self).on_touch_up(touch)
-        elif str(touch.device) == "multitouchtable":
-            Controller.on_touch_down(touch)
-
-
-
-
-
-
 
 #and Main
 
