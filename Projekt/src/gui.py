@@ -347,10 +347,55 @@ class ScrollViewFixed(ScrollView):
         if self.slider != None:
             self.slider.value_normalized = self.scroll_y
 
+
+
+
+
+
+
+
+
+
+##################################################################
+#-------------------- touch block Popup Class -------------------#
+##################################################################
+
+#This class disables touch on popups
+
+class touchBlockedPopup(Popup):
+    #On touch events
+    def on_touch_down(self, touch):
+        print "Touch down!"
+        print "Touch uid: " + str(touch.uid)
+
+        if len(EventLoop.touches) > 1:
+            print "Multi touch!"
+        
+        if str(touch.device) == "mouse":
+            super(touchBlockedPopup, self).on_touch_down(touch)
+
+    def on_touch_move(self, touch):
+        print "Touch move!"
+        print "uid: " + str(touch.uid)
+        if str(touch.device) == "mouse":
+            super(touchBlockedPopup, self).on_touch_move(touch)
+
+    def on_touch_up(self, touch):
+        print "Touch up!"
+        print "uid: " + str(touch.uid)
+        if str(touch.device) == "mouse":
+            super(touchBlockedPopup, self).on_touch_up(touch)
+
+
+
+
+
+
+
 ##################################################################
 #-------------------- Event Popup Class -------------------------#
 ##################################################################
-class EventPopup(Popup):
+class EventPopup(touchBlockedPopup):
     '''A class which is a very specialized popup.
 
     To use, simply initiate an instance with one parameter, which is a
@@ -546,7 +591,7 @@ Example no args: confirm.open("Are you sure you want to close the program?",
 
 
 
-class ConfirmPopup(Popup):
+class ConfirmPopup(touchBlockedPopup):
     function = None
     args = []
     
@@ -945,8 +990,10 @@ def manageMacros():
 ##################################################################
 class GestureMapper(App):
 
+    
+
     def build(self):
-        root = BoxLayout(orientation='vertical')
+        root = TouchArea(orientation='vertical')
         #top bar, choose profile bar
         #topBar = StencilView()
         topBar = FloatLayout(size_hint=(1,0.3))
@@ -977,6 +1024,12 @@ class GestureMapper(App):
         mainArea.add_widget(gestureLabel)
         mainArea.add_widget(mappingBox)
         mainArea.add_widget(addMappingButton)
+        mainArea.add_widget(TouchArea())
+        
+        '''root.add_widget(gesturePopup)
+        root.add_widget(macroPopup)
+        root.add_widget(confirm)'''
+        
         #updateMappings()
        
         #add all to root
@@ -985,6 +1038,40 @@ class GestureMapper(App):
         
         return root
         
+
+
+
+class TouchArea(BoxLayout):
+
+    #On touch events
+    def on_touch_down(self, touch):
+        print "Touch down!"
+        print "Touch uid: " + str(touch.uid)
+
+        if len(EventLoop.touches) > 1:
+            print "Multi touch!"
+        
+        if str(touch.device) == "mouse":
+            super(TouchArea, self).on_touch_down(touch)
+
+    def on_touch_move(self, touch):
+        print "Touch move!"
+        print "uid: " + str(touch.uid)
+        if str(touch.device) == "mouse":
+            super(TouchArea, self).on_touch_move(touch)
+
+    def on_touch_up(self, touch):
+        print "Touch up!"
+        print "uid: " + str(touch.uid)
+        if str(touch.device) == "mouse":
+            super(TouchArea, self).on_touch_up(touch)
+
+
+
+
+
+
+
 
 #and Main
 
