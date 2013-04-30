@@ -17,6 +17,7 @@ from kivy.properties import NumericProperty
 from kivy.graphics import Color,Ellipse,Line
 from kivy.gesture import Gesture,GestureDatabase
 import Gesture as OwnGesture
+# import Controller
 
 import thread
 import time
@@ -63,7 +64,7 @@ usage:
 4. There are lots of options for setting Images, attributes should have
    (long :/) describing names. Set images before adding mappings.
 5. When adding a mapping, it should be in the format of a tuple with
-   two string attributes. Otherwise, might get exceptions.
+   two string attributes. Otherwise, might get exceptions
 6. MappingDisplay is a FloatLayout with two children: a background
    image and a ScrollView. If adding children directly, it will behave
    like a FloatLayout. The ScrollView contains a BoxLayout with
@@ -281,6 +282,14 @@ class GestureCreator(FloatLayout):
         return not queue.empty()
     '''End of on-touch events'''
 
+
+class MacroCreator(FloatLayout):
+    layout = None
+    def __init__(self,**kwargs):
+        super(MacroCreator,self).__init__(**kwargs)
+        self.layout = BoxLayout(orientation='vertical',size_hint=(None,None),size = (100,100))
+        nameBox = TextInput(multiline = False,font_size = 13)
+        nameBox.add_widget(self.layout)
 
 class MappingInstance(FloatLayout):
     index = 0
@@ -884,6 +893,11 @@ macroLabel = Label(text='[color=000000][b][size=16]Windows Function',
                    font_name = font,
                    markup = True)
 
+mcreator = MacroCreator(size = (200, 75), size_hint=(None,None),
+                            pos_hint = {'x':0.02,'y':0.04})
+
+#gcreator = GestureCreator(size = (200, 75), size_hint=(None,None),
+#                            pos_hint = {'x':0.02,'y':0.04})
 # mapping thingy
 
 mappingBox = MappingDisplay(size = (500, 275), size_hint=(None,None),
@@ -976,6 +990,7 @@ class GestureMapper(App):
         mainArea.add_widget(macroLabel)
         mainArea.add_widget(gestureLabel)
         mainArea.add_widget(mappingBox)
+        mainArea.add_widget(mcreator)
         mainArea.add_widget(addMappingButton)
         #updateMappings()
        
