@@ -314,6 +314,38 @@ class MappingInstance(FloatLayout):
         self.children[2].bind(on_release=self.__infoBtnGest_callback)
         self.children[4].bind(on_release=self.__infoBtnMac_callback)
 
+
+##################################################################
+#-------------------- touch block Popup Class -------------------#
+##################################################################
+
+#This class disables touch on popups
+
+class touchBlockedPopup(Popup):
+    #On touch events
+    def on_touch_down(self, touch):
+        print "Touch down!"
+        print "Touch uid: " + str(touch.uid)
+
+        if len(EventLoop.touches) > 1:
+            print "Multi touch!"
+        
+        if str(touch.device) == "mouse":
+            super(touchBlockedPopup, self).on_touch_down(touch)
+
+    def on_touch_move(self, touch):
+        print "Touch move!"
+        print "uid: " + str(touch.uid)
+        if str(touch.device) == "mouse":
+            super(touchBlockedPopup, self).on_touch_move(touch)
+
+    def on_touch_up(self, touch):
+        print "Touch up!"
+        print "uid: " + str(touch.uid)
+        if str(touch.device) == "mouse":
+            super(touchBlockedPopup, self).on_touch_up(touch)
+
+
 ##################################################################
 #-------------------- Event Popup Class -------------------------#
 ##################################################################
@@ -911,12 +943,27 @@ def displayEditMappingPopup(index, gestOrMacro):
         macroPopup.open(index)
 
 
-
-
-
 ############
 # Manage custom events
 ############
+
+'''
+This is the class CustomizeEventPopup.
+
+It is the popup that pops up when the user clicks on the button
+"customize" in the event popup. Basically, the class consists of a
+popup (opens with open()), with a title and a content (of course...).
+The content is a floatlayout with three components: one ListView for
+listing all custom events, and two buttons: create new and done.
+The create button calls either the createMacro() function, or the
+more complicated createGestureCallback(). The Done button simply dismisses
+the popup. Each component in the listview is either a CustomGestureWidget
+or a CustomMacroWidget. More info on them below.
+
+To use the popup, two instances have already been created. Simply call
+cepg.open() or cegm.open() to open the popups. 
+'''
+
 
 class CustomizeEventPopup(Popup):
     gestureOrMacro = "gesture"
@@ -987,6 +1034,15 @@ class CustomizeEventPopup(Popup):
                 self.container.add_widget(CustomMacroWidget(i, self, event))
             i += 1
 
+
+'''
+For context, see comment above class CustomizeEventPopup.
+This is a boxlayout with 2 components: one label with the gesture name,
+and a button for deleting this gesture. Note that the "label" is actually
+a button, but its fine because Button actually inherits from Label, and
+in the button you can set background image.
+'''
+
 class CustomGestureWidget(BoxLayout):
     index = 0
     owner = None
@@ -1016,6 +1072,13 @@ class CustomGestureWidget(BoxLayout):
                         background_normal = PICPATH+'/dropdown_choice.png',
                         background_down = PICPATH+'/dropdown_choice.png'))
         self.add_widget(delBtn)
+
+        
+'''
+For context, see comment above class CustomizeEventPopup.
+This is similar to the CustomGestureWidget, except that there also is a
+button for editing this macro, which calls the EditMacroCallback function.
+'''
 
 class CustomMacroWidget(BoxLayout):
     index = 0
@@ -1054,7 +1117,11 @@ class CustomMacroWidget(BoxLayout):
         self.add_widget(editBtn)
         self.add_widget(delBtn)
 
+
 #### End classes
+
+#### End classes definitions
+
 
 cepg = CustomizeEventPopup('gesture')
 cepm = CustomizeEventPopup('macro')
@@ -1127,9 +1194,45 @@ class GestureMapper(App):
         root.add_widget(mainArea)
         
         return root
+
+
+#kristoffers klass
+class TouchArea(BoxLayout):
+
+    #On touch events
+    def on_touch_down(self, touch):
+        print "Touch down!"
+        print "Touch uid: " + str(touch.uid)
+
+        if len(EventLoop.touches) > 1:
+            print "Multi touch!"
         
+        if str(touch.device) == "mouse":
+            super(TouchArea, self).on_touch_down(touch)
+        elif str(touch.device) == "multitouchtable":
+            Controller.on_touch_down(touch)
+        
+
+    def on_touch_move(self, touch):
+        print "Touch move!"
+        print "uid: " + str(touch.uid)
+        if str(touch.device) == "mouse":
+            super(TouchArea, self).on_touch_move(touch)
+        elif str(touch.device) == "multitouchtable":
+            Controller.on_touch_down(touch)
+        
+
+    def on_touch_up(self, touch):
+        print "Touch up!"
+        print "uid: " + str(touch.uid)
+        if str(touch.device) == "mouse":
+            super(TouchArea, self).on_touch_up(touch)
+        elif str(touch.device) == "multitouchtable":
+            Controller.on_touch_down(touch)
+
 
 #and Main
 
 if __name__ == '__main__':
     GestureMapper().run()
+
