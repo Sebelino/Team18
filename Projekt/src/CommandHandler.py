@@ -1,4 +1,4 @@
-import win32api, win32con,time
+import win32api, win32con, time, os
 
 VK_CODE = {'backspace':0x08,
            'tab':0x09,
@@ -150,12 +150,10 @@ VK_CODE = {'backspace':0x08,
 def execute(command):
     script = command.getScript()
     words = script.split()
-    time.sleep(3)
     parser(words)
     
 def testExecuteString(command):
     words = command.split()
-    time.sleep(3)
     parser(words)
 
 def parser(words):
@@ -169,6 +167,10 @@ def parser(words):
         press2Keys(VK_CODE[words[1]],VK_CODE[words[2]])
     if words[0].lower() == "scroll":
         press2Keys(words[1],words[2])
+    if words[0].lower() == "sleep":
+        sleep(words[1])
+    if words[0].lower() == "open":
+        openPath(words[1])
 
 def leftClick(x,y):
     win32api.mouse_event(win32con.MOUSEEVENTF_MOVE, x, y,0)
@@ -192,3 +194,10 @@ def press2Keys(w1,w2):
     win32api.keybd_event(w2,0,0,0)
     win32api.keybd_event(w1,0 ,win32con.KEYEVENTF_KEYUP ,0)
     win32api.keybd_event(w2,0 ,win32con.KEYEVENTF_KEYUP ,0)
+    
+def sleep(ms):
+    time.sleep(ms)
+
+def openPath(w1):    
+    os.startfile(w1)
+    
