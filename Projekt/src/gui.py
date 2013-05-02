@@ -18,7 +18,7 @@ from kivy.graphics import Color,Ellipse,Line
 from kivy.gesture import Gesture,GestureDatabase
 import Gesture as OwnGesture
 from listview import ListView, ScrollViewFixed
-# import Controller
+import Controller
 
 import thread
 import time
@@ -1283,7 +1283,7 @@ class TouchArea(BoxLayout):
         if str(touch.device) == "mouse":
             super(TouchArea, self).on_touch_down(touch)
         elif str(touch.device) == "multitouchtable":
-            Controller.on_touch_down(touch)
+            Controller.on_touch_down(self, touch)
         
 
     def on_touch_move(self, touch):
@@ -1292,7 +1292,7 @@ class TouchArea(BoxLayout):
         if str(touch.device) == "mouse":
             super(TouchArea, self).on_touch_move(touch)
         elif str(touch.device) == "multitouchtable":
-            Controller.on_touch_down(touch)
+            Controller.on_touch_down(self,touch)
         
 
     def on_touch_up(self, touch):
@@ -1301,7 +1301,7 @@ class TouchArea(BoxLayout):
         if str(touch.device) == "mouse":
             super(TouchArea, self).on_touch_up(touch)
         elif str(touch.device) == "multitouchtable":
-            Controller.on_touch_down(touch)
+            Controller.on_touch_down(self,touch)
 
 #and Main
 
