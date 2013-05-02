@@ -198,7 +198,7 @@ def press2Keys(w1,w2):
     win32api.keybd_event(w2,0 ,win32con.KEYEVENTF_KEYUP ,0)
     
 def sleep(ms):
-    time.sleep(ms)
+    time.sleep(ms/1000)
 
 def openPath(w1):    
     os.startfile(w1)
