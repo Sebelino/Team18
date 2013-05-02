@@ -731,8 +731,9 @@ def removeMapping(index):
     pass
 
 #-------------- Gestures ----------------#
-def createGesture(gesture):
+def createGesture(gesture, gestData, descType, desc):
     """ Creates the gesture. """
+    print gesture, gestData, "\n" ,descType, desc
     pass
 
 def removeGesture(gesture):
@@ -1207,17 +1208,99 @@ class EditMacroPopup(Popup):
         self.textAreaDesc.text = macInfo[3]
         self.textAreaScript.text = macInfo[1]
         super(EditMacroPopup, self).open()
-        
+
+class CreateGesturePopup(Popup):
+    textAreaName = None
+    textAreaDesc = None
+    traceWidget = None #Widget for tracing user's gesture
+    gestString = "SOME LONG STRING"
+    container = None
+    
+    def __init__(self, **kwargs):
+        super(CreateGesturePopup, self).__init__(**kwargs)
+        self.size_hint = (None, None)
+        self.size = (500, 500)
+        self.title = "Create gesture"
+        self.title_size = 20
+        self.auto_dismiss = False
+        container = FloatLayout()
+
+        #create buttons
+        acceptButton = Button(size_hint = (None, None), size = (120, 26),
+                              pos_hint = {'x':0.05, 'y':0}, color = (0,0,0,1),
+                              text = "Accept",
+                              background_normal = PICPATH+'/button_up.png',
+                              background_down = PICPATH+'/button_down.png')
+        def acceptButton_callback(btn):
+            createGesture(self.textAreaName.text, self.gestString,
+                      'text', self.textAreaDesc.text)
+            cepg.refresh()
+            self.dismiss()
+        acceptButton.bind(on_release=acceptButton_callback)
+        cancelButton = Button(size_hint = (None, None), size = (120, 26),
+                              pos_hint = {'right':0.95, 'y':0}, color = (0,0,0,1),
+                              text = "Cancel",
+                              background_normal = PICPATH+'/button_up.png',
+                              background_down = PICPATH+'/button_down.png')
+        cancelButton.bind(on_release=lambda(btn):self.dismiss())
+
+        #create textinputs
+        self.textAreaName = TextInput(multiline = False, font_size = 13,
+                                      size_hint = (0.4, 0.07),
+                                      text = "My gesture",
+                                      pos_hint = {'x':0, 'y': 0.88})
+        self.textAreaDesc = TextInput(multiline = True, font_size = 13,
+                                      size_hint = (0.4, 0.2),
+                                      text = "My description",
+                                      pos_hint = {'x':0, 'y': 0.63})
+        '''self.traceWidget = TextInput(multiline = True, font_size = 11,
+                                      size_hint = (1, 0.47),
+                                      pos_hint = {'x':0, 'y': 0.1})'''
+        #TODO - INITIALIZE YOUR WIDGET HERE
+        #see above bortkommenterad text input for pos_hint and size_hint
+        #values to fit it
+
+        #add widgets
+        container.add_widget(Label(font_size=15, text="Gesture name",
+                                   size_hint = (1, 0.05),
+                                   pos_hint = {'x':0, 'y':0.95},
+                                   halign='left', text_size=(450,None)))
+        container.add_widget(self.textAreaName)
+        container.add_widget(Label(font_size=15, text="Gesture description",
+                                   size_hint = (1, 0.05),
+                                   pos_hint = {'x':0, 'y':0.83},
+                                   halign='left', text_size=(450,None)))       
+        container.add_widget(self.textAreaDesc)
+        container.add_widget(Label(font_size=15, text="Draw gesture here",
+                                   size_hint = (1, 0.05),
+                                   pos_hint = {'x':0, 'y':0.57},
+                                   halign='left', text_size=(450,None)))        
+        #container.add_widget(self.textAreaScript)
+        #TODO - ADD YOUR WIDGET HERE
+        container.add_widget(acceptButton)
+        container.add_widget(cancelButton)
+
+        self.container = container
+        self.content = container
+
+    def open(self):
+        '''overriding open function'''
+        self.textAreaName.text = "My gesture"
+        self.textAreaDesc.text = "My description"
+        self.gestString = None
+        #TODO - IF YOU WANT TO INITIALISE SOMETHING FOR YOUR WIDGET
+        #       WHEN THE POPUP OPENS
+        super(CreateGesturePopup, self).open()
 
 ######## Edit macros
 emp = EditMacroPopup()
+egp = CreateGesturePopup()
         
 def editMacroCallback(macro):
     emp.open(macro)
 
 def createGestureCallback():
-    print "Will now open create gesture popup"
-    pass;
+    egp.open()
 
 #def createMacro():
 #    pass;
