@@ -151,7 +151,7 @@ VK_CODE = {'backspace':0x08,
            '`':0xC0}
 
 def execute(command):
-    if windows7 = True
+    if windows7 == True:
         script = command.getScript()
         words = script.split()
         parser(words)

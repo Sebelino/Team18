@@ -23,28 +23,22 @@ def simplegesture(name, point_list):
     return g
 
 
-def on_touch_down(self, touch):
+def on_touch_down(touch):
     # start collecting points in touch.ud
-    # create a line to display the points
     userdata = touch.ud
-    with self.canvas:
-        Color(1, 1, 0)
-        d = 30.
-        Ellipse(pos=(touch.x - d/2, touch.y - d/2), size=(d, d))
-        userdata['line'] = Line(points=(touch.x, touch.y))
+    userdata['line'] = Line(points=(touch.x, touch.y))
     return None    #TODO Return actual gesture object
 
-def on_touch_move(self, touch):
+def on_touch_move(touch):
     # store points of the touch movement
     try:
         touch.ud['line'].points += [touch.x, touch.y]
-        return True
     except (KeyError), e:
         pass
 
     return None    #TODO Return actual gesture object
 
-def on_touch_up(self, touch):
+def on_touch_up(touch):
     # touch is over, display informations, and check if it matches some
     # known gesture.
     g = simplegesture(
@@ -55,11 +49,7 @@ def on_touch_up(self, touch):
     # gestures to my_gestures.py
     print "gesture representation:", gdb.gesture_to_str(g)
 
-    gesture = OwnGesture.Gesture(gdb.gesture_to_str(g))
-
-    # erase the lines on the screen, this is a bit quick&dirty, since we
-    # can have another touch event on the way...
-    self.canvas.clear()
+    gesture = OwnGesture.Gesture("name", False, gdb.gesture_to_str(g))
     
     return gesture    #TODO Return actual gesture object
 

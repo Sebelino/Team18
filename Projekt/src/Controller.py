@@ -2,35 +2,34 @@ import GestureHandler
 import ProfileManager
 import CommandHandler
 import Gesture
-
-
-def getListOfMappings():
-    ProfileManager.getMappings()
+import Command
 
 def signalCommand(g):
+    print g
     if g == None:
+        print "g is None\n\n\n!!!"
         pass
     else:
-        mappings = getListOfMappings()
-        d = dict(mappings)
-        c = d[g]
+        c = ProfileManager.getCommand(g)
         CommandHandler.execute(c)
 
+
 #On touch events
-def on_touch_down(self, touch):
+def on_touch_down(touch):
     g = GestureHandler.on_touch_down(touch)
     signalCommand(g)
-
-def on_touch_move(self, touch):
+    print "hi\nhi\nhi\nDOWN!!!"
+    
+def on_touch_move(touch):
     g = GestureHandler.on_touch_move(touch)
     signalCommand(g)
-
-def on_touch_up(self, touch):
+    print "hi\nhi\nhi\nMOVE!!!!!!!!"
+    
+def on_touch_up(touch):
     g = GestureHandler.on_touch_up(touch)
     signalCommand(g)
+    print "hi\nhi\nhi\nUP"
 
-#command = ProfileManager.getCommand(gesture)
-#CommandHandler.execute(command)
 
 # For databasen
 def getListOfMappings():
