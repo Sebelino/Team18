@@ -61,7 +61,7 @@ def on_touch_up(self, touch):
     # can have another touch event on the way...
     self.canvas.clear()
     
-    return None    #TODO Return actual gesture object
+    return gesture    #TODO Return actual gesture object
 
 
 
