@@ -18,12 +18,13 @@ from kivy.graphics import Color,Ellipse,Line
 from kivy.gesture import Gesture,GestureDatabase
 import Gesture as OwnGesture
 from listview import ListView, ScrollViewFixed
-import Controller
+# import Controller
 
 import thread
 import time
 import os
 import sys
+import DatabaseAdapter as db                     #Spaghetti-dependency. Fixa!
 import GestureHandler
 from kivy.base import EventLoop
 import Queue
@@ -643,11 +644,11 @@ def getCurrentProfile():
 def getListOfMappings(profile):
     """Returns a list of mappings, requested from Controller."""
     #TODO
-    return Controller.getListOfMappings()
+    return db.getMappings()
 
 def getListOfGestures():
     """Returns a list of available Gestures, requested from Controller."""
-    table = Controller.getListOfGestures()
+    table = db.getGestures()
     return [(r[0],TextInput(text=('' if r[1] is None else r[1]),readonly=True)) for r in table]
 #    return [('KameHameHA', TextInput(text='WAVE\nJO\nNEJ\nblod',readonly = True)),
 #            ('punch',TextInput(text='kALABALALAMMMMMMMMMMMMmmmASDN',readonly = True)),
@@ -661,7 +662,7 @@ def getListOfCustomGestures():
 
 def getListOfMacros():
     """Returns a list of Macros/Windows Functions, requested from Controller."""
-    table = Controller.getListOfCommands()
+    table = db.getCommands()
     return [(r[0],TextInput(text=('' if r[1] is None else r[1]),readonly=True)) for r in table]
 #    return [('leftclick', TextInput(text='U DUNNO WUT LEFTCLICK IS',readonly = True)),
 #            ('rightclick',TextInput(text='RaaALABALALAMMMMMMMMMMMMMMMMMMMMMmmmASDN',readonly = True)),
@@ -670,7 +671,11 @@ def getListOfMacros():
 
 def getListOfCustomMacros():
     """Returns a list of all Custom gestures"""
-    return ["RAH", "BLO", "PATETISKMACRO" ]    
+    return ["RAH", "BLO", "PATETISKMACRO" ]
+
+def getMacroInfo(macro):
+    pass
+    return ["macro", "stop;write;stop;", "text", "stops and writes"]
            
 #-------- Profile management ---------#
 
@@ -744,6 +749,7 @@ def createMacro():
 def editMacro(macro, newScript, descType, desc):
     """edits macro 'macro' from the script newScript,
        to description desc, which is of type descType"""
+    print macro, newScript, "\n" ,descType, desc
 
 def removeMacro(macro):
     """ Removes the specified Macro. """
@@ -1135,10 +1141,89 @@ def manageMacros():
 ## Create events functions, classes and popups here
 #####################################################
 
+class EditMacroPopup(Popup):
+    textAreaName = None
+    textAreaDesc = None
+    textAreaScript = None
+    container = None
+    macro = "the awesome macro"
+    
+    def __init__(self, **kwargs):
+        super(EditMacroPopup, self).__init__(**kwargs)
+        self.size_hint = (None, None)
+        self.size = (500, 500)
+        self.title = "Edit macro"
+        self.title_size = 20
+        self.auto_dismiss = False
+        container = FloatLayout()
+
+        #create buttons
+        acceptButton = Button(size_hint = (None, None), size = (120, 26),
+                              pos_hint = {'x':0.05, 'y':0}, color = (0,0,0,1),
+                              text = "Accept",
+                              background_normal = PICPATH+'/button_up.png',
+                              background_down = PICPATH+'/button_down.png')
+        def acceptButton_callback(btn):
+            editMacro(self.textAreaName.text, self.textAreaScript.text,
+                      'text', self.textAreaDesc.text)
+            cepm.refresh()
+            self.dismiss()
+        acceptButton.bind(on_release=acceptButton_callback)
+        cancelButton = Button(size_hint = (None, None), size = (120, 26),
+                              pos_hint = {'right':0.95, 'y':0}, color = (0,0,0,1),
+                              text = "Cancel",
+                              background_normal = PICPATH+'/button_up.png',
+                              background_down = PICPATH+'/button_down.png')
+        cancelButton.bind(on_release=lambda(btn):self.dismiss())
+
+        #create textinputs
+        self.textAreaName = TextInput(multiline = False, font_size = 13,
+                                      size_hint = (0.4, 0.07),
+                                      pos_hint = {'x':0, 'y': 0.88})
+        self.textAreaDesc = TextInput(multiline = True, font_size = 13,
+                                      size_hint = (0.4, 0.2),
+                                      pos_hint = {'x':0, 'y': 0.63})
+        self.textAreaScript = TextInput(multiline = True, font_size = 11,
+                                      size_hint = (1, 0.47),
+                                      pos_hint = {'x':0, 'y': 0.1})
+
+        #add widgets
+        container.add_widget(Label(font_size=15, text="Macro name",
+                                   size_hint = (1, 0.05),
+                                   pos_hint = {'x':0, 'y':0.95},
+                                   halign='left', text_size=(450,None)))
+        container.add_widget(self.textAreaName)
+        container.add_widget(Label(font_size=15, text="Macro description",
+                                   size_hint = (1, 0.05),
+                                   pos_hint = {'x':0, 'y':0.83},
+                                   halign='left', text_size=(450,None)))       
+        container.add_widget(self.textAreaDesc)
+        container.add_widget(Label(font_size=15, text="Macro script",
+                                   size_hint = (1, 0.05),
+                                   pos_hint = {'x':0, 'y':0.57},
+                                   halign='left', text_size=(450,None)))        
+        container.add_widget(self.textAreaScript)
+        container.add_widget(acceptButton)
+        container.add_widget(cancelButton)
+
+        self.container = container
+        self.content = container
+
+    def open(self, macro):
+        '''overriding open function'''
+        self.macro = macro
+        macInfo = getMacroInfo(macro)
+        self.textAreaName.text = macInfo[0]
+        self.textAreaDesc.text = macInfo[3]
+        self.textAreaScript.text = macInfo[1]
+        super(EditMacroPopup, self).open()
+        
+
 ######## Edit macros
+emp = EditMacroPopup()
+        
 def editMacroCallback(macro):
-    print "Will now edit macro ", macro
-    pass
+    emp.open(macro)
 
 def createGestureCallback():
     print "Will now open create gesture popup"
@@ -1154,7 +1239,7 @@ def createGestureCallback():
 class GestureMapper(App):
 
     def build(self):
-        root = BoxLayout(orientation='vertical')
+        root = TouchArea(orientation='vertical')
         #top bar, choose profile bar
         #topBar = StencilView()
         topBar = FloatLayout(size_hint=(1,0.3))
