@@ -7,22 +7,27 @@ import Gesture
 def getListOfMappings():
     ProfileManager.getMappings()
 
-#On touch events
-def on_touch_down(self, touch):
-    g = GestureHandler.on_touch_down(touch)
-    #TODO
-    '''
+def signalCommand(g):
     if g == None:
         pass
     else:
-        getListOfMappings().[sla upp gesten och returnera kommando]
-    '''
-    
+        mappings = getListOfMappings()
+        d = dict(mappings)
+        c = d[g]
+        CommandHandler.execute(c)
+
+#On touch events
+def on_touch_down(self, touch):
+    g = GestureHandler.on_touch_down(touch)
+    signalCommand(g)
+
 def on_touch_move(self, touch):
     g = GestureHandler.on_touch_move(touch)
+    signalCommand(g)
 
 def on_touch_up(self, touch):
     g = GestureHandler.on_touch_up(touch)
+    signalCommand(g)
 
 #command = ProfileManager.getCommand(gesture)
 #CommandHandler.execute(command)
@@ -36,3 +41,6 @@ def getListOfGestures():
 
 def getListOfCommands():
     return ProfileManager.getCommands()
+
+
+

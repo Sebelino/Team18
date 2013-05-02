@@ -78,3 +78,4 @@ def getMappings():
     conn.commit()
     conn.close()
     return result
+
