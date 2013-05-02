@@ -18,12 +18,13 @@ from kivy.graphics import Color,Ellipse,Line
 from kivy.gesture import Gesture,GestureDatabase
 import Gesture as OwnGesture
 from listview import ListView, ScrollViewFixed
-import Controller
+# import Controller
 
 import thread
 import time
 import os
 import sys
+import DatabaseAdapter as db                     #Spaghetti-dependency. Fixa!
 import GestureHandler
 from kivy.base import EventLoop
 import Queue
@@ -641,11 +642,11 @@ def getCurrentProfile():
 def getListOfMappings(profile):
     """Returns a list of mappings, requested from Controller."""
     #TODO
-    return Controller.getListOfMappings()
+    return db.getMappings()
 
 def getListOfGestures():
     """Returns a list of available Gestures, requested from Controller."""
-    table = Controller.getListOfGestures()
+    table = db.getGestures()
     return [(r[0],TextInput(text=('' if r[1] is None else r[1]),readonly=True)) for r in table]
 #    return [('KameHameHA', TextInput(text='WAVE\nJO\nNEJ\nblod',readonly = True)),
 #            ('punch',TextInput(text='kALABALALAMMMMMMMMMMMMmmmASDN',readonly = True)),
@@ -659,7 +660,7 @@ def getListOfCustomGestures():
 
 def getListOfMacros():
     """Returns a list of Macros/Windows Functions, requested from Controller."""
-    table = Controller.getListOfCommands()
+    table = db.getCommands()
     return [(r[0],TextInput(text=('' if r[1] is None else r[1]),readonly=True)) for r in table]
 #    return [('leftclick', TextInput(text='U DUNNO WUT LEFTCLICK IS',readonly = True)),
 #            ('rightclick',TextInput(text='RaaALABALALAMMMMMMMMMMMMMMMMMMMMMmmmASDN',readonly = True)),
@@ -1142,6 +1143,7 @@ class EditMacroPopup(Popup):
         self.size_hint = (None, None)
         self.size = (500, 500)
         self.title = "Edit macro"
+        self.title_size = 20
         self.auto_dismiss = False
         container = FloatLayout()
 
@@ -1176,17 +1178,17 @@ class EditMacroPopup(Popup):
                                       pos_hint = {'x':0, 'y': 0.1})
 
         #add widgets
-        container.add_widget(Label(font_size=16, text="Macro name",
+        container.add_widget(Label(font_size=15, text="Macro name",
                                    size_hint = (1, 0.05),
                                    pos_hint = {'x':0, 'y':0.95},
                                    halign='left', text_size=(450,None)))
         container.add_widget(self.textAreaName)
-        container.add_widget(Label(font_size=16, text="Macro description",
+        container.add_widget(Label(font_size=15, text="Macro description",
                                    size_hint = (1, 0.05),
                                    pos_hint = {'x':0, 'y':0.83},
                                    halign='left', text_size=(450,None)))       
         container.add_widget(self.textAreaDesc)
-        container.add_widget(Label(font_size=16, text="Macro script",
+        container.add_widget(Label(font_size=15, text="Macro script",
                                    size_hint = (1, 0.05),
                                    pos_hint = {'x':0, 'y':0.57},
                                    halign='left', text_size=(450,None)))        
@@ -1227,7 +1229,7 @@ def createGestureCallback():
 class GestureMapper(App):
 
     def build(self):
-        root = BoxLayout(orientation='vertical')
+        root = TouchArea(orientation='vertical')
         #top bar, choose profile bar
         #topBar = StencilView()
         topBar = FloatLayout(size_hint=(1,0.3))
