@@ -171,7 +171,9 @@ def parser(words):
         sleep(words[1])
     if words[0].lower() == "open":
         openPath(words[1])
-
+    if words[0].lower() == "press3keys":
+        press3Keys(VK_CODE[words[1]],VK_CODE[words[2]],VK_CODE[words[3]])
+    
 def leftClick(x,y):
     win32api.mouse_event(win32con.MOUSEEVENTF_MOVE, x, y,0)
     win32api.mouse_event(win32con.MOUSEEVENTF_LEFTDOWN,x,y,0,0)
@@ -200,4 +202,12 @@ def sleep(ms):
 
 def openPath(w1):    
     os.startfile(w1)
+    
+def press3Keys(w1,w2,w3):
+    win32api.keybd_event(w1,0,0,0)
+    win32api.keybd_event(w2,0,0,0)
+    win32api.keybd_event(w3,0,0,0)
+    win32api.keybd_event(w1,0 ,win32con.KEYEVENTF_KEYUP ,0)
+    win32api.keybd_event(w2,0 ,win32con.KEYEVENTF_KEYUP ,0)
+    win32api.keybd_event(w3,0 ,win32con.KEYEVENTF_KEYUP ,0)
     
