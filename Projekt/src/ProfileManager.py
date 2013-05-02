@@ -45,5 +45,9 @@ def getCommand(gesture):
     return Command.Command("nop")
     #return currentProfile.get(OwnGesture.Gesture(gdb.gesture_to_str(identifiedGesture)))
 
+def getGestures():
+    return db.getGestures()
+def getCommands():
+    return db.getCommands()
 def getMappings():
     return db.getMappings()
