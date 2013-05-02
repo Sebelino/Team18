@@ -166,7 +166,7 @@ def parser(words):
     if words[0].lower() == "press2keys":
         press2Keys(VK_CODE[words[1]],VK_CODE[words[2]])
     if words[0].lower() == "scroll":
-        press2Keys(words[1],words[2])
+        press2Keys(words[1],words[2],words[3])
     if words[0].lower() == "sleep":
         sleep(words[1])
     if words[0].lower() == "open":
@@ -184,8 +184,8 @@ def rightClick(x,y):
     win32api.mouse_event(win32con.MOUSEEVENTF_RIGHTDOWN,x,y,0,0)
     win32api.mouse_event(win32con.MOUSEEVENTF_RIGHTUP,x,y,0,0)
 
-def scroll(x,y):
-    win32api.mouse_event(win32con.MOUSEEVENTF_WHEEL,x,y,-120,0)
+def scroll(x,y,px):
+    win32api.mouse_event(win32con.MOUSEEVENTF_WHEEL,x,y,px,0)
 
 def pressKey(w):
     win32api.keybd_event(w,0,0,0)
