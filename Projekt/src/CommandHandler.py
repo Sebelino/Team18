@@ -1,4 +1,7 @@
-import win32api, win32con, time, os
+#import win32api, win32con
+import time, os
+
+
 
 VK_CODE = {'backspace':0x08,
            'tab':0x09,
@@ -148,9 +151,12 @@ VK_CODE = {'backspace':0x08,
            '`':0xC0}
 
 def execute(command):
-    script = command.getScript()
-    words = script.split()
-    parser(words)
+    if windows7 = True
+        script = command.getScript()
+        words = script.split()
+        parser(words)
+    else:
+        print "Running on linux, can't execute Windows commands, but the execute method is reached!"
     
 def testExecuteString(command):
     words = command.split()
@@ -210,4 +216,6 @@ def press3Keys(w1,w2,w3):
     win32api.keybd_event(w1,0 ,win32con.KEYEVENTF_KEYUP ,0)
     win32api.keybd_event(w2,0 ,win32con.KEYEVENTF_KEYUP ,0)
     win32api.keybd_event(w3,0 ,win32con.KEYEVENTF_KEYUP ,0)
-    
+
+windows7 = False
+
