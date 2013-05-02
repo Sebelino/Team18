@@ -1,4 +1,4 @@
-import win32api, win32con,time
+import win32api, win32con, time, os
 
 VK_CODE = {'backspace':0x08,
            'tab':0x09,
@@ -150,12 +150,10 @@ VK_CODE = {'backspace':0x08,
 def execute(command):
     script = command.getScript()
     words = script.split()
-    time.sleep(3)
     parser(words)
     
 def testExecuteString(command):
     words = command.split()
-    time.sleep(3)
     parser(words)
 
 def parser(words):
@@ -168,8 +166,14 @@ def parser(words):
     if words[0].lower() == "press2keys":
         press2Keys(VK_CODE[words[1]],VK_CODE[words[2]])
     if words[0].lower() == "scroll":
-        press2Keys(words[1],words[2])
-
+        press2Keys(words[1],words[2],words[3])
+    if words[0].lower() == "sleep":
+        sleep(words[1])
+    if words[0].lower() == "open":
+        openPath(words[1])
+    if words[0].lower() == "press3keys":
+        press3Keys(VK_CODE[words[1]],VK_CODE[words[2]],VK_CODE[words[3]])
+    
 def leftClick(x,y):
     win32api.mouse_event(win32con.MOUSEEVENTF_MOVE, x, y,0)
     win32api.mouse_event(win32con.MOUSEEVENTF_LEFTDOWN,x,y,0,0)
@@ -180,8 +184,8 @@ def rightClick(x,y):
     win32api.mouse_event(win32con.MOUSEEVENTF_RIGHTDOWN,x,y,0,0)
     win32api.mouse_event(win32con.MOUSEEVENTF_RIGHTUP,x,y,0,0)
 
-def scroll(x,y):
-    win32api.mouse_event(win32con.MOUSEEVENTF_WHEEL,x,y,-120,0)
+def scroll(x,y,px):
+    win32api.mouse_event(win32con.MOUSEEVENTF_WHEEL,x,y,px,0)
 
 def pressKey(w):
     win32api.keybd_event(w,0,0,0)
@@ -192,3 +196,18 @@ def press2Keys(w1,w2):
     win32api.keybd_event(w2,0,0,0)
     win32api.keybd_event(w1,0 ,win32con.KEYEVENTF_KEYUP ,0)
     win32api.keybd_event(w2,0 ,win32con.KEYEVENTF_KEYUP ,0)
+    
+def sleep(ms):
+    time.sleep(ms/1000)
+
+def openPath(w1):    
+    os.startfile(w1)
+    
+def press3Keys(w1,w2,w3):
+    win32api.keybd_event(w1,0,0,0)
+    win32api.keybd_event(w2,0,0,0)
+    win32api.keybd_event(w3,0,0,0)
+    win32api.keybd_event(w1,0 ,win32con.KEYEVENTF_KEYUP ,0)
+    win32api.keybd_event(w2,0 ,win32con.KEYEVENTF_KEYUP ,0)
+    win32api.keybd_event(w3,0 ,win32con.KEYEVENTF_KEYUP ,0)
+    
