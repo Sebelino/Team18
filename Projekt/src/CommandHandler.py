@@ -1,4 +1,4 @@
-#import win32api, win32con
+import win32api, win32con, win32gui
 import time, os
 
 
@@ -217,5 +217,9 @@ def press3Keys(w1,w2,w3):
     win32api.keybd_event(w2,0 ,win32con.KEYEVENTF_KEYUP ,0)
     win32api.keybd_event(w3,0 ,win32con.KEYEVENTF_KEYUP ,0)
 
-windows7 = False
+def minimize():
+    win32gui.ShowWindow(GetActiveWindow(), win32con.SW_MINIMIZE)
+    
+    
+windows7 = true
 
