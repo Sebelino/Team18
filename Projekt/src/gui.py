@@ -629,16 +629,14 @@ the specifics. See Controller for more info about the functions.
 """
 
 #-------- Requests -------------------#
+"""Returns a list of profiles, requested from Controller."""
 def getListOfProfiles():
-    """Returns a list of profiles, requested from Controller."""
-    #TODO
-    return ['HueZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZ','Boo','Traktor',
-            'Captain MintberryCrunch', 'Internet', 'Halo', 'Pale tree']
+    return Controller.getListOfProfiles()
 
+"""Returns the currently selected profile, requested from Controller."""
 def getCurrentProfile():
-    """Returns the currently selected profile, requested from Controller."""
     #TODO
-    return getListOfProfiles()[4]
+    return Controller.getCurrentProfile()
     
 
 def getListOfMappings(profile):

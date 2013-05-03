@@ -85,3 +85,6 @@ def getMappings():
     conn.close()
     return result
 
+def getProfiles():
+    return query("SELECT name FROM profiles")
+

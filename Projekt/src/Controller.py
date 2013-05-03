@@ -35,6 +35,9 @@ def on_touch_up(touch):
 def getListOfMappings(): return ProfileManager.getMappings()
 def getListOfGestures(): return ProfileManager.getGestures()
 def getListOfCommands(): return ProfileManager.getCommands()
+def getListOfProfiles(): return ProfileManager.getProfiles()
+def getCurrentProfile(): return ProfileManager.currentProfile
+def setCurrentProfile(newProfile): ProfileManager.currentProfile = newProfile
 
 
 
