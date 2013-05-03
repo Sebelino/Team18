@@ -1376,8 +1376,9 @@ class TouchArea(BoxLayout):
         
         if str(touch.device) == "mouse":
             super(TouchArea, self).on_touch_down(touch)
-        elif str(touch.device) == "multitouchtable":
             Controller.on_touch_down(touch)
+        elif str(touch.device) == "multitouchtable":
+            pass
         
 
     def on_touch_move(self, touch):
@@ -1385,8 +1386,9 @@ class TouchArea(BoxLayout):
         print "uid: " + str(touch.uid)
         if str(touch.device) == "mouse":
             super(TouchArea, self).on_touch_move(touch)
-        elif str(touch.device) == "multitouchtable":
             Controller.on_touch_move(touch)
+        elif str(touch.device) == "multitouchtable":
+            pass
         
 
     def on_touch_up(self, touch):
@@ -1394,8 +1396,9 @@ class TouchArea(BoxLayout):
         print "uid: " + str(touch.uid)
         if str(touch.device) == "mouse":
             super(TouchArea, self).on_touch_up(touch)
-        elif str(touch.device) == "multitouchtable":
             Controller.on_touch_up(touch)
+        elif str(touch.device) == "multitouchtable":
+            pass
 
 
 #and Main

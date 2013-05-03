@@ -32,14 +32,9 @@ def on_touch_up(touch):
 
 
 # For databasen
-def getListOfMappings():
-    return ProfileManager.getMappings()
-
-def getListOfGestures():
-    return ProfileManager.getGestures()
-
-def getListOfCommands():
-    return ProfileManager.getCommands()
+def getListOfMappings(): return ProfileManager.getMappings()
+def getListOfGestures(): return ProfileManager.getGestures()
+def getListOfCommands(): return ProfileManager.getCommands()
 
 
 

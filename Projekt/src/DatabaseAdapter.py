@@ -45,23 +45,27 @@ def select(c,condition,columns,table):
         c.execute("SELECT %s FROM %s WHERE %s"% (columns,table,condition))
     return c.fetchall()
 
+# Executes the query and returns the results, if any.
+def query(query):
+    conn = sqlite3.connect(database)
+    c = conn.cursor()
+    c.execute(query)
+    result = c.fetchall()
+    conn.commit()
+    conn.close()
+    return result
+
 database = '../resources/profiles.db'
 
 def getGestures():
-    conn = sqlite3.connect(database)
-    c = conn.cursor()
-    result = select(c,"","*","gestures")
-    conn.commit()
-    conn.close()
-    return result
+    return query("SELECT * FROM gestures")
+
+def getProfileGestures(profilename):
+    return query("SELECT gesturename,description,representation FROM gestures,profiles WHERE\
+            gestures.name = gesturename AND profiles.name = '%s'"% profilename)
 
 def getCommands():
-    conn = sqlite3.connect(database)
-    c = conn.cursor()
-    result = select(c,"","*","commands")
-    conn.commit()
-    conn.close()
-    return result
+    return query("SELECT * FROM commands")
 
 def getScript(gesturename):
     conn = sqlite3.connect(database)
@@ -69,6 +73,8 @@ def getScript(gesturename):
     result = select(c,"profiles.commandname = commands.name AND gesturename = '%s' AND profiles.name='Sebbes profil'"% gesturename,"script","profiles,commands")
     conn.commit()
     conn.close()
+    print result
+    print gesturename
     return result[0][0]
 
 def getMappings():
