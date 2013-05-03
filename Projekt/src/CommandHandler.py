@@ -221,5 +221,5 @@ def minimize():
     win32gui.ShowWindow(GetActiveWindow(), win32con.SW_MINIMIZE)
     
     
-windows7 = true
+windows7 = True
 

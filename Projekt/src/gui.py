@@ -24,7 +24,6 @@ import thread
 import time
 import os
 import sys
-import DatabaseAdapter as db                     #Spaghetti-dependency. Fixa!
 import GestureHandler
 from kivy.base import EventLoop
 import Queue
@@ -635,18 +634,16 @@ def getListOfProfiles():
 
 """Returns the currently selected profile, requested from Controller."""
 def getCurrentProfile():
-    #TODO
     return Controller.getCurrentProfile()
     
 
 def getListOfMappings(profile):
     """Returns a list of mappings, requested from Controller."""
-    #TODO
-    return db.getMappings()
+    return Controller.getListOfMappings()
 
 def getListOfGestures():
     """Returns a list of available Gestures, requested from Controller."""
-    table = db.getGestures()
+    table = Controller.getListOfGestures()
     return [(r[0],TextInput(text=('' if r[1] is None else r[1]),readonly=True)) for r in table]
 #    return [('KameHameHA', TextInput(text='WAVE\nJO\nNEJ\nblod',readonly = True)),
 #            ('punch',TextInput(text='kALABALALAMMMMMMMMMMMMmmmASDN',readonly = True)),
@@ -660,7 +657,7 @@ def getListOfCustomGestures():
 
 def getListOfMacros():
     """Returns a list of Macros/Windows Functions, requested from Controller."""
-    table = db.getCommands()
+    table = Controller.getListOfMacros()
     return [(r[0],TextInput(text=('' if r[1] is None else r[1]),readonly=True)) for r in table]
 #    return [('leftclick', TextInput(text='U DUNNO WUT LEFTCLICK IS',readonly = True)),
 #            ('rightclick',TextInput(text='RaaALABALALAMMMMMMMMMMMMMMMMMMMMMmmmASDN',readonly = True)),
