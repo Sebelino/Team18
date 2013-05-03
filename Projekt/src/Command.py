@@ -1,7 +1,7 @@
 class Command:
-    def __init__(self,script):
-        self.name = "(Unnamed)"
-        self.description = "(No description)"
+    def __init__(self,name,description,script):
+        self.name = name
+        self.description = description
         self.script = script
 
     def getScript(self):

@@ -1358,7 +1358,7 @@ class GestureMapper(App):
         return root
 
 
-#kristoffers klass
+#Kristoffers klass
 class TouchArea(BoxLayout):
 
     #On touch events
@@ -1375,7 +1375,6 @@ class TouchArea(BoxLayout):
         elif str(touch.device) == "multitouchtable":
             pass
         
-
     def on_touch_move(self, touch):
         print "Touch move!"
         print "uid: " + str(touch.uid)
@@ -1385,7 +1384,6 @@ class TouchArea(BoxLayout):
         elif str(touch.device) == "multitouchtable":
             pass
         
-
     def on_touch_up(self, touch):
         print "Touch up!"
         print "uid: " + str(touch.uid)
@@ -1395,8 +1393,7 @@ class TouchArea(BoxLayout):
         elif str(touch.device) == "multitouchtable":
             pass
 
-
-#and Main
+#And main
 
 if __name__ == '__main__':
     GestureMapper().run()

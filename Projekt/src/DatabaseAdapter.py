@@ -62,10 +62,15 @@ def getGestures():
 
 def getProfileGestures(profilename):
     return query("SELECT gesturename,description,representation FROM gestures,profiles WHERE\
-            gestures.name = gesturename AND profiles.name = '%s'"% profilename)
+        gestures.name = gesturename AND profiles.name = '%s'"% profilename)
 
 def getCommands():
     return query("SELECT * FROM commands")
+
+def getCommand(gesturename):
+    return query("SELECT commands.name,commands.description,commands.script FROM\
+        profiles,commands WHERE profiles.commandname = commands.name AND\
+        gesturename = '%s' AND profiles.name='Sebbes profil'"% gesturename)[0]
 
 def getScript(gesturename):
     conn = sqlite3.connect(database)
