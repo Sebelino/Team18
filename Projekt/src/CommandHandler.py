@@ -152,11 +152,9 @@ VK_CODE = {'backspace':0x08,
 
 def execute(command):
     if windows7:
-        time.sleep(3) #TODO
-        print "Running Windows and executing command %s."% str(command.name)
+        print "Running Windows and executing command '%s'."% str(command.name)
         script = command.getScript()
-        words = script.split()
-        parse(words)
+        parse(script)
     else:
         print "Running on linux, can't execute Windows commands, but the execute method is reached!"
     
@@ -164,8 +162,10 @@ def testExecuteString(command):
     words = command.split()
     parse(words)
 
-def parse(words):
+def parse(script):
+    words = script.split()
     if words[0].lower() == "presskey":
+        time.sleep(3) #TODO
         pressKey(VK_CODE[words[1]])
     if words[0].lower() == "leftclick":
         leftClick(words[1],words[2])
