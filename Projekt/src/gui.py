@@ -511,7 +511,6 @@ class IndexButton(Button):
     def __init__(self,**kwargs):
         super(IndexButton,self).__init__(**kwargs)
 
-
 ##################################################################
 #-------------- Confirm Popup Class and function-----------------#
 ##################################################################
@@ -676,10 +675,9 @@ def getMacroInfo(macro):
 
 def createProfile(profileName):
     """ Creates a new profile with the given name.
-
     Must return the name of the newly created profile."""
-    #TODO
     print "Creating profile " + profileName
+    Controller.createProfile(profileName)
     return profileName
 
 def editProfile(oldProfileName, newProfileName):
@@ -697,8 +695,7 @@ def selectProfile(profileName):
 def removeProfile(profileName):
     """ Removes the profile with the given name."""
     print "Removing profile " + profileName
-    #TODO
-    pass
+    Controller.removeProfile(profileName)
 
 #------------- Mappings ----------------#
 def createMapping(createCounter):

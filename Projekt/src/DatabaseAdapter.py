@@ -26,14 +26,24 @@ def tableToString(table):
     return tableString
 
 # Inserts the row into the table.
-def insert(c,args):
-    row = [args[0],args[1]]
-    c.execute("INSERT INTO gestures VALUES (?,?)",row)
+def insert(tablename,args):
+    conn = sqlite3.connect(database)
+    c = conn.cursor()
+    questionmarks = "?"
+    for _ in range(1,len(args)):
+        questionmarks += ",?"
+    c.execute("INSERT INTO %s VALUES (%s)"% (tablename,questionmarks),args)
+    conn.commit()
+    conn.close()
     return 'Insertion successful.'
 
 # Deletes the rows satisfying the condition.
-def delete(c,condition):
-    c.execute("DELETE FROM gestures WHERE %s"% condition)
+def delete(tablename,condition):
+    conn = sqlite3.connect(database)
+    c = conn.cursor()
+    c.execute("DELETE FROM %s WHERE %s"% (tablename,condition))
+    conn.commit()
+    conn.close()
     return 'Deletion successful.'
 
 # Returns the rows satisfying the condition.
@@ -92,4 +102,13 @@ def getMappings():
 
 def getProfiles():
     return query("SELECT name FROM profiles")
+
+def createProfile(profilename):
+    print "Inserting into profile %s."% profilename
+    (somegesture,somecommand) = query("SELECT gesturename,commandname FROM profiles")[0]
+    insert("profiles",(profilename,somegesture,somecommand))
+
+def removeProfile(profilename):
+    print "Removing profile %s."% profilename
+    delete("profiles","name = '%s'"% profilename)
 

@@ -1,8 +1,6 @@
 import win32api, win32con, win32gui
 import time, os
 
-
-
 VK_CODE = {'backspace':0x08,
            'tab':0x09,
            'clear':0x0C,
@@ -157,7 +155,7 @@ def execute(command):
         parse(script)
     else:
         print "Running on linux, can't execute Windows commands, but the execute method is reached!"
-    
+
 def testExecuteString(command):
     words = command.split()
     parse(words)

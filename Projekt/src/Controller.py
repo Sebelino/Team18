@@ -38,6 +38,8 @@ def getListOfMacros(): return ProfileManager.getCommands()
 def getListOfProfiles(): return ProfileManager.getProfiles()
 def getCurrentProfile(): return ProfileManager.currentProfile
 def setCurrentProfile(newProfile): ProfileManager.currentProfile = newProfile
+def createProfile(profilename): ProfileManager.createProfile(profilename)
+def removeProfile(profilename): ProfileManager.removeProfile(profilename)
 
 
 
