@@ -541,9 +541,6 @@ Example 3 args: confirm.open("Are you sure you want to print this?",
 Example no args: confirm.open("Are you sure you want to close the program?",
                                exit)
 '''
-
-
-
 class ConfirmPopup(Popup):
     function = None
     args = []
@@ -557,7 +554,6 @@ class ConfirmPopup(Popup):
         self.separator_color = (0.625, 0.625, 0.625, 1)
         self.separator_height = 1
         self.title_size = '10sp'
-        #self.background=PICPATH+'/white_background.png'
         btnsize = (100, 27)
         yesBtn = Button(size_hint = (None,None), size = btnsize,
                         text = "[color=000000]Accept", markup = True,
@@ -608,13 +604,7 @@ mainBackgroundImg = Image(allow_stretch=True, keep_ratio=False,
                           source=PICPATH+'/background_bot.png',
                           size_hint=(1,1),
                           pos_hint={'y':0})
-blackBorderImg = Image(allow_stretch=True, keep_ratio=False,
-                       source=PICPATH+'/black_border.png',
-                       size_hint=(1,1),
-                       pos_hint={'y':0})
-
-
-                      
+                    
 ##################################################################
 #--------------------- Functions --------------------------------#
 ##################################################################
@@ -653,20 +643,21 @@ def getListOfGestures():
 
 def getListOfCustomGestures():
     """Returns a list of all Custom gestures"""
-    return ["RAH", "BLO", "PATETISK" ]
+    return ["Draw Circle", "Check mark", "U shape" ]
+    
 
 def getListOfMacros():
     """Returns a list of Macros/Windows Functions, requested from Controller."""
     table = Controller.getListOfMacros()
     return [(r[0],TextInput(text=('' if r[1] is None else r[1]),readonly=True)) for r in table]
-#    return [('leftclick', TextInput(text='U DUNNO WUT LEFTCLICK IS',readonly = True)),
-#            ('rightclick',TextInput(text='RaaALABALALAMMMMMMMMMMMMMMMMMMMMMmmmASDN',readonly = True)),
-#            ('faint', Image(source=PICPATH+'/art.png', allow_stretch=True,
-#                            keep_ratio=False))]
+    #return [('leftclick', TextInput(text='ABCDEFGHIJKLMNOPQRSTUVWXYZABCDEFGH\nAAEWDFSA\nA\nA\A',readonly = True)),
+    #        ('rightclick',TextInput(text='RaaALABALALAMMMMMMMMMMMMMMMMMMMMMmmmASDN',readonly = True)),
+    #        ('faint', Image(source=PICPATH+'/art.png', allow_stretch=True,
+    #                       keep_ratio=False))]
 
 def getListOfCustomMacros():
     """Returns a list of all Custom gestures"""
-    return ["RAH", "BLO", "PATETISKMACRO" ]
+    return ["Write username", "Best macro ever"]
 
 def getMacroInfo(macro):
     pass
@@ -964,8 +955,6 @@ or a CustomMacroWidget. More info on them below.
 To use the popup, two instances have already been created. Simply call
 cepg.open() or cegm.open() to open the popups. 
 '''
-
-
 class CustomizeEventPopup(Popup):
     gestureOrMacro = "gesture"
     container = None
@@ -975,6 +964,8 @@ class CustomizeEventPopup(Popup):
         self.size_hint = (None, None)
         self.size = (400, 400)
         self.auto_dismiss = False
+        self.separator_color = (0.625, 0.625, 0.625, 1)
+        self.separator_height = 1
         self.gestureOrMacro = gestureOrMacro
         content = FloatLayout()
         self.container = content
@@ -1002,11 +993,11 @@ class CustomizeEventPopup(Popup):
 
         #Do some event-specific stuff
         if gestureOrMacro == "gesture":
-            self.title = "Manage Custom Gestures"
             createBtn.text = "[color=000000]Create new gesture"
+            self.background = PICPATH+'/background_custom_gestures.png'
         else:
-            self.title = "Manage Custom Macros"
             createBtn.text = "[color=000000]Create new macro"
+            self.background = PICPATH+'/background_custom_macros.png'
 
         #add widgets
         content.add_widget(doneBtn)
@@ -1070,8 +1061,8 @@ class CustomGestureWidget(BoxLayout):
         self.add_widget(Button(text=name, color = (0,0,0,1),
                         text_size = (260,None), halign='left',
                         size_hint_x = 4.5, font_size = 12,
-                        background_normal = PICPATH+'/dropdown_choice.png',
-                        background_down = PICPATH+'/dropdown_choice.png'))
+                        background_normal = PICPATH+'/listview_choice.png',
+                        background_down = PICPATH+'/listview_choice.png'))
         self.add_widget(delBtn)
 
         
@@ -1113,8 +1104,8 @@ class CustomMacroWidget(BoxLayout):
         self.add_widget(Button(text=name, color = (0,0,0,1),
                         text_size = (220,None), halign='left',
                         size_hint_x = 4.5, font_size = 12,
-                        background_normal = PICPATH+'/dropdown_choice.png',
-                        background_down = PICPATH+'/dropdown_choice.png'))
+                        background_normal = PICPATH+'/listview_choice.png',
+                        background_down = PICPATH+'/listview_choice.png'))
         self.add_widget(editBtn)
         self.add_widget(delBtn)
 
@@ -1148,9 +1139,10 @@ class EditMacroPopup(Popup):
         super(EditMacroPopup, self).__init__(**kwargs)
         self.size_hint = (None, None)
         self.size = (500, 500)
-        self.title = "Edit macro"
-        self.title_size = 20
+        self.background = PICPATH+'/background_edit_macro.png'
         self.auto_dismiss = False
+        self.separator_color = (0.625, 0.625, 0.625, 1)
+        self.separator_height = 1
         container = FloatLayout()
 
         #create buttons
@@ -1174,10 +1166,10 @@ class EditMacroPopup(Popup):
 
         #create textinputs
         self.textAreaName = TextInput(multiline = False, font_size = 13,
-                                      size_hint = (0.4, 0.07),
+                                      size_hint = (0.5, 0.07),
                                       pos_hint = {'x':0, 'y': 0.88})
         self.textAreaDesc = TextInput(multiline = True, font_size = 13,
-                                      size_hint = (0.4, 0.2),
+                                      size_hint = (0.7, 0.2),
                                       pos_hint = {'x':0, 'y': 0.63})
         self.textAreaScript = TextInput(multiline = True, font_size = 11,
                                       size_hint = (1, 0.47),
@@ -1185,17 +1177,17 @@ class EditMacroPopup(Popup):
 
         #add widgets
         container.add_widget(Label(font_size=15, text="Macro name",
-                                   size_hint = (1, 0.05),
+                                   size_hint = (1, 0.05), color = (0,0,0,1),
                                    pos_hint = {'x':0, 'y':0.95},
                                    halign='left', text_size=(450,None)))
         container.add_widget(self.textAreaName)
         container.add_widget(Label(font_size=15, text="Macro description",
-                                   size_hint = (1, 0.05),
+                                   size_hint = (1, 0.05), color = (0,0,0,1),
                                    pos_hint = {'x':0, 'y':0.83},
                                    halign='left', text_size=(450,None)))       
         container.add_widget(self.textAreaDesc)
         container.add_widget(Label(font_size=15, text="Macro script",
-                                   size_hint = (1, 0.05),
+                                   size_hint = (1, 0.05), color = (0,0,0,1),
                                    pos_hint = {'x':0, 'y':0.57},
                                    halign='left', text_size=(450,None)))        
         container.add_widget(self.textAreaScript)
@@ -1225,8 +1217,9 @@ class CreateGesturePopup(Popup):
         super(CreateGesturePopup, self).__init__(**kwargs)
         self.size_hint = (None, None)
         self.size = (500, 500)
-        self.title = "Create gesture"
-        self.title_size = 20
+        self.background = PICPATH+'/background_edit_macro.png'
+        self.auto_dismiss = False
+        self.separator_color = (0.625, 0.625, 0.625, 1)
         self.auto_dismiss = False
         container = FloatLayout()
 
@@ -1251,11 +1244,11 @@ class CreateGesturePopup(Popup):
 
         #create textinputs
         self.textAreaName = TextInput(multiline = False, font_size = 13,
-                                      size_hint = (0.4, 0.07),
+                                      size_hint = (0.5, 0.07),
                                       text = "My gesture",
                                       pos_hint = {'x':0, 'y': 0.88})
         self.textAreaDesc = TextInput(multiline = True, font_size = 13,
-                                      size_hint = (0.4, 0.2),
+                                      size_hint = (0.7, 0.2),
                                       text = "My description",
                                       pos_hint = {'x':0, 'y': 0.63})
         '''self.traceWidget = TextInput(multiline = True, font_size = 11,
@@ -1268,16 +1261,17 @@ class CreateGesturePopup(Popup):
         #add widgets
         container.add_widget(Label(font_size=15, text="Gesture name",
                                    size_hint = (1, 0.05),
+                                   color = (0,0,0,1),
                                    pos_hint = {'x':0, 'y':0.95},
                                    halign='left', text_size=(450,None)))
         container.add_widget(self.textAreaName)
         container.add_widget(Label(font_size=15, text="Gesture description",
-                                   size_hint = (1, 0.05),
+                                   size_hint = (1, 0.05), color = (0,0,0,1),
                                    pos_hint = {'x':0, 'y':0.83},
                                    halign='left', text_size=(450,None)))       
         container.add_widget(self.textAreaDesc)
         container.add_widget(Label(font_size=15, text="Draw gesture here",
-                                   size_hint = (1, 0.05),
+                                   size_hint = (1, 0.05), color = (0,0,0,1),
                                    pos_hint = {'x':0, 'y':0.57},
                                    halign='left', text_size=(450,None)))        
         #container.add_widget(self.textAreaScript)
