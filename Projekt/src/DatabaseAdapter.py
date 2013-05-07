@@ -37,6 +37,17 @@ def insert(tablename,args):
     conn.close()
     return 'Insertion successful.'
 
+# Alters the table.
+def update(tablename,attribute,newValue,condition):
+    conn = sqlite3.connect(database)
+    c = conn.cursor()
+    questionmarks = "?"
+    print "UPDATE %s SET %s=%s WHERE %s"% (tablename,attribute,newValue,condition)
+    c.execute("UPDATE %s SET %s=%s WHERE %s"% (tablename,attribute,newValue,condition))
+    conn.commit()
+    conn.close()
+    return 'Update successful.'
+
 # Deletes the rows satisfying the condition.
 def delete(tablename,condition):
     conn = sqlite3.connect(database)
@@ -104,11 +115,12 @@ def getProfiles():
     return query("SELECT name FROM profiles")
 
 def createProfile(profilename):
-    print "Inserting into profile %s."% profilename
     (somegesture,somecommand) = query("SELECT gesturename,commandname FROM profiles")[0]
     insert("profiles",(profilename,somegesture,somecommand))
 
 def removeProfile(profilename):
-    print "Removing profile %s."% profilename
     delete("profiles","name = '%s'"% profilename)
+
+def renameProfile(old,new):
+    update("profiles","name","'%s'"% new,"name = '%s'"% old)
 

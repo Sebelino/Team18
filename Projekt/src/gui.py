@@ -683,13 +683,12 @@ def createProfile(profileName):
 def editProfile(oldProfileName, newProfileName):
     """ Changes the name of a profile to the new name."""
     print "Changing name from " + oldProfileName + " to " + newProfileName 
-    #TODO
-    pass
+    Controller.renameProfile(oldProfileName,newProfileName)
 
 def selectProfile(profileName):
     """ Selects the profile with the given name."""
     print "Selecting profile " + profileName
-    #TODO
+    Controller.setProfile(profileName)
     pass
 
 def removeProfile(profileName):

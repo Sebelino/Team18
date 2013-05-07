@@ -40,6 +40,8 @@ def getCurrentProfile(): return ProfileManager.currentProfile
 def setCurrentProfile(newProfile): ProfileManager.currentProfile = newProfile
 def createProfile(profilename): ProfileManager.createProfile(profilename)
 def removeProfile(profilename): ProfileManager.removeProfile(profilename)
+def setProfile(profilename): ProfileManager.currentProfile = profilename
+def renameProfile(old,new): ProfileManager.renameProfile(old,new)
 
 
 
