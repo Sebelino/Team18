@@ -12,6 +12,8 @@ from kivy.gesture import Gesture, GestureDatabase
 from my_gestures import cross, circle, check, square, s
 import Queue
 
+activeTouches = dict()
+
 def simplegesture(name, point_list):
     """
     A simple helper function
@@ -27,12 +29,17 @@ def on_touch_down(touch):
     # start collecting points in touch.ud
     userdata = touch.ud
     userdata['line'] = Line(points=(touch.x, touch.y))
+    
+    activeTouches.update(touch.uid : {0 : (touch.x, touch.y)})
+    
     return None    #TODO Return actual gesture object
 
 def on_touch_move(touch):
     # store points of the touch movement
     try:
         touch.ud['line'].points += [touch.x, touch.y]
+        activeTouches.update(touch.uid : {(len(activeTouches[uid])) : (touch.x, touch.y)})
+        print activeTouches
     except (KeyError), e:
         pass
 
@@ -50,6 +57,8 @@ def on_touch_up(touch):
     print "gesture representation:", gdb.gesture_to_str(g)
 
     gesture = OwnGesture.Gesture("name", False, gdb.gesture_to_str(g))
+    
+    del activeTouches[uid]
     
     return gesture    #TODO Return actual gesture object
 
