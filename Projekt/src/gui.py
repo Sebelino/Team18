@@ -30,17 +30,17 @@ import Queue
 
 
 #Screen size constants.
-import Tkinter
+'''import Tkinter
 SCREEN_WIDTH = Tkinter.Tk().winfo_screenwidth()
 SCREEN_HEIGHT = Tkinter.Tk().winfo_screenheight()
-
-#If you use Windows, uncomment these:
 '''
+#If you use Windows, uncomment these:
+
 import win32api
 from win32api import GetSystemMetrics
 print "width =", GetSystemMetrics (0)
 print "height =",GetSystemMetrics (1)
-'''
+
 
 ##################################################################
 #---------------------- Config ----------------------------------#
@@ -293,13 +293,13 @@ class GestureCreator(FloatLayout):
         # print the gesture representation, you can use that to add
         # gestures to my_gestures.py
         print "gesture representation:", self.gdb.gesture_to_str(g)
-
+        #TODO - E DETTA KORREKT????????????? uppdatera i widgeten
         gesture = OwnGesture.Gesture("(Newborn)",False,self.gdb.gesture_to_str(g))
         self.queue.put(gesture)
 
         # erase the lines on the screen, this is a bit quick&dirty, since we
         # can have another touch event on the way...
-        self.canvas.clear()
+        self.canvas.clear() #TODO, se till att border inte raderas vid detta!
 
     def containsGesture():
         return not queue.empty()
@@ -1228,7 +1228,7 @@ class EditMacroPopup(Popup):
 class CreateGesturePopup(Popup):
     textAreaName = None
     textAreaDesc = None
-    traceWidget = None #Widget for tracing user's gesture
+    gcreator = None #Widget for tracing user's gesture
     gestString = "SOME LONG STRING"
     container = None
     
@@ -1276,7 +1276,11 @@ class CreateGesturePopup(Popup):
         #TODO - INITIALIZE YOUR WIDGET HERE
         self.gcreator = GestureCreator(size_hint = (1, 0.47), size = (120, 26),
                                   pos_hint = {'x':0, 'y':0.1}, color = (0,1,0,0.5),
-)
+                                       )
+        self.gcreator.add_widget(Image(source=PICPATH+'/create_gesture_border.png',
+                                       allow_stretch=True, keep_ratio=False,
+                                       size_hint = (1,1), pos_hint={'x':0,'y':0}))
+        
         #see above bortkommenterad text input for pos_hint and size_hint
         #values to fit it
 
