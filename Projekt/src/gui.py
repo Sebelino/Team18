@@ -34,7 +34,7 @@ import Queue
 
 """Create a small cute window, unresizeable"""
 
-Config.set('kivy','window_icon', 'smiley_ic.png')
+Config.set('kivy','window_icon', '../icon.png')
 Config.set('graphics','fullscreen',0)
 Config.set('graphics','resizable',0)
 Config.set('graphics','width',650)
