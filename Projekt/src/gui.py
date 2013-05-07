@@ -271,12 +271,12 @@ class GestureCreator(FloatLayout):
         # gestures to my_gestures.py
         print "gesture representation:", self.gdb.gesture_to_str(g)
 
-        gesture = OwnGesture.Gesture(self.gdb.gesture_to_str(g))
+        gesture = OwnGesture.Gesture("(Newborn)",False,self.gdb.gesture_to_str(g))
         self.queue.put(gesture)
 
         # erase the lines on the screen, this is a bit quick&dirty, since we
         # can have another touch event on the way...
-        #self.canvas.clear()
+        self.canvas.clear()
 
     def containsGesture():
         return not queue.empty()
