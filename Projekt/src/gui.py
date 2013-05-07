@@ -28,6 +28,20 @@ import GestureHandler
 from kivy.base import EventLoop
 import Queue
 
+
+#Screen size constants.
+import Tkinter
+SCREEN_WIDTH = Tkinter.Tk().winfo_screenwidth()
+SCREEN_HEIGHT = Tkinter.Tk().winfo_screenheight()
+
+#If you use Windows, uncomment these:
+'''
+import win32api
+from win32api import GetSystemMetrics
+print "width =", GetSystemMetrics (0)
+print "height =",GetSystemMetrics (1)
+'''
+
 ##################################################################
 #---------------------- Config ----------------------------------#
 ##################################################################
@@ -232,6 +246,9 @@ class GestureCreator(FloatLayout):
         self.gdb = GestureDatabase()
     
     def on_touch_down(self, touch):
+        if not self.collide_point(touch.x,touch.y):
+            print "UTANFOR!!!"
+            return False
         print str(touch.device)
         if str(touch.device) == "multitouchtable":
             print "touch"
@@ -247,6 +264,9 @@ class GestureCreator(FloatLayout):
             userdata['line'] = Line(points=(touch.x, touch.y))
 
     def on_touch_move(self, touch):
+        if not self.collide_point(touch.x,touch.y):
+            print "UTANFOR!!!"
+            return False
         # store points of the touch movement
         try:
             touch.ud['line'].points += [touch.x, touch.y]
@@ -261,6 +281,9 @@ class GestureCreator(FloatLayout):
         return queue.get()
 
     def on_touch_up(self, touch):
+        if not self.collide_point(touch.x,touch.y):
+            print "UTANFOR!!!"
+            return False
         # touch is over, display informations, and check if it matches some
         # known gesture.
         g = simplegesture(
@@ -271,12 +294,12 @@ class GestureCreator(FloatLayout):
         # gestures to my_gestures.py
         print "gesture representation:", self.gdb.gesture_to_str(g)
 
-        gesture = OwnGesture.Gesture(self.gdb.gesture_to_str(g))
+        gesture = OwnGesture.Gesture("(Newborn)",False,self.gdb.gesture_to_str(g))
         self.queue.put(gesture)
 
         # erase the lines on the screen, this is a bit quick&dirty, since we
         # can have another touch event on the way...
-        #self.canvas.clear()
+        self.canvas.clear()
 
     def containsGesture():
         return not queue.empty()
@@ -511,7 +534,6 @@ class IndexButton(Button):
     def __init__(self,**kwargs):
         super(IndexButton,self).__init__(**kwargs)
 
-
 ##################################################################
 #-------------- Confirm Popup Class and function-----------------#
 ##################################################################
@@ -667,29 +689,26 @@ def getMacroInfo(macro):
 
 def createProfile(profileName):
     """ Creates a new profile with the given name.
-
     Must return the name of the newly created profile."""
-    #TODO
     print "Creating profile " + profileName
+    Controller.createProfile(profileName)
     return profileName
 
 def editProfile(oldProfileName, newProfileName):
     """ Changes the name of a profile to the new name."""
     print "Changing name from " + oldProfileName + " to " + newProfileName 
-    #TODO
-    pass
+    Controller.renameProfile(oldProfileName,newProfileName)
 
 def selectProfile(profileName):
     """ Selects the profile with the given name."""
     print "Selecting profile " + profileName
-    #TODO
+    Controller.setProfile(profileName)
     pass
 
 def removeProfile(profileName):
     """ Removes the profile with the given name."""
     print "Removing profile " + profileName
-    #TODO
-    pass
+    Controller.removeProfile(profileName)
 
 #------------- Mappings ----------------#
 def createMapping(createCounter):
@@ -719,26 +738,26 @@ def removeMapping(index):
     pass
 
 #-------------- Gestures ----------------#
-def createGesture(gesture, gestData, descType, desc):
+def createGesture(gesture, gestData, descType, desc): #TODO
     """ Creates the gesture. """
     print gesture, gestData, "\n" ,descType, desc
     pass
 
-def removeGesture(gesture):
+def removeGesture(gesture): #TODO
     """ Removes the specified gesture. """
     pass
 
 #-------------- Macros/Windows functions ------------------#
-def createMacro():
+def createMacro(): #TODO
     """ Creates a new Macro. """
     pass
 
-def editMacro(macro, newScript, descType, desc):
+def editMacro(macro, newScript, descType, desc): #TODO
     """edits macro 'macro' from the script newScript,
        to description desc, which is of type descType"""
     print macro, newScript, "\n" ,descType, desc
 
-def removeMacro(macro):
+def removeMacro(macro): #TODO
     """ Removes the specified Macro. """
     print "removing macro ", macro
     pass
@@ -1255,6 +1274,9 @@ class CreateGesturePopup(Popup):
                                       size_hint = (1, 0.47),
                                       pos_hint = {'x':0, 'y': 0.1})'''
         #TODO - INITIALIZE YOUR WIDGET HERE
+        self.gcreator = GestureCreator(size_hint = (1, 0.47), size = (120, 26),
+                                  pos_hint = {'x':0, 'y':0.1}, color = (0,1,0,0.5),
+)
         #see above bortkommenterad text input for pos_hint and size_hint
         #values to fit it
 
@@ -1276,6 +1298,8 @@ class CreateGesturePopup(Popup):
                                    halign='left', text_size=(450,None)))        
         #container.add_widget(self.textAreaScript)
         #TODO - ADD YOUR WIDGET HERE
+        container.add_widget(self.gcreator)
+
         container.add_widget(acceptButton)
         container.add_widget(cancelButton)
 
@@ -1365,27 +1389,27 @@ class TouchArea(BoxLayout):
         
         if str(touch.device) == "mouse":
             super(TouchArea, self).on_touch_down(touch)
-            Controller.on_touch_down(touch)
         elif str(touch.device) == "multitouchtable":
-            pass
+            touch.scale_to_screen(SCREEN_WIDTH,SCREEN_HEIGHT)
+            Controller.on_touch_down(touch)
         
     def on_touch_move(self, touch):
         print "Touch move!"
         print "uid: " + str(touch.uid)
         if str(touch.device) == "mouse":
             super(TouchArea, self).on_touch_move(touch)
-            Controller.on_touch_move(touch)
         elif str(touch.device) == "multitouchtable":
-            pass
+            touch.scale_to_screen(SCREEN_WIDTH,SCREEN_HEIGHT)
+            Controller.on_touch_move(touch)
         
     def on_touch_up(self, touch):
         print "Touch up!"
         print "uid: " + str(touch.uid)
         if str(touch.device) == "mouse":
             super(TouchArea, self).on_touch_up(touch)
-            Controller.on_touch_up(touch)
         elif str(touch.device) == "multitouchtable":
-            pass
+            touch.scale_to_screen(SCREEN_WIDTH,SCREEN_HEIGHT)
+            Controller.on_touch_up(touch)
 
 #And main
 

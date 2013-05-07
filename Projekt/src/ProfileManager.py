@@ -37,3 +37,6 @@ def getGestures(): return db.getGestures()
 def getCommands(): return db.getCommands()
 def getMappings(): return db.getMappings()
 def getProfiles(): return [x[0] for x in db.getProfiles()]
+def createProfile(profilename): db.createProfile(profilename)
+def removeProfile(profilename): db.removeProfile(profilename)
+def renameProfile(old,new): db.renameProfile(old,new)

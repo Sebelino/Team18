@@ -1,7 +1,5 @@
-import win32api, win32con, win32gui
+#import win32api, win32con, win32gui
 import time, os
-
-
 
 VK_CODE = {'backspace':0x08,
            'tab':0x09,
@@ -157,7 +155,7 @@ def execute(command):
         parse(script)
     else:
         print "Running on linux, can't execute Windows commands, but the execute method is reached!"
-    
+
 def testExecuteString(command):
     words = command.split()
     parse(words)
@@ -169,6 +167,15 @@ def parse(script):
         pressKey(VK_CODE[words[1]])
     if words[0].lower() == "leftclick":
         leftClick(words[1],words[2])
+
+    #Lade till dessa
+    if words[0].lower() == "leftclickdown":
+        leftClickDown(words[1],words[2])
+    if words[0].lower() == "leftclickmove":
+        leftClickMove(words[1],words[2])
+    if words[0].lower() == "leftclickup":
+        leftClickUp(words[1],words[2])
+    
     if words[0].lower() == "rightclick":
         rightClick(words[1],words[2])
     if words[0].lower() == "press2keys":
@@ -181,14 +188,31 @@ def parse(script):
         openPath(words[1])
     if words[0].lower() == "press3keys":
         press3Keys(VK_CODE[words[1]],VK_CODE[words[2]],VK_CODE[words[3]])
-    
+
+
+
+#Borde vi inte ha dessa separata?
+def leftClickDown(x,y):
+    win32api.SetCursorPos((x, y))
+    win32api.mouse_event(win32con.MOUSEEVENTF_LEFTDOWN,x,y,0,0)
+
+def leftClickMove(x,y):
+    win32api.SetCursorPos((x, y))
+
+def leftClickUp(x,y):
+    win32api.SetCursorPos((x, y))
+    win32api.mouse_event(win32con.MOUSEEVENTF_LEFTUP,x,y,0,0)
+
+
+
+
 def leftClick(x,y):
-    win32api.mouse_event(win32con.MOUSEEVENTF_MOVE, x, y,0)
+    win32api.SetCursorPos((x, y))
     win32api.mouse_event(win32con.MOUSEEVENTF_LEFTDOWN,x,y,0,0)
     win32api.mouse_event(win32con.MOUSEEVENTF_LEFTUP,x,y,0,0)
 
 def rightClick(x,y):
-    win32api.mouse_event(win32con.MOUSEEVENTF_MOVE, x, y,0)
+    win32api.SetCursorPos((x, y))
     win32api.mouse_event(win32con.MOUSEEVENTF_RIGHTDOWN,x,y,0,0)
     win32api.mouse_event(win32con.MOUSEEVENTF_RIGHTUP,x,y,0,0)
 
@@ -220,8 +244,9 @@ def press3Keys(w1,w2,w3):
     win32api.keybd_event(w3,0 ,win32con.KEYEVENTF_KEYUP ,0)
 
 def minimize():
-    win32gui.ShowWindow(GetActiveWindow(), win32con.SW_MINIMIZE)
+    hwnd = win32gui.GetForegroundWindow()
+    win32gui.ShowWindow(hwnd, win32con.SW_MINIMIZE)
+
     
-    
-windows7 = True
+windows7 = False
 
