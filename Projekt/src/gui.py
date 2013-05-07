@@ -1251,6 +1251,9 @@ class CreateGesturePopup(Popup):
                                       size_hint = (1, 0.47),
                                       pos_hint = {'x':0, 'y': 0.1})'''
         #TODO - INITIALIZE YOUR WIDGET HERE
+        self.gcreator = GestureCreator(size_hint = (20, 10), size = (120, 26),
+                                  pos_hint = {'right':0.95, 'y':0}, color = (0,1,0,0.5),
+)
         #see above bortkommenterad text input for pos_hint and size_hint
         #values to fit it
 
@@ -1272,6 +1275,8 @@ class CreateGesturePopup(Popup):
                                    halign='left', text_size=(450,None)))        
         #container.add_widget(self.textAreaScript)
         #TODO - ADD YOUR WIDGET HERE
+        container.add_widget(self.gcreator)
+
         container.add_widget(acceptButton)
         container.add_widget(cancelButton)
 
