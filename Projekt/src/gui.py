@@ -232,6 +232,9 @@ class GestureCreator(FloatLayout):
         self.gdb = GestureDatabase()
     
     def on_touch_down(self, touch):
+        if not self.collide_point(touch.x,touch.y):
+            print "UTANFOR!!!"
+            return False
         print str(touch.device)
         if str(touch.device) == "multitouchtable":
             print "touch"
@@ -247,6 +250,9 @@ class GestureCreator(FloatLayout):
             userdata['line'] = Line(points=(touch.x, touch.y))
 
     def on_touch_move(self, touch):
+        if not self.collide_point(touch.x,touch.y):
+            print "UTANFOR!!!"
+            return False
         # store points of the touch movement
         try:
             touch.ud['line'].points += [touch.x, touch.y]
@@ -261,6 +267,9 @@ class GestureCreator(FloatLayout):
         return queue.get()
 
     def on_touch_up(self, touch):
+        if not self.collide_point(touch.x,touch.y):
+            print "UTANFOR!!!"
+            return False
         # touch is over, display informations, and check if it matches some
         # known gesture.
         g = simplegesture(
@@ -1251,8 +1260,8 @@ class CreateGesturePopup(Popup):
                                       size_hint = (1, 0.47),
                                       pos_hint = {'x':0, 'y': 0.1})'''
         #TODO - INITIALIZE YOUR WIDGET HERE
-        self.gcreator = GestureCreator(size_hint = (20, 10), size = (120, 26),
-                                  pos_hint = {'right':0.95, 'y':0}, color = (0,1,0,0.5),
+        self.gcreator = GestureCreator(size_hint = (1, 0.47), size = (120, 26),
+                                  pos_hint = {'x':0, 'y':0.1}, color = (0,1,0,0.5),
 )
         #see above bortkommenterad text input for pos_hint and size_hint
         #values to fit it
@@ -1366,27 +1375,24 @@ class TouchArea(BoxLayout):
         
         if str(touch.device) == "mouse":
             super(TouchArea, self).on_touch_down(touch)
-            Controller.on_touch_down(touch)
         elif str(touch.device) == "multitouchtable":
-            pass
+            Controller.on_touch_down(touch)
         
     def on_touch_move(self, touch):
         print "Touch move!"
         print "uid: " + str(touch.uid)
         if str(touch.device) == "mouse":
             super(TouchArea, self).on_touch_move(touch)
-            Controller.on_touch_move(touch)
         elif str(touch.device) == "multitouchtable":
-            pass
+            Controller.on_touch_move(touch)
         
     def on_touch_up(self, touch):
         print "Touch up!"
         print "uid: " + str(touch.uid)
         if str(touch.device) == "mouse":
             super(TouchArea, self).on_touch_up(touch)
-            Controller.on_touch_up(touch)
         elif str(touch.device) == "multitouchtable":
-            pass
+            Controller.on_touch_up(touch)
 
 #And main
 

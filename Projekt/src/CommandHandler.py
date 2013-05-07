@@ -181,12 +181,12 @@ def parse(script):
         press3Keys(VK_CODE[words[1]],VK_CODE[words[2]],VK_CODE[words[3]])
     
 def leftClick(x,y):
-    win32api.mouse_event(win32con.MOUSEEVENTF_MOVE, x, y,0)
+    win32api.SetCursorPos((x, y))
     win32api.mouse_event(win32con.MOUSEEVENTF_LEFTDOWN,x,y,0,0)
     win32api.mouse_event(win32con.MOUSEEVENTF_LEFTUP,x,y,0,0)
 
 def rightClick(x,y):
-    win32api.mouse_event(win32con.MOUSEEVENTF_MOVE, x, y,0)
+    win32api.SetCursorPos((x, y))
     win32api.mouse_event(win32con.MOUSEEVENTF_RIGHTDOWN,x,y,0,0)
     win32api.mouse_event(win32con.MOUSEEVENTF_RIGHTUP,x,y,0,0)
 
