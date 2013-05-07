@@ -38,7 +38,7 @@ def on_touch_move(touch):
     # store points of the touch movement
     try:
         touch.ud['line'].points += [touch.x, touch.y]
-        activeTouches[touch.uid].update({touch.uid : {(len(activeTouches[touch.uid])) : (touch.x, touch.y)}})
+        activeTouches[touch.uid].update({(len(activeTouches[touch.uid])) : (touch.x, touch.y)})
         print activeTouches
     except (KeyError), e:
         pass
