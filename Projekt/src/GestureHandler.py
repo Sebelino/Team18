@@ -14,6 +14,8 @@ import Queue
 
 activeTouches = dict()
 
+twoPointGest = dict() #points used for recognizing two point gestures
+
 def simplegesture(name, point_list):
     """
     A simple helper function
@@ -32,6 +34,9 @@ def on_touch_down(touch):
     
     activeTouches.update({touch.uid : {0 : (touch.x, touch.y)}})
     
+    if (len(twoPointGest) < 2):
+        twoPointGest.update({touch.uid : {0 : (touch.x, touch.y)}})
+    
     return None    #TODO Return actual gesture object
 
 def on_touch_move(touch):
@@ -39,6 +44,9 @@ def on_touch_move(touch):
     try:
         touch.ud['line'].points += [touch.x, touch.y]
         activeTouches[touch.uid].update({(len(activeTouches[touch.uid])) : (touch.x, touch.y)})
+        
+        
+        
         print activeTouches
     except (KeyError), e:
         pass
