@@ -167,6 +167,15 @@ def parse(script):
         pressKey(VK_CODE[words[1]])
     if words[0].lower() == "leftclick":
         leftClick(words[1],words[2])
+
+    #Lade till dessa
+    if words[0].lower() == "leftclickdown":
+        leftClickDown(words[1],words[2])
+    if words[0].lower() == "leftclickmove":
+        leftClickMove(words[1],words[2])
+    if words[0].lower() == "leftclickup":
+        leftClickUp(words[1],words[2])
+    
     if words[0].lower() == "rightclick":
         rightClick(words[1],words[2])
     if words[0].lower() == "press2keys":
@@ -179,7 +188,24 @@ def parse(script):
         openPath(words[1])
     if words[0].lower() == "press3keys":
         press3Keys(VK_CODE[words[1]],VK_CODE[words[2]],VK_CODE[words[3]])
-    
+
+
+
+#Borde vi inte ha dessa separata?
+def leftClickDown(x,y):
+    win32api.SetCursorPos((x, y))
+    win32api.mouse_event(win32con.MOUSEEVENTF_LEFTDOWN,x,y,0,0)
+
+def leftClickMove(x,y):
+    win32api.SetCursorPos((x, y))
+
+def leftClickUp(x,y):
+    win32api.SetCursorPos((x, y))
+    win32api.mouse_event(win32con.MOUSEEVENTF_LEFTUP,x,y,0,0)
+
+
+
+
 def leftClick(x,y):
     win32api.SetCursorPos((x, y))
     win32api.mouse_event(win32con.MOUSEEVENTF_LEFTDOWN,x,y,0,0)

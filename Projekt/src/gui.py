@@ -28,6 +28,20 @@ import GestureHandler
 from kivy.base import EventLoop
 import Queue
 
+
+#Screen size constants.
+import Tkinter
+SCREEN_WIDTH = Tkinter.Tk().winfo_screenwidth()
+SCREEN_HEIGHT = Tkinter.Tk().winfo_screenheight()
+
+#If you use Windows, uncomment these:
+'''
+import win32api
+from win32api import GetSystemMetrics
+print "width =", GetSystemMetrics (0)
+print "height =",GetSystemMetrics (1)
+'''
+
 ##################################################################
 #---------------------- Config ----------------------------------#
 ##################################################################
@@ -1376,6 +1390,7 @@ class TouchArea(BoxLayout):
         if str(touch.device) == "mouse":
             super(TouchArea, self).on_touch_down(touch)
         elif str(touch.device) == "multitouchtable":
+            touch.scale_to_screen(SCREEN_WIDTH,SCREEN_HEIGHT)
             Controller.on_touch_down(touch)
         
     def on_touch_move(self, touch):
@@ -1384,6 +1399,7 @@ class TouchArea(BoxLayout):
         if str(touch.device) == "mouse":
             super(TouchArea, self).on_touch_move(touch)
         elif str(touch.device) == "multitouchtable":
+            touch.scale_to_screen(SCREEN_WIDTH,SCREEN_HEIGHT)
             Controller.on_touch_move(touch)
         
     def on_touch_up(self, touch):
@@ -1392,6 +1408,7 @@ class TouchArea(BoxLayout):
         if str(touch.device) == "mouse":
             super(TouchArea, self).on_touch_up(touch)
         elif str(touch.device) == "multitouchtable":
+            touch.scale_to_screen(SCREEN_WIDTH,SCREEN_HEIGHT)
             Controller.on_touch_up(touch)
 
 #And main
