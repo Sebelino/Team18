@@ -218,8 +218,9 @@ def press3Keys(w1,w2,w3):
     win32api.keybd_event(w3,0 ,win32con.KEYEVENTF_KEYUP ,0)
 
 def minimize():
-    win32gui.ShowWindow(GetActiveWindow(), win32con.SW_MINIMIZE)
-    
+    hwnd = win32gui.GetForegroundWindow()
+    win32gui.ShowWindow(hwnd, win32con.SW_MINIMIZE)
+
     
 windows7 = True
 
