@@ -30,7 +30,7 @@ def on_touch_down(touch):
     userdata = touch.ud
     userdata['line'] = Line(points=(touch.x, touch.y))
     
-    activeTouches.update(touch.uid : {0 : (touch.x, touch.y)})
+    activeTouches.update({touch.uid : {0 : (touch.x, touch.y)}})
     
     return None    #TODO Return actual gesture object
 
@@ -38,7 +38,7 @@ def on_touch_move(touch):
     # store points of the touch movement
     try:
         touch.ud['line'].points += [touch.x, touch.y]
-        activeTouches.update(touch.uid : {(len(activeTouches[uid])) : (touch.x, touch.y)})
+        activeTouches[touch.uid].update({touch.uid : {(len(activeTouches[touch.uid])) : (touch.x, touch.y)}})
         print activeTouches
     except (KeyError), e:
         pass
@@ -58,7 +58,7 @@ def on_touch_up(touch):
 
     gesture = OwnGesture.Gesture("name", False, gdb.gesture_to_str(g))
     
-    del activeTouches[uid]
+    del activeTouches[touch.uid]
     
     return gesture    #TODO Return actual gesture object
 

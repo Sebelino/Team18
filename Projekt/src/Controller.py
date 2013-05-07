@@ -13,22 +13,21 @@ def signalCommand(g):
         c = ProfileManager.getCommand(g)
         CommandHandler.execute(c)
 
-
 #On touch events
 def on_touch_down(touch):
     g = GestureHandler.on_touch_down(touch)
     signalCommand(g)
-    print "hi\nhi\nhi\nDOWN!!!"
+    print "DOWN!!!"
     
 def on_touch_move(touch):
     g = GestureHandler.on_touch_move(touch)
     signalCommand(g)
-    print "hi\nhi\nhi\nMOVE!!!!!!!!"
+    print "MOVE!!!!!!!!"
     
 def on_touch_up(touch):
     g = GestureHandler.on_touch_up(touch)
     signalCommand(g)
-    print "hi\nhi\nhi\nUP"
+    print "UP"
 
 
 # For databasen

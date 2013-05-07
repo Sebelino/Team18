@@ -715,26 +715,26 @@ def removeMapping(index):
     pass
 
 #-------------- Gestures ----------------#
-def createGesture(gesture, gestData, descType, desc):
+def createGesture(gesture, gestData, descType, desc): #TODO
     """ Creates the gesture. """
     print gesture, gestData, "\n" ,descType, desc
     pass
 
-def removeGesture(gesture):
+def removeGesture(gesture): #TODO
     """ Removes the specified gesture. """
     pass
 
 #-------------- Macros/Windows functions ------------------#
-def createMacro():
+def createMacro(): #TODO
     """ Creates a new Macro. """
     pass
 
-def editMacro(macro, newScript, descType, desc):
+def editMacro(macro, newScript, descType, desc): #TODO
     """edits macro 'macro' from the script newScript,
        to description desc, which is of type descType"""
     print macro, newScript, "\n" ,descType, desc
 
-def removeMacro(macro):
+def removeMacro(macro): #TODO
     """ Removes the specified Macro. """
     print "removing macro ", macro
     pass
