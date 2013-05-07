@@ -8,6 +8,8 @@ from kivy.uix.widget import Widget
 from kivy.uix.button import Button
 from kivy.graphics import Color, Ellipse, Line
 from kivy.gesture import Gesture, GestureDatabase
+import win32api
+import win32con
 
 from my_gestures import cross, circle, check, square, s
 import Queue
@@ -27,6 +29,10 @@ def simplegesture(name, point_list):
 
 def on_touch_down(touch):
     # start collecting points in touch.ud
+    touch.scale_for_screen(4096,2400)
+    (x,y) = (int(touch.x) ,int(touch.y))
+    win32api.SetCursorPos((x, 2400-y))
+    win32api.mouse_event(win32con.MOUSEEVENTF_LEFTDOWN,x,2400-y,0,0)
     userdata = touch.ud
     userdata['line'] = Line(points=(touch.x, touch.y))
     
@@ -36,6 +42,11 @@ def on_touch_down(touch):
 
 def on_touch_move(touch):
     # store points of the touch movement
+    touch.scale_for_screen(4096,2400)
+    (x,y) = (int(touch.x) ,int(touch.y))
+    print "TAUTTCH!!"+str((x,2400-y))
+    win32api.SetCursorPos((x, 2400-y))
+
     try:
         touch.ud['line'].points += [touch.x, touch.y]
         activeTouches[touch.uid].update({(len(activeTouches[touch.uid])) : (touch.x, touch.y)})
@@ -46,6 +57,10 @@ def on_touch_move(touch):
     return None    #TODO Return actual gesture object
 
 def on_touch_up(touch):
+    touch.scale_for_screen(4096,2400)
+    (x,y) = (int(touch.x) ,int(touch.y))
+    win32api.SetCursorPos((x, 2400-y))
+    win32api.mouse_event(win32con.MOUSEEVENTF_LEFTUP,x,2400-y,0,0)
     # touch is over, display informations, and check if it matches some
     # known gesture.
     g = simplegesture(
