@@ -188,6 +188,8 @@ def parse(script):
         openPath(words[1])
     if words[0].lower() == "press3keys":
         press3Keys(VK_CODE[words[1]],VK_CODE[words[2]],VK_CODE[words[3]])
+    if words[0].lower() == "minimize":
+        minimize()
 
 
 
@@ -202,9 +204,6 @@ def leftClickMove(x,y):
 def leftClickUp(x,y):
     win32api.SetCursorPos((x, y))
     win32api.mouse_event(win32con.MOUSEEVENTF_LEFTUP,x,y,0,0)
-
-
-
 
 def leftClick(x,y):
     win32api.SetCursorPos((x, y))
