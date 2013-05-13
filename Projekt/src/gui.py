@@ -1236,7 +1236,7 @@ class CreateGesturePopup(Popup):
         super(CreateGesturePopup, self).__init__(**kwargs)
         self.size_hint = (None, None)
         self.size = (500, 500)
-        self.background = PICPATH+'/background_edit_macro.png'
+        self.background = PICPATH+'/background_create_gesture.png'
         self.auto_dismiss = False
         self.separator_color = (0.625, 0.625, 0.625, 1)
         self.auto_dismiss = False
