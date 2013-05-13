@@ -239,16 +239,17 @@ class MappingDisplay(FloatLayout):
         
 class GestureCreator(FloatLayout):
     '''On touch events'''
-    queue = Queue.Queue()
 
     def __init__(self,**kwargs):
         super(GestureCreator,self).__init__(**kwargs)
+        #gdb is the kivt build in class, to transform a gesture into a string.
         self.gdb = GestureDatabase()
     
     def on_touch_down(self, touch):
         if not self.collide_point(touch.x,touch.y):
             print "UTANFOR!!!"
             return False
+        self.canvas.clear()
         print str(touch.device)
         if str(touch.device) == "multitouchtable":
             print "touch"
@@ -290,16 +291,7 @@ class GestureCreator(FloatLayout):
                 '',
                 zip(touch.ud['line'].points[::2], touch.ud['line'].points[1::2])
                 )
-        # print the gesture representation, you can use that to add
-        # gestures to my_gestures.py
-        print "gesture representation:", self.gdb.gesture_to_str(g)
-        #TODO - E DETTA KORREKT????????????? uppdatera i widgeten
-        gesture = OwnGesture.Gesture("(Newborn)",False,self.gdb.gesture_to_str(g))
-        self.queue.put(gesture)
-
-        # erase the lines on the screen, this is a bit quick&dirty, since we
-        # can have another touch event on the way...
-        self.canvas.clear() #TODO, se till att border inte raderas vid detta!
+        cgp.gestString = self.gdb.gesture_to_str(g)
 
     def containsGesture():
         return not queue.empty()
@@ -1274,12 +1266,13 @@ class CreateGesturePopup(Popup):
                                       size_hint = (1, 0.47),
                                       pos_hint = {'x':0, 'y': 0.1})'''
         #TODO - INITIALIZE YOUR WIDGET HERE
-        self.gcreator = GestureCreator(size_hint = (1, 0.47), size = (120, 26),
-                                  pos_hint = {'x':0, 'y':0.1}, color = (0,1,0,0.5),
-                                       )
-        self.gcreator.add_widget(Image(source=PICPATH+'/create_gesture_border.png',
+        fl = FloatLayout(size_hint = (1, 0.47), pos_hint = {'x':0, 'y':0.1})
+        
+        self.gcreator = GestureCreator(pos_hint = {'x':0, 'y':0})
+        fl.add_widget(Image(source=PICPATH+'/create_gesture_border.png',
                                        allow_stretch=True, keep_ratio=False,
                                        size_hint = (1,1), pos_hint={'x':0,'y':0}))
+        fl.add_widget(self.gcreator)
         
         #see above bortkommenterad text input for pos_hint and size_hint
         #values to fit it
@@ -1302,7 +1295,7 @@ class CreateGesturePopup(Popup):
                                    halign='left', text_size=(450,None)))        
         #container.add_widget(self.textAreaScript)
         #TODO - ADD YOUR WIDGET HERE
-        container.add_widget(self.gcreator)
+        container.add_widget(fl)
 
         container.add_widget(acceptButton)
         container.add_widget(cancelButton)
@@ -1315,19 +1308,17 @@ class CreateGesturePopup(Popup):
         self.textAreaName.text = "My gesture"
         self.textAreaDesc.text = "My description"
         self.gestString = None
-        #TODO - IF YOU WANT TO INITIALISE SOMETHING FOR YOUR WIDGET
-        #       WHEN THE POPUP OPENS
         super(CreateGesturePopup, self).open()
 
 ######## Edit macros
 emp = EditMacroPopup()
-egp = CreateGesturePopup()
+cgp = CreateGesturePopup()
         
 def editMacroCallback(macro):
     emp.open(macro)
 
 def createGestureCallback():
-    egp.open()
+    cgp.open()
 
 #def createMacro():
 #    pass;
