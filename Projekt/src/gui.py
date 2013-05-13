@@ -165,46 +165,44 @@ class MappingDisplay(FloatLayout):
                         size_hint = (None,None),
                         size = (50, self.mappingHeight - border*2),
                         font_name = font,
-                        text = '[color=000000][size=12]Remove', markup=True
+                        color = (0,0,0,1), font_size = 12,
+                        text = 'Remove'
                         )
         
         gesture = Label(color = (0,0,0,1),
                         text = mapping[0],
-                        bold = True, markup= True,
+                        bold = True, 
                         pos_hint = {'x':0.12, 'y':border_y},
                         size_hint = (None,None),
                         size = (150, self.mappingHeight - border*2),
                         font_name = font, halign = 'left',text_size=(150,None),
-                        font_size = 12
-                        )
+                        font_size = 12)
         
         gestureInfoBtn = Button(background_normal = self.gestureEditButtonImageUp,
                                 background_down = self.gestureEditButtonImageDown,
                                 pos_hint = {'x':0.43, 'y':border_y},
                                 size_hint = (None,None),
                                 size = (40, self.mappingHeight - border*2),
-                                text = '[color=000000][size=12]Edit', markup=True,
-                                font_name = font
-                                )
+                                text = 'Edit', font_name = font,
+                                color = (0,0,0,1), font_size = 12)
         
         macro = Label(color = (0,0,0,1),
                       text = mapping[1],
-                      bold = True, markup = True,
+                      bold = True,
                       pos_hint = {'x':0.61, 'y':border_y},
                       size_hint = (None,None),
                       size = (150, self.mappingHeight - border*2),
                       font_name = font, halign = 'left', text_size=(150, None),
-                      font_size = 12
-                      )
+                      font_size = 12)
         
         macroInfoBtn = Button(background_normal = self.macroEditButtonImageUp,
                               background_down = self.macroEditButtonImageDown,
                               pos_hint = {'x':0.915, 'y':border_y},
                               size_hint = (None,None),
                               size = (40, self.mappingHeight - border*2),
-                              text = '[color=000000][size=12]Edit', markup=True,
-                              font_name = font
-                              )
+                              text = 'Edit', font_name = font,
+                              color = (0,0,0,1), font_size = 12)
+        
         mappingWidget.add_widget(macroInfoBtn)
         mappingWidget.add_widget(macro)
         mappingWidget.add_widget(gestureInfoBtn)
@@ -296,16 +294,6 @@ class GestureCreator(FloatLayout):
     def containsGesture():
         return not queue.empty()
     '''End of on-touch events'''
-
-
-class MacroCreator(FloatLayout):
-    layout = None
-    def __init__(self,**kwargs):
-        super(MacroCreator,self).__init__(**kwargs)
-        self.layout = BoxLayout(orientation='vertical',size_hint=(None,None),size = (100,100))
-        nameBox = TextInput(multiline = False,font_size = 13)
-        #nameBox.add_widget(self.layout)
-        self.add_widget(nameBox)
 
 class MappingInstance(FloatLayout):
     index = 0
@@ -420,7 +408,7 @@ class EventPopup(Popup):
         '''Private method to set buttons.'''
 
         #Button that signals cancel
-        cancelBtn = Button(text='[color=000000]Cancel', markup=True,
+        cancelBtn = Button(text='Cancel', color = (0,0,0,1),
                            size_hint=(None,None), size = (140, 25),
                            pos_hint = {'right':0.98, 'y':0},
                            background_normal = PICPATH+'/button_up.png',
@@ -429,7 +417,7 @@ class EventPopup(Popup):
         cancelBtn.bind(on_release= lambda btn: self.dismiss())
         
         #Button that signals accept
-        doneBtn = Button(text='[color=000000]Ok', markup=True,
+        doneBtn = Button(text='Ok', color = (0,0,0,1),
                          size_hint=(None,None), size = (140, 25),
                          pos_hint = {'x':0.02, 'y':0},
                          background_normal = PICPATH+'/button_up.png',
@@ -450,22 +438,20 @@ class EventPopup(Popup):
     def __addCreateEventButton(self):
         '''private method to create createEvent button'''
 
-        eventBtn = Button(markup=True,
+        eventBtn = Button(color = (0,0,0,1), font_name = font, font_size = 11,
                           size_hint=(None,None), size = (95, 28),
                           pos_hint = {'right':0.99, 'top':0.97},
                           background_normal = PICPATH+'/button_up.png',
                           background_down = PICPATH+'/button_down.png')
         
         if self.gestureOrMacro == 'gesture':
-            eventBtn.text = '[color=000000][font='+font+'][size=11]'+ \
-                            'Customize'
+            eventBtn.text = 'Customize'
             def eventBtn_callback(btn):
                 manageGestures()
                 #self.dismiss() TODO
             eventBtn.bind(on_release=eventBtn_callback)
         elif self.gestureOrMacro == 'macro':
-            eventBtn.text = '[color=000000][font='+font+'][size=11]'+ \
-                            'Customize'
+            eventBtn.text = 'Customize'
             def eventBtn_callback(btn):
                 manageMacros()
                 #self.dismiss() TODO
@@ -485,8 +471,8 @@ class EventPopup(Popup):
             w.size_hint = (0.95, 0.6)
             w.pos_hint = {'x':0.025, 'y':0.2}
 
-        pickEventBtn = Button(text='[color=000000]'+allEvents[0][0], 
-                          markup=True, size_hint=(0.7,0.12),
+        pickEventBtn = Button(text=allEvents[0][0], 
+                          color = (0,0,0,1), size_hint=(0.7,0.12),
                           pos_hint = {'x':0.01, 'y': 0.85},
                           background_normal = PICPATH+'/button_up_dropdown.png',
                           background_down = PICPATH+'/button_down_dropdown.png',
@@ -525,6 +511,346 @@ class IndexButton(Button):
     index = 0
     def __init__(self,**kwargs):
         super(IndexButton,self).__init__(**kwargs)
+
+#############################
+# Manage custom events popup classes
+############################
+
+'''
+This is the class CustomizeEventPopup.
+
+It is the popup that pops up when the user clicks on the button
+"customize" in the event popup. Basically, the class consists of a
+popup (opens with open()), with a title and a content (of course...).
+The content is a floatlayout with three components: one ListView for
+listing all custom events, and two buttons: create new and done.
+The create button calls either the createMacro() function, or the
+more complicated createGestureCallback(). The Done button simply dismisses
+the popup. Each component in the listview is either a CustomGestureWidget
+or a CustomMacroWidget. More info on them below.
+
+To use the popup, two instances have already been created. Simply call
+cepg.open() or cegm.open() to open the popups. 
+'''
+class CustomizeEventPopup(Popup):
+    gestureOrMacro = "gesture"
+    container = None
+
+    def __init__(self, gestureOrMacro, **kwargs):
+        super(CustomizeEventPopup, self).__init__(**kwargs)
+        self.size_hint = (None, None)
+        self.size = (400, 400)
+        self.auto_dismiss = False
+        self.separator_color = (0.625, 0.625, 0.625, 1)
+        self.separator_height = 1
+        self.gestureOrMacro = gestureOrMacro
+        content = FloatLayout()
+        self.container = content
+
+        #set create button
+        createBtn = Button(size_hint = (None, None), size = (150, 25),
+                           pos_hint = {'x': 0.05, 'y': 0.03},
+                           color = (0,0,0,1),
+                           background_normal = PICPATH+'/button_up.png',
+                           background_down = PICPATH+'/button_down.png')
+        def createBtn_callback(btn):
+            if gestureOrMacro == 'gesture':
+                createGestureCallback()
+            else:
+                createMacro()
+                self.refresh()
+        createBtn.bind(on_release=createBtn_callback)
+        
+        #set done button
+        doneBtn = Button(size_hint = (None, None), size = (150, 25),
+                         text = "Done", color = (0,0,0,1),
+                         pos_hint = {'right': 0.95, 'y': 0.03},
+                         background_normal = PICPATH+'/button_up.png',
+                         background_down = PICPATH+'/button_down.png')
+        doneBtn.bind(on_release=lambda(btn):self.dismiss())
+
+        #Do some event-specific stuff
+        if gestureOrMacro == "gesture":
+            createBtn.text = "Create new gesture"
+            self.background = PICPATH+'/background_custom_gestures.png'
+        else:
+            createBtn.text = "Create new macro"
+            self.background = PICPATH+'/background_custom_macros.png'
+
+        #add widgets
+        content.add_widget(doneBtn)
+        content.add_widget(createBtn)
+        self.container = ListView(25, size_hint = (None, None),
+                                    size = (340, 260),
+                                    pos_hint = {'x':0, 'y':0.2})
+        content.add_widget(self.container)
+        self.content = content
+        
+
+        self.refresh()
+        
+    def refresh(self):
+        while len(self.container.box.children) > 0:
+            self.container.remove_widget(self.container.box.children[0])
+        if self.gestureOrMacro == 'gesture':
+            eventList = getListOfCustomGestures()
+        else:
+            eventList = getListOfCustomMacros()
+        i = 0
+        for event in eventList:
+            if self.gestureOrMacro == 'gesture':
+                self.container.add_widget(CustomGestureWidget(i, self, event))
+            else:
+                self.container.add_widget(CustomMacroWidget(i, self, event))
+            i += 1
+
+
+'''
+For context, see comment above class CustomizeEventPopup.
+This is a boxlayout with 2 components: one label with the gesture name,
+and a button for deleting this gesture. Note that the "label" is actually
+a button, but its fine because Button actually inherits from Label, and
+in the button you can set background image.
+'''
+class CustomGestureWidget(BoxLayout):
+    index = 0
+    owner = None
+    name = "My gesture"
+    
+    def __init__(self, index, owner, name, **kwargs):
+        super(CustomGestureWidget, self).__init__(**kwargs)
+        #set various variables
+        self.index = index
+        self.owner = owner
+        self.name = name
+        self.spacing = 3
+        #now create button
+        delBtn = Button(text='Delete', font_size = 12, color = (0,0,0,1),
+                        background_normal = PICPATH+'/button_up.png',
+                        background_down = PICPATH+'/button_down.png')
+        #bind button
+        def delBtn_callback(btn):
+            removeGesture(name)
+            owner.refresh()
+            print "Removing gesture ", name
+        delBtn.bind(on_release=delBtn_callback)
+        #build self
+        self.add_widget(Button(text=name, color = (0,0,0,1),
+                        text_size = (260,None), halign='left',
+                        size_hint_x = 4.5, font_size = 12,
+                        background_normal = PICPATH+'/listview_choice.png',
+                        background_down = PICPATH+'/listview_choice.png'))
+        self.add_widget(delBtn)
+
+        
+'''
+For context, see comment above class CustomizeEventPopup.
+This is similar to the CustomGestureWidget, except that there also is a
+button for editing this macro, which calls the EditMacroCallback function.
+'''
+class CustomMacroWidget(BoxLayout):
+    index = 0
+    owner = None
+    name = "My macro"
+    
+    def __init__(self, index, owner, name, **kwargs):
+        super(CustomMacroWidget, self).__init__(**kwargs)
+        #set various variables
+        self.index = index
+        self.owner = owner
+        self.name = name
+        self.spacing = 3
+        #now create buttons
+        editBtn = Button(text='Edit', font_size = 12, color = (0,0,0,1),
+                         background_normal = PICPATH+'/button_up.png',
+                         background_down = PICPATH+'/button_down.png')
+        delBtn = Button(text='Delete', font_size = 12, color = (0,0,0,1),
+                        background_normal = PICPATH+'/button_up.png',
+                        background_down = PICPATH+'/button_down.png')
+
+        #bind buttons
+        editBtn.bind(on_release=lambda(btn):editMacroCallback(name))
+        def delBtn_callback(btn):
+            #print "Removing macro ", name
+            removeMacro(name)
+            owner.refresh()
+        delBtn.bind(on_release=delBtn_callback)
+        
+        #build self
+        self.add_widget(Button(text=name, color = (0,0,0,1),
+                        text_size = (220,None), halign='left',
+                        size_hint_x = 4.5, font_size = 12,
+                        background_normal = PICPATH+'/listview_choice.png',
+                        background_down = PICPATH+'/listview_choice.png'))
+        self.add_widget(editBtn)
+        self.add_widget(delBtn)
+
+#####################################################
+## Edit macro and create gesture popup classes,
+#####################################################
+
+class EditMacroPopup(Popup):
+    textAreaName = None
+    textAreaDesc = None
+    textAreaScript = None
+    container = None
+    macro = "the awesome macro"
+    
+    def __init__(self, **kwargs):
+        super(EditMacroPopup, self).__init__(**kwargs)
+        self.size_hint = (None, None)
+        self.size = (500, 500)
+        self.background = PICPATH+'/background_edit_macro.png'
+        self.auto_dismiss = False
+        self.separator_color = (0.625, 0.625, 0.625, 1)
+        self.separator_height = 1
+        container = FloatLayout()
+
+        #create buttons
+        acceptButton = Button(size_hint = (None, None), size = (120, 26),
+                              pos_hint = {'x':0.05, 'y':0}, color = (0,0,0,1),
+                              text = "Accept",
+                              background_normal = PICPATH+'/button_up.png',
+                              background_down = PICPATH+'/button_down.png')
+        def acceptButton_callback(btn):
+            editMacro(self.textAreaName.text, self.textAreaScript.text,
+                      'text', self.textAreaDesc.text)
+            cepm.refresh()
+            self.dismiss()
+        acceptButton.bind(on_release=acceptButton_callback)
+        cancelButton = Button(size_hint = (None, None), size = (120, 26),
+                              pos_hint = {'right':0.95, 'y':0}, color = (0,0,0,1),
+                              text = "Cancel",
+                              background_normal = PICPATH+'/button_up.png',
+                              background_down = PICPATH+'/button_down.png')
+        cancelButton.bind(on_release=lambda(btn):self.dismiss())
+
+        #create textinputs
+        self.textAreaName = TextInput(multiline = False, font_size = 13,
+                                      size_hint = (0.5, 0.07),
+                                      pos_hint = {'x':0, 'y': 0.88})
+        self.textAreaDesc = TextInput(multiline = True, font_size = 13,
+                                      size_hint = (0.7, 0.2),
+                                      pos_hint = {'x':0, 'y': 0.63})
+        self.textAreaScript = TextInput(multiline = True, font_size = 11,
+                                      size_hint = (1, 0.47),
+                                      pos_hint = {'x':0, 'y': 0.1})
+
+        #add widgets
+        container.add_widget(Label(font_size=15, text="Macro name",
+                                   size_hint = (1, 0.05), color = (0,0,0,1),
+                                   pos_hint = {'x':0, 'y':0.95},
+                                   halign='left', text_size=(450,None)))
+        container.add_widget(self.textAreaName)
+        container.add_widget(Label(font_size=15, text="Macro description",
+                                   size_hint = (1, 0.05), color = (0,0,0,1),
+                                   pos_hint = {'x':0, 'y':0.83},
+                                   halign='left', text_size=(450,None)))       
+        container.add_widget(self.textAreaDesc)
+        container.add_widget(Label(font_size=15, text="Macro script",
+                                   size_hint = (1, 0.05), color = (0,0,0,1),
+                                   pos_hint = {'x':0, 'y':0.57},
+                                   halign='left', text_size=(450,None)))        
+        container.add_widget(self.textAreaScript)
+        container.add_widget(acceptButton)
+        container.add_widget(cancelButton)
+
+        self.container = container
+        self.content = container
+
+    def open(self, macro):
+        '''overriding open function'''
+        self.macro = macro
+        macInfo = getMacroInfo(macro)
+        self.textAreaName.text = macInfo[0]
+        self.textAreaDesc.text = macInfo[3]
+        self.textAreaScript.text = macInfo[1]
+        super(EditMacroPopup, self).open()
+
+class CreateGesturePopup(Popup):
+    textAreaName = None
+    textAreaDesc = None
+    gcreator = None #Widget for tracing user's gesture
+    gestString = "SOME LONG STRING"
+    container = None
+    
+    def __init__(self, **kwargs):
+        super(CreateGesturePopup, self).__init__(**kwargs)
+        self.size_hint = (None, None)
+        self.size = (500, 500)
+        self.background = PICPATH+'/background_create_gesture.png'
+        self.auto_dismiss = False
+        self.separator_color = (0.625, 0.625, 0.625, 1)
+        self.auto_dismiss = False
+        container = FloatLayout()
+
+        #create buttons
+        acceptButton = Button(size_hint = (None, None), size = (120, 26),
+                              pos_hint = {'x':0.05, 'y':0}, color = (0,0,0,1),
+                              text = "Accept",
+                              background_normal = PICPATH+'/button_up.png',
+                              background_down = PICPATH+'/button_down.png')
+        def acceptButton_callback(btn):
+            createGesture(self.textAreaName.text, self.gestString,
+                      'text', self.textAreaDesc.text)
+            cepg.refresh()
+            self.dismiss()
+        acceptButton.bind(on_release=acceptButton_callback)
+        cancelButton = Button(size_hint = (None, None), size = (120, 26),
+                              pos_hint = {'right':0.95, 'y':0}, color = (0,0,0,1),
+                              text = "Cancel",
+                              background_normal = PICPATH+'/button_up.png',
+                              background_down = PICPATH+'/button_down.png')
+        cancelButton.bind(on_release=lambda(btn):self.dismiss())
+
+        #create textinputs
+        self.textAreaName = TextInput(multiline = False, font_size = 13,
+                                      size_hint = (0.5, 0.07),
+                                      text = "My gesture",
+                                      pos_hint = {'x':0, 'y': 0.88})
+        self.textAreaDesc = TextInput(multiline = True, font_size = 13,
+                                      size_hint = (0.7, 0.2),
+                                      text = "My description",
+                                      pos_hint = {'x':0, 'y': 0.63})
+
+        fl = FloatLayout(size_hint = (1, 0.47), pos_hint = {'x':0, 'y':0.1})
+        self.gcreator = GestureCreator(pos_hint = {'x':0, 'y':0})
+        fl.add_widget(Image(source=PICPATH+'/create_gesture_border.png',
+                                       allow_stretch=True, keep_ratio=False,
+                                       size_hint = (1,1), pos_hint={'x':0,'y':0}))
+        fl.add_widget(self.gcreator)
+
+        #add widgets
+        container.add_widget(Label(font_size=15, text="Gesture name",
+                                   size_hint = (1, 0.05),
+                                   color = (0,0,0,1),
+                                   pos_hint = {'x':0, 'y':0.95},
+                                   halign='left', text_size=(450,None)))
+        container.add_widget(self.textAreaName)
+        container.add_widget(Label(font_size=15, text="Gesture description",
+                                   size_hint = (1, 0.05), color = (0,0,0,1),
+                                   pos_hint = {'x':0, 'y':0.83},
+                                   halign='left', text_size=(450,None)))       
+        container.add_widget(self.textAreaDesc)
+        container.add_widget(Label(font_size=15, text="Draw gesture here",
+                                   size_hint = (1, 0.05), color = (0,0,0,1),
+                                   pos_hint = {'x':0, 'y':0.57},
+                                   halign='left', text_size=(450,None)))        
+        container.add_widget(fl)
+        container.add_widget(acceptButton)
+        container.add_widget(cancelButton)
+
+        self.container = container
+        self.content = container
+
+    def open(self):
+        '''overriding open function'''
+        self.textAreaName.text = "My gesture"
+        self.textAreaDesc.text = "My description"
+        self.gestString = None
+        super(CreateGesturePopup, self).open()
+
+
 
 ##################################################################
 #-------------- Confirm Popup Class and function-----------------#
@@ -570,13 +896,13 @@ class ConfirmPopup(Popup):
         self.title_size = '10sp'
         btnsize = (100, 27)
         yesBtn = Button(size_hint = (None,None), size = btnsize,
-                        text = "[color=000000]Accept", markup = True,
+                        text = "Accept", color = (0,0,0,1),
                         pos_hint = {'x':0.05, 'y':0.05}, 
                         background_normal = PICPATH+'/button_up.png',
                         background_down = PICPATH+'/button_down.png')
         yesBtn.bind(on_release = self.callFunction)
         noBtn = Button(size_hint = (None,None), size = btnsize,
-                        text = "[color=000000]Cancel", markup = True,
+                        text = "Cancel", color = (0,0,0,1),
                         pos_hint = {'right':0.95, 'y':0.05}, 
                         background_normal = PICPATH+'/button_up.png',
                         background_down = PICPATH+'/button_down.png')        
@@ -759,51 +1085,61 @@ def removeMacro(macro): #TODO
 ##################################################################
 
 #------------------ ProfileBar ----------------------------------#
+
 #Profile selection, is a boxlayout with 2 components:
 #1. a label with a static text saying "current profile"
 #2. A button with a dropdown Menu for the profile selection action
 
-profileSelectionLabel = Label(text='[color=000000][b]Select profile',
-                              markup=True,
+profileSelectionLabel = Label(text='Select profile',
+                              bold=True, color = (0,0,0,1),
                               size_hint=(None, None),
                               size = (250, 30),
                               pos_hint = {'x':0.05, 'y':0.6})
 
-profileSelection = Button(markup=True,
+profileSelection = Button(size_hint = (None, None), size = (250, 30),
                 background_normal=PICPATH+'/button_up_dropdown.png',
                 background_down=PICPATH+'/button_up_dropdown.png',
-                size_hint = (None, None),
-                size = (250, 30),
                 pos_hint = {'x':0.05, 'y':0.4},
-                halign = 'left',
-                text_size=(240,None),
-                  )
+                halign = 'left', text_size=(240,None),
+                font_size = 14, color = (0,0,0,1))
 
-def profileSelectionButtonTextSet(profileName):
-    btntext=kivy.utils.escape_markup(profileName)
-    profileSelection.text = '[size=14][color=000000]' + btntext
-profileSelectionButtonTextSet(getCurrentProfile())
 #For the dropdown, the max_height is set to 400.
 #This means, that up to 20 profiles can fit before scroll starts
 #being relevant.
 d = DropDown(max_height=410, bar_width=15)
-for profile in getListOfProfiles():
-    btn = Button(text=profile, color=(0,0,0,1), size_hint_y=None, height=20,
-                 background_normal = PICPATH+'/dropdown_choice.png',
-                 halign = 'left', text_size = (240,None))
-    btn.bind(on_press=lambda btn: d.select(btn.text))
-    d.add_widget(btn)
+def updateProfileList():
+    d.clear_widgets()
+    for profile in getListOfProfiles():
+        btn = Button(text=profile, color=(0,0,0,1), size_hint_y=None,
+                     height=20,
+                     background_normal = PICPATH+'/dropdown_choice.png',
+                     halign = 'left', text_size = (240,None))
+        btn.bind(on_press=lambda btn: d.select(btn.text))
+        d.add_widget(btn)
+
+#profile chooser action
+profileSelection.bind(on_release=d.open)
+def pickProf(inst, name):
+    selectProfile(name)
+    updateTextBoxes(name)
+    
+d.bind(on_select=pickProf)
                                  
-#add profile button, a simple button
+#-------------------add profile button, a simple button
 createProfileButton = Button( size_hint = (None,None),
                               size = (120,25),
                               pos_hint = {'x':0.03, 'y':0.1},
                               background_normal = PICPATH+'/button_up.png',
                               background_down = PICPATH+'/button_down.png',
-                              font_name = font,
-                              text = "[color=000000][size=15]New profile",
-                              markup=True)
-
+                              font_name = font, color = (0,0,0,1),
+                              text = "New profile", font_size = 15)
+def createProfileButtonAction(btn):
+    newProfileName = createProfile('Untitled Profile')
+    updateProfileList()
+    updateTextBoxes(newProfileName)
+    profileNameTextBox.focus = True
+    profileNameTextBox.select_all()
+createProfileButton.bind(on_release=createProfileButtonAction)
 
 #Profile name box
 #Consists, like the profile selection, of a BoxLayout with 2 components,
@@ -813,102 +1149,66 @@ profileNameBox = BoxLayout(orientation='vertical',
                            size_hint = (0.4, 0.5),
                            pos_hint = {'x':0.55, 'y':0.2})
 
-profileNameBox.add_widget(Label(text='[color=000000][b]Change profile name',
-                                  markup=True,
+profileNameBox.add_widget(Label(text='Change profile name',
+                                color = (0,0,0,1), bold = True,
                                 size_hint_y = 0.8))
                            
-profileNameTextBox = TextInput(multiline = False,
-                               font_size = 13)
-
-def profileNameTextBoxTextSet(profileName):
-    text=kivy.utils.escape_markup(profileName)
-    profileNameTextBox.text = text
-    
-profileNameTextBoxTextSet(getCurrentProfile()) #TODO
-
+profileNameTextBox = TextInput(multiline = False, font_size = 13)
 profileNameBox.add_widget(profileNameTextBox)
 
-#delete profile button
-deleteProfileButton = Button(size_hint = (None, None), size = (120,25),
-                            pos_hint = {'x':0.25, 'y':0.1},
-                            text='[color=000000]Delete profile',
-                            markup = True,
-                            background_normal = PICPATH+'/button_up.png',
-                            background_down = PICPATH+'/button_down.png')
-
-#bind actions
-#updates both choose profiles text, and profile name bar.
-def updateTextBoxes(profileName):
-    profileSelectionButtonTextSet(profileName)
-    profileNameTextBoxTextSet(profileName)
-    profileNameTextBox.cancel_selection()
-    profileNameTextBox.focus = False
-    titleMappings.text = '[color=000000][b][size=30]' + profileName
-
-#profile chooser action
-profileSelection.bind(on_release=d.open)
-def pickProf(inst, name):
-    updateTextBoxes(name)
-    selectProfile(name)
-d.bind(on_select=pickProf)
-
-#name text box action
 def profileNameTextBoxAction(txtbox):
     editProfile(getCurrentProfile(), txtbox.text)
     updateTextBoxes(txtbox.text)
 profileNameTextBox.bind(on_text_validate = profileNameTextBoxAction)
 
-#create profile button action
-def createProfileButtonAction(btn):
-    newProfileName = createProfile('Untitled Profile')
-    updateTextBoxes(newProfileName)
-    profileNameTextBox.focus = True
-    profileNameTextBox.select_all()
-createProfileButton.bind(on_release=createProfileButtonAction)
-
 #delete profile button
+deleteProfileButton = Button(size_hint = (None, None), size = (120,25),
+                            pos_hint = {'x':0.25, 'y':0.1},
+                            text='Delete profile', color = (0,0,0,1),
+                            background_normal = PICPATH+'/button_up.png',
+                            background_down = PICPATH+'/button_down.png')
+
 def deleteProfileButtonAction(btn):
     confirm.open("Are you sure you want to delete profile\n" +
                  getCurrentProfile() + "?", delProf)
-
+    
 def delProf():
     removeProfile(getCurrentProfile())
+    updateProfileList()
     updateTextBoxes(getCurrentProfile())
     
-deleteProfileButton.bind(on_release = deleteProfileButtonAction)
+deleteProfileButton.bind(on_release = deleteProfileButtonAction)   
+#bind actions
+#updates both choose profiles text, and profile name bar.
+def updateTextBoxes(profileName):
+    #profileName = getCurrentProfile()
+    profileSelection.text = profileName
+    profileNameTextBox.text = profileName
+    profileNameTextBox.cancel_selection()
+    profileNameTextBox.focus = False
+    titleMappings.text = profileName
 
 # -------------------Main Area -----------------------------#
 
 #main title
-titleMappings = Label(text='[color=000000][b][size=30]' + getCurrentProfile(),
-                      size_hint=(1,0.1),
-                      pos_hint={'y':0.91},
-                      markup = True)
+titleMappings = Label(text=getCurrentProfile(),
+                      size_hint=(1,0.1), pos_hint={'y':0.91},
+                      color = (0,0,0,1), bold = True, font_size = 30)
 
 #Labels for Gestures and Windows Functions
-gestureLabel = Label(text='[color=000000][b][size=16]Gesture',
-                     size_hint=(0.2,0.05),
-                     pos_hint={'x':0.16,'y':0.85},
-                     font_name = font,
-                     markup = True)
+gestureLabel = Label(text='Gesture', size_hint=(0.2,0.05),
+                     pos_hint={'x':0.16,'y':0.85}, font_name = font,
+                     color = (0,0,0,1), bold = True, font_size = 16)
 
-macroLabel = Label(text='[color=000000][b][size=16]Windows Function',
-                   size_hint=(0.2,0.05),
-                   pos_hint={'x':0.52, 'y':0.85},
-                   font_name = font,
-                   markup = True)
+macroLabel = Label(text='Windows Function', size_hint=(0.2,0.05),
+                   pos_hint={'x':0.52, 'y':0.85}, font_name = font,
+                   color = (0,0,0,1), bold = True, font_size = 16)
 
-mcreator = MacroCreator(size = (200, 75), size_hint=(None,None),
-                            pos_hint = {'x':0.02,'y':0.04})
-
-#gcreator = GestureCreator(size = (200, 75), size_hint=(None,None),
-#                            pos_hint = {'x':0.02,'y':0.04})
-# mapping thingy
+#-------- mapping thingy
 
 mappingBox = MappingDisplay(size = (500, 275), size_hint=(None,None),
                             pos_hint = {'x':0.05,'y':0.1})
-#mappingBox.pos_hint = {'x':0.1,'y':0.1}
-                           # pos_hint={'x':0.2, 'y':0.2})
+
 mappingBox.mappingImagePath = PICPATH+'/mapping_border.png'
 mappingBox.deleteButtonImagePathUp = PICPATH+'/button_up.png'
 mappingBox.deleteButtonImagePathDown = PICPATH+'/button_down.png'
@@ -916,15 +1216,14 @@ mappingBox.gestureEditButtonImageUp = PICPATH+'/button_up.png'
 mappingBox.gestureEditButtonImageDown = PICPATH+'/button_down.png'
 mappingBox.macroEditButtonImageUp = PICPATH+'/button_up.png'
 mappingBox.macroEditButtonImageDown = PICPATH+'/button_down.png'
-for mapp in getListOfMappings(getCurrentProfile()):
+for mapp in getListOfMappings(getCurrentProfile()): #update mappings
     mappingBox.addMapping(mapp)
 
 #add mapping button
-addMappingButton = Button(text = '[size=14][color=000000]New Mapping',
-                          size_hint = (None,None),
-                          size = (110,20),
+addMappingButton = Button(text = 'New Mapping',
+                          size_hint = (None,None), size = (110,20),
                           pos_hint = {'x':0.8,'y':0.85},
-                          markup=True,
+                          font_size = 14, color = (0,0,0,1),
                           background_normal = PICPATH+'/button_up.png',
                           background_down = PICPATH+'/button_down.png')
 counter = [1]
@@ -945,189 +1244,9 @@ def displayEditMappingPopup(index, gestOrMacro):
         macroPopup.setDropdownWithExplanation(allEvents)
         macroPopup.open(index)
 
-
-############
-# Manage custom events
-############
-
-'''
-This is the class CustomizeEventPopup.
-
-It is the popup that pops up when the user clicks on the button
-"customize" in the event popup. Basically, the class consists of a
-popup (opens with open()), with a title and a content (of course...).
-The content is a floatlayout with three components: one ListView for
-listing all custom events, and two buttons: create new and done.
-The create button calls either the createMacro() function, or the
-more complicated createGestureCallback(). The Done button simply dismisses
-the popup. Each component in the listview is either a CustomGestureWidget
-or a CustomMacroWidget. More info on them below.
-
-To use the popup, two instances have already been created. Simply call
-cepg.open() or cegm.open() to open the popups. 
-'''
-class CustomizeEventPopup(Popup):
-    gestureOrMacro = "gesture"
-    container = None
-
-    def __init__(self, gestureOrMacro, **kwargs):
-        super(CustomizeEventPopup, self).__init__(**kwargs)
-        self.size_hint = (None, None)
-        self.size = (400, 400)
-        self.auto_dismiss = False
-        self.separator_color = (0.625, 0.625, 0.625, 1)
-        self.separator_height = 1
-        self.gestureOrMacro = gestureOrMacro
-        content = FloatLayout()
-        self.container = content
-
-        #set create button
-        createBtn = Button(size_hint = (None, None), size = (150, 25),
-                           pos_hint = {'x': 0.05, 'y': 0.03}, markup = True,
-                           background_normal = PICPATH+'/button_up.png',
-                           background_down = PICPATH+'/button_down.png')
-        def createBtn_callback(btn):
-            if gestureOrMacro == 'gesture':
-                createGestureCallback()
-            else:
-                createMacro()
-                self.refresh()
-        createBtn.bind(on_release=createBtn_callback)
-        
-        #set done button
-        doneBtn = Button(size_hint = (None, None), size = (150, 25),
-                         text = "[color=000000]Done", markup = True,
-                         pos_hint = {'right': 0.95, 'y': 0.03},
-                         background_normal = PICPATH+'/button_up.png',
-                         background_down = PICPATH+'/button_down.png')
-        doneBtn.bind(on_release=lambda(btn):self.dismiss())
-
-        #Do some event-specific stuff
-        if gestureOrMacro == "gesture":
-            createBtn.text = "[color=000000]Create new gesture"
-            self.background = PICPATH+'/background_custom_gestures.png'
-        else:
-            createBtn.text = "[color=000000]Create new macro"
-            self.background = PICPATH+'/background_custom_macros.png'
-
-        #add widgets
-        content.add_widget(doneBtn)
-        content.add_widget(createBtn)
-        self.container = ListView(25, size_hint = (None, None),
-                                    size = (340, 260),
-                                    pos_hint = {'x':0, 'y':0.2})
-        content.add_widget(self.container)
-        self.content = content
-        
-
-        self.refresh()
-        
-    def refresh(self):
-        while len(self.container.box.children) > 0:
-            self.container.remove_widget(self.container.box.children[0])
-        if self.gestureOrMacro == 'gesture':
-            eventList = getListOfCustomGestures()
-        else:
-            eventList = getListOfCustomMacros()
-        i = 0
-        for event in eventList:
-            if self.gestureOrMacro == 'gesture':
-                self.container.add_widget(CustomGestureWidget(i, self, event))
-            else:
-                self.container.add_widget(CustomMacroWidget(i, self, event))
-            i += 1
-
-
-'''
-For context, see comment above class CustomizeEventPopup.
-This is a boxlayout with 2 components: one label with the gesture name,
-and a button for deleting this gesture. Note that the "label" is actually
-a button, but its fine because Button actually inherits from Label, and
-in the button you can set background image.
-'''
-
-class CustomGestureWidget(BoxLayout):
-    index = 0
-    owner = None
-    name = "My gesture"
-    
-    def __init__(self, index, owner, name, **kwargs):
-        super(CustomGestureWidget, self).__init__(**kwargs)
-        #set various variables
-        self.index = index
-        self.owner = owner
-        self.name = name
-        self.spacing = 3
-        #now create button
-        delBtn = Button(text='Delete', font_size = 12, color = (0,0,0,1),
-                        background_normal = PICPATH+'/button_up.png',
-                        background_down = PICPATH+'/button_down.png')
-        #bind button
-        def delBtn_callback(btn):
-            removeGesture(name)
-            owner.refresh()
-            print "Removing gesture ", name
-        delBtn.bind(on_release=delBtn_callback)
-        #build self
-        self.add_widget(Button(text=name, color = (0,0,0,1),
-                        text_size = (260,None), halign='left',
-                        size_hint_x = 4.5, font_size = 12,
-                        background_normal = PICPATH+'/listview_choice.png',
-                        background_down = PICPATH+'/listview_choice.png'))
-        self.add_widget(delBtn)
-
-        
-'''
-For context, see comment above class CustomizeEventPopup.
-This is similar to the CustomGestureWidget, except that there also is a
-button for editing this macro, which calls the EditMacroCallback function.
-'''
-
-class CustomMacroWidget(BoxLayout):
-    index = 0
-    owner = None
-    name = "My macro"
-    
-    def __init__(self, index, owner, name, **kwargs):
-        super(CustomMacroWidget, self).__init__(**kwargs)
-        #set various variables
-        self.index = index
-        self.owner = owner
-        self.name = name
-        self.spacing = 3
-        #now create buttons
-        editBtn = Button(text='Edit', font_size = 12, color = (0,0,0,1),
-                         background_normal = PICPATH+'/button_up.png',
-                         background_down = PICPATH+'/button_down.png')
-        delBtn = Button(text='Delete', font_size = 12, color = (0,0,0,1),
-                        background_normal = PICPATH+'/button_up.png',
-                        background_down = PICPATH+'/button_down.png')
-
-        #bind buttons
-        editBtn.bind(on_release=lambda(btn):editMacroCallback(name))
-        def delBtn_callback(btn):
-            print "Removing macro ", name
-            removeMacro(name)
-            owner.refresh()
-        delBtn.bind(on_release=delBtn_callback)
-        
-        #build self
-        self.add_widget(Button(text=name, color = (0,0,0,1),
-                        text_size = (220,None), halign='left',
-                        size_hint_x = 4.5, font_size = 12,
-                        background_normal = PICPATH+'/listview_choice.png',
-                        background_down = PICPATH+'/listview_choice.png'))
-        self.add_widget(editBtn)
-        self.add_widget(delBtn)
-
-
-#### End classes
-
-#### End classes definitions
-
-
-cepg = CustomizeEventPopup('gesture')
-cepm = CustomizeEventPopup('macro')
+#manage custom macros and gestures
+cepg = CustomizeEventPopup('gesture') #CustomizeEventPopupGestures
+cepm = CustomizeEventPopup('macro')   #CustomizeEventPopupMacros
 
 def manageGestures():
     cepg.open()
@@ -1135,194 +1254,15 @@ def manageGestures():
 def manageMacros():
     cepm.open()
 
-#####################################################
-## Create events functions, classes and popups here
-#####################################################
-
-class EditMacroPopup(Popup):
-    textAreaName = None
-    textAreaDesc = None
-    textAreaScript = None
-    container = None
-    macro = "the awesome macro"
-    
-    def __init__(self, **kwargs):
-        super(EditMacroPopup, self).__init__(**kwargs)
-        self.size_hint = (None, None)
-        self.size = (500, 500)
-        self.background = PICPATH+'/background_edit_macro.png'
-        self.auto_dismiss = False
-        self.separator_color = (0.625, 0.625, 0.625, 1)
-        self.separator_height = 1
-        container = FloatLayout()
-
-        #create buttons
-        acceptButton = Button(size_hint = (None, None), size = (120, 26),
-                              pos_hint = {'x':0.05, 'y':0}, color = (0,0,0,1),
-                              text = "Accept",
-                              background_normal = PICPATH+'/button_up.png',
-                              background_down = PICPATH+'/button_down.png')
-        def acceptButton_callback(btn):
-            editMacro(self.textAreaName.text, self.textAreaScript.text,
-                      'text', self.textAreaDesc.text)
-            cepm.refresh()
-            self.dismiss()
-        acceptButton.bind(on_release=acceptButton_callback)
-        cancelButton = Button(size_hint = (None, None), size = (120, 26),
-                              pos_hint = {'right':0.95, 'y':0}, color = (0,0,0,1),
-                              text = "Cancel",
-                              background_normal = PICPATH+'/button_up.png',
-                              background_down = PICPATH+'/button_down.png')
-        cancelButton.bind(on_release=lambda(btn):self.dismiss())
-
-        #create textinputs
-        self.textAreaName = TextInput(multiline = False, font_size = 13,
-                                      size_hint = (0.5, 0.07),
-                                      pos_hint = {'x':0, 'y': 0.88})
-        self.textAreaDesc = TextInput(multiline = True, font_size = 13,
-                                      size_hint = (0.7, 0.2),
-                                      pos_hint = {'x':0, 'y': 0.63})
-        self.textAreaScript = TextInput(multiline = True, font_size = 11,
-                                      size_hint = (1, 0.47),
-                                      pos_hint = {'x':0, 'y': 0.1})
-
-        #add widgets
-        container.add_widget(Label(font_size=15, text="Macro name",
-                                   size_hint = (1, 0.05), color = (0,0,0,1),
-                                   pos_hint = {'x':0, 'y':0.95},
-                                   halign='left', text_size=(450,None)))
-        container.add_widget(self.textAreaName)
-        container.add_widget(Label(font_size=15, text="Macro description",
-                                   size_hint = (1, 0.05), color = (0,0,0,1),
-                                   pos_hint = {'x':0, 'y':0.83},
-                                   halign='left', text_size=(450,None)))       
-        container.add_widget(self.textAreaDesc)
-        container.add_widget(Label(font_size=15, text="Macro script",
-                                   size_hint = (1, 0.05), color = (0,0,0,1),
-                                   pos_hint = {'x':0, 'y':0.57},
-                                   halign='left', text_size=(450,None)))        
-        container.add_widget(self.textAreaScript)
-        container.add_widget(acceptButton)
-        container.add_widget(cancelButton)
-
-        self.container = container
-        self.content = container
-
-    def open(self, macro):
-        '''overriding open function'''
-        self.macro = macro
-        macInfo = getMacroInfo(macro)
-        self.textAreaName.text = macInfo[0]
-        self.textAreaDesc.text = macInfo[3]
-        self.textAreaScript.text = macInfo[1]
-        super(EditMacroPopup, self).open()
-
-class CreateGesturePopup(Popup):
-    textAreaName = None
-    textAreaDesc = None
-    gcreator = None #Widget for tracing user's gesture
-    gestString = "SOME LONG STRING"
-    container = None
-    
-    def __init__(self, **kwargs):
-        super(CreateGesturePopup, self).__init__(**kwargs)
-        self.size_hint = (None, None)
-        self.size = (500, 500)
-        self.background = PICPATH+'/background_create_gesture.png'
-        self.auto_dismiss = False
-        self.separator_color = (0.625, 0.625, 0.625, 1)
-        self.auto_dismiss = False
-        container = FloatLayout()
-
-        #create buttons
-        acceptButton = Button(size_hint = (None, None), size = (120, 26),
-                              pos_hint = {'x':0.05, 'y':0}, color = (0,0,0,1),
-                              text = "Accept",
-                              background_normal = PICPATH+'/button_up.png',
-                              background_down = PICPATH+'/button_down.png')
-        def acceptButton_callback(btn):
-            createGesture(self.textAreaName.text, self.gestString,
-                      'text', self.textAreaDesc.text)
-            cepg.refresh()
-            self.dismiss()
-        acceptButton.bind(on_release=acceptButton_callback)
-        cancelButton = Button(size_hint = (None, None), size = (120, 26),
-                              pos_hint = {'right':0.95, 'y':0}, color = (0,0,0,1),
-                              text = "Cancel",
-                              background_normal = PICPATH+'/button_up.png',
-                              background_down = PICPATH+'/button_down.png')
-        cancelButton.bind(on_release=lambda(btn):self.dismiss())
-
-        #create textinputs
-        self.textAreaName = TextInput(multiline = False, font_size = 13,
-                                      size_hint = (0.5, 0.07),
-                                      text = "My gesture",
-                                      pos_hint = {'x':0, 'y': 0.88})
-        self.textAreaDesc = TextInput(multiline = True, font_size = 13,
-                                      size_hint = (0.7, 0.2),
-                                      text = "My description",
-                                      pos_hint = {'x':0, 'y': 0.63})
-        '''self.traceWidget = TextInput(multiline = True, font_size = 11,
-                                      size_hint = (1, 0.47),
-                                      pos_hint = {'x':0, 'y': 0.1})'''
-        #TODO - INITIALIZE YOUR WIDGET HERE
-        fl = FloatLayout(size_hint = (1, 0.47), pos_hint = {'x':0, 'y':0.1})
-        
-        self.gcreator = GestureCreator(pos_hint = {'x':0, 'y':0})
-        fl.add_widget(Image(source=PICPATH+'/create_gesture_border.png',
-                                       allow_stretch=True, keep_ratio=False,
-                                       size_hint = (1,1), pos_hint={'x':0,'y':0}))
-        fl.add_widget(self.gcreator)
-        
-        #see above bortkommenterad text input for pos_hint and size_hint
-        #values to fit it
-
-        #add widgets
-        container.add_widget(Label(font_size=15, text="Gesture name",
-                                   size_hint = (1, 0.05),
-                                   color = (0,0,0,1),
-                                   pos_hint = {'x':0, 'y':0.95},
-                                   halign='left', text_size=(450,None)))
-        container.add_widget(self.textAreaName)
-        container.add_widget(Label(font_size=15, text="Gesture description",
-                                   size_hint = (1, 0.05), color = (0,0,0,1),
-                                   pos_hint = {'x':0, 'y':0.83},
-                                   halign='left', text_size=(450,None)))       
-        container.add_widget(self.textAreaDesc)
-        container.add_widget(Label(font_size=15, text="Draw gesture here",
-                                   size_hint = (1, 0.05), color = (0,0,0,1),
-                                   pos_hint = {'x':0, 'y':0.57},
-                                   halign='left', text_size=(450,None)))        
-        #container.add_widget(self.textAreaScript)
-        #TODO - ADD YOUR WIDGET HERE
-        container.add_widget(fl)
-
-        container.add_widget(acceptButton)
-        container.add_widget(cancelButton)
-
-        self.container = container
-        self.content = container
-
-    def open(self):
-        '''overriding open function'''
-        self.textAreaName.text = "My gesture"
-        self.textAreaDesc.text = "My description"
-        self.gestString = None
-        super(CreateGesturePopup, self).open()
-
-######## Edit macros
-emp = EditMacroPopup()
-cgp = CreateGesturePopup()
+#Edit macros and create gesture popups
+emp = EditMacroPopup()                #EditMacroPopup
+cgp = CreateGesturePopup()            #CreateGesturePopup
         
 def editMacroCallback(macro):
     emp.open(macro)
 
 def createGestureCallback():
     cgp.open()
-
-#def createMacro():
-#    pass;
-
 
 ##################################################################
 # ------------------Main building class ------------------------_#
@@ -1340,6 +1280,10 @@ class GestureMapper(App):
         topBar.add_widget(profileNameBox)      #profile renaming
         topBar.add_widget(createProfileButton) #create profile button
         topBar.add_widget(deleteProfileButton)
+        updateProfileList()
+        updateTextBoxes(getCurrentProfile())
+        #print(getCurrentProfile())
+        #print(getListOfProfiles())
 
         #this part below does so that when the user clicks somewhere
         #on the topbar which is not in the profile name text box.
