@@ -1009,13 +1009,14 @@ def createProfile(profileName):
     """ Creates a new profile with the given name.
     Must return the name of the newly created profile."""
     print "Creating profile " + profileName
-    Controller.createProfile(profileName)
+    Controller.createProfile(profileName) # TODO - MUST RETURN!!!
     return profileName
 
 def editProfile(oldProfileName, newProfileName):
     """ Changes the name of a profile to the new name."""
     print "Changing name from " + oldProfileName + " to " + newProfileName 
     Controller.renameProfile(oldProfileName,newProfileName)
+    return newProfileName #TODO, must return!!!!
 
 def selectProfile(profileName):
     """ Selects the profile with the given name."""
@@ -1157,8 +1158,9 @@ profileNameTextBox = TextInput(multiline = False, font_size = 13)
 profileNameBox.add_widget(profileNameTextBox)
 
 def profileNameTextBoxAction(txtbox):
-    editProfile(getCurrentProfile(), txtbox.text)
-    updateTextBoxes(txtbox.text)
+    newProfile = editProfile(getCurrentProfile(), txtbox.text)
+    updateProfileList()
+    updateTextBoxes(newProfile)
 profileNameTextBox.bind(on_text_validate = profileNameTextBoxAction)
 
 #delete profile button

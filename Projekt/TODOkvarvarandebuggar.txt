@@ -1,0 +1,12 @@
+TODO
+
+OBS - detta är endast testningar på profilhanteringen, inget om mappningar, macros eller gestures
+
+Buggar:
+- när man skapar en ny profil byter alla namn till Untitled Profile.... orsak unknown
+- namnbytning fungerar inte alltid - det har att göra med att currentProfile inte uppdateras när man gör det.
+- När man gör newProfile måste currentProfile uppdateras till den nya skapade profilen.
+- när man tar bort profiler måste currentProfile uppdateras!
+
+Annat viktigt!
+- Controller måste returnera värden! t.ex. createProfile, så måste controller returnera namnet på den skapade profilen. Gäller för vissa andra funktioner också
