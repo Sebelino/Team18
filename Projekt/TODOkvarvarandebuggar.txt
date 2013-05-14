@@ -7,6 +7,7 @@ Buggar:
 - namnbytning fungerar inte alltid - det har att göra med att currentProfile inte uppdateras när man gör det.
 - När man gör newProfile måste currentProfile uppdateras till den nya skapade profilen.
 - när man tar bort profiler måste currentProfile uppdateras!
+- om antalet profiler är 0, och man försöker skapa en profil, krashar programmet. (orsak unknown)
 
 Annat viktigt!
 - Controller måste returnera värden! t.ex. createProfile, så måste controller returnera namnet på den skapade profilen. Gäller för vissa andra funktioner också
