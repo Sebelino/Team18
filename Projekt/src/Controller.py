@@ -30,7 +30,7 @@ def on_touch_up(touch):
     print "UP"
 
 
-# For databasen
+# For the database
 def getListOfMappings(): return ProfileManager.getMappings()
 def getListOfGestures(): return ProfileManager.getGestures()
 def getListOfMacros(): return ProfileManager.getCommands()
@@ -41,6 +41,7 @@ def createProfile(profilename): ProfileManager.createProfile(profilename)
 def removeProfile(profilename): ProfileManager.removeProfile(profilename)
 def setProfile(profilename): ProfileManager.currentProfile = profilename
 def renameProfile(old,new): ProfileManager.renameProfile(old,new)
+def removeMacro(name): ProfileManager.removeMacro(name)
 
 
 

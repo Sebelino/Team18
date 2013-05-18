@@ -40,3 +40,4 @@ def getProfiles(): return [x[0] for x in db.getProfiles()]
 def createProfile(profilename): db.createProfile(profilename)
 def removeProfile(profilename): db.removeProfile(profilename)
 def renameProfile(old,new): db.renameProfile(old,new)
+def removeMacro(name): db.removeMacro(name)

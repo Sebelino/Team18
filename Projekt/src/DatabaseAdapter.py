@@ -124,3 +124,6 @@ def removeProfile(profilename):
 def renameProfile(old,new):
     update("profiles","name","'%s'"% new,"name = '%s'"% old)
 
+def removeMacro(macroname):
+    delete("commands","name = '%s'"% macroname)
+

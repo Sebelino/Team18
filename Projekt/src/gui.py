@@ -975,33 +975,28 @@ def getListOfGestures():
     """Returns a list of available Gestures, requested from Controller."""
     table = Controller.getListOfGestures()
     return [(r[0],TextInput(text=('' if r[1] is None else r[1]),readonly=True)) for r in table]
-#    return [('KameHameHA', TextInput(text='WAVE\nJO\nNEJ\nblod',readonly = True)),
-#            ('punch',TextInput(text='kALABALALAMMMMMMMMMMMMmmmASDN',readonly = True)),
-#            ('Hadoken',TextInput(text='kALABALALAMMMMMMMMMMMMmmmASDN',readonly = True)),
-#            ('Two-finger swipe', Image(source=PICPATH+'/two_swipe.gif', allow_stretch=True,
-#                            keep_ratio=False))]
 
 def getListOfCustomGestures():
     """Returns a list of all Custom gestures"""
-    return ["Draw Circle", "Check mark", "U shape" ]
+    print "\n\n\n"
+    table = Controller.getListOfGestures()
+    return [r[0] for r in table]
     
 
 def getListOfMacros():
     """Returns a list of Macros/Windows Functions, requested from Controller."""
     table = Controller.getListOfMacros()
     return [(r[0],TextInput(text=('' if r[1] is None else r[1]),readonly=True)) for r in table]
-    #return [('leftclick', TextInput(text='ABCDEFGHIJKLMNOPQRSTUVWXYZABCDEFGH\nAAEWDFSA\nA\nA\A',readonly = True)),
-    #        ('rightclick',TextInput(text='RaaALABALALAMMMMMMMMMMMMMMMMMMMMMmmmASDN',readonly = True)),
-    #        ('faint', Image(source=PICPATH+'/art.png', allow_stretch=True,
-    #                       keep_ratio=False))]
 
 def getListOfCustomMacros():
     """Returns a list of all Custom gestures"""
-    return ["Write username", "Best macro ever"]
+    table = Controller.getListOfMacros()
+    return [r[0] for r in table]
 
 def getMacroInfo(macro):
-    pass
-    return ["macro", "stop;write;stop;", "text", "stops and writes"]
+    table = Controller.getListOfMacros()
+    row = filter(lambda r: r[0]==macro,table)[0]
+    return [row[0],row[2],"text",row[1]]
            
 #-------- Profile management ---------#
 
@@ -1079,7 +1074,7 @@ def editMacro(macro, newScript, descType, desc): #TODO
 def removeMacro(macro): #TODO
     """ Removes the specified Macro. """
     print "removing macro ", macro
-    pass
+    Controller.removeMacro(macro);
 
 ##################################################################
 # ------------------ Components --------------------------------_#
