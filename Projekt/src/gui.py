@@ -46,16 +46,16 @@ print "height =",GetSystemMetrics (1)
 #---------------------- Config ----------------------------------#
 ##################################################################
 
+PICPATH = '../resources/pics'
+font = '../resources/font/segoeui.ttf'
+
 """Create a small cute window, unresizeable"""
 
-Config.set('kivy','window_icon', '../icon.png')
+Config.set('kivy','window_icon','%s/icon.png'% PICPATH)
 Config.set('graphics','fullscreen',0)
 Config.set('graphics','resizable',0)
 Config.set('graphics','width',650)
 Config.set('graphics','height',500)
-
-PICPATH = '../resources/pics'
-font = '../resources/font/segoeui.ttf'
 
 ######################################################
 ## -----------------------Mapping Display Class -----#
