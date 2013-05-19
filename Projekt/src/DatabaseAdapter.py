@@ -119,6 +119,8 @@ def createProfile(profilename):
     insert("profiles",(profilename,somegesture,somecommand))
 
 def removeProfile(profilename):
+    if not query("SELECT * FROM profiles"):
+        raise sqlite3.IntegrityError
     delete("profiles","name = '%s'"% profilename)
 
 def renameProfile(old,new):
