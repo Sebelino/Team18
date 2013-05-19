@@ -152,3 +152,8 @@ def removeMapping(profile,gesture):
         delete("profiles","name = %s AND gesturename = %s"% (profile,gesture))
     except sqlite3.IntegrityError as err:
         print "Sorry, there has to be at least one mapping available."
+
+def insertGesture(gesture,description,representation):
+    insert("gestures",(gesture,description,representation))
+
+

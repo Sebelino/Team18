@@ -1054,10 +1054,10 @@ def removeMapping(index):
     pass
 
 #-------------- Gestures ----------------#
-def createGesture(gesture, gestData, descType, desc): #TODO
+def createGesture(gesture, representation, descType, description): #TODO
     """ Creates the gesture. """
-    print gesture, gestData, "\n" ,descType, desc
-    pass
+    print gesture, representation, "\n" ,descType, representation
+    Controller.createGesture(gesture,description,representation)
 
 def removeGesture(gesture): #TODO
     """ Removes the specified gesture. """
