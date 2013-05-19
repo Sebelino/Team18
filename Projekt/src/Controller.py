@@ -43,6 +43,7 @@ def setProfile(profilename): ProfileManager.currentProfile = profilename
 def renameProfile(old,new): ProfileManager.renameProfile(old,new)
 def removeMacro(name): ProfileManager.removeMacro(name)
 def createMapping(gesturename,commandname): ProfileManager.createMapping(gesturename,commandname)
+def removeMapping(gesturename): ProfileManager.removeMapping(gesturename)
 
 
 

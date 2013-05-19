@@ -123,11 +123,11 @@ def createProfile(profilename):
 
 def removeProfile(profilename):
     try:
-        if not query("SELECT * FROM profiles"):
+        if int(query("SELECT COUNT(*) FROM profiles")) <= 1:
             raise sqlite3.IntegrityError
+        delete("profiles","name = '%s'"% profilename)
     except sqlite3.IntegrityError as err:
         print "Sorry, there has to be at least one profile available."
-    delete("profiles","name = '%s'"% profilename)
 
 def renameProfile(old,new):
     try:
@@ -144,3 +144,11 @@ def insertMapping(profile,gesture,command):
     except sqlite3.IntegrityError as err:
         print "Sorry, your insertion violates the functional dependency"
         print "profile,gesture -> macro."
+
+def removeMapping(profile,gesture):
+    try:
+        if int(query("SELECT COUNT(*) FROM profiles")) <= 1:
+            raise sqlite3.IntegrityError
+        delete("profiles","name = %s AND gesturename = %s"% (profile,gesture))
+    except sqlite3.IntegrityError as err:
+        print "Sorry, there has to be at least one mapping available."

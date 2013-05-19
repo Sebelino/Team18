@@ -1050,7 +1050,7 @@ def editMapping(index, newGesture, newMacro):
 def removeMapping(index):
     """ Removes the mapping with the given index."""
     print 'removing mapping ' + str(index)
-    #TODO
+    Controller.removeMapping(gesturename)
     pass
 
 #-------------- Gestures ----------------#
