@@ -116,7 +116,10 @@ def getProfiles():
 
 def createProfile(profilename):
     (somegesture,somecommand) = query("SELECT gesturename,commandname FROM profiles")[0]
-    insert("profiles",(profilename,somegesture,somecommand))
+    try:
+        insert("profiles",(profilename,somegesture,somecommand))
+    except sqlite3.IntegrityError as err:
+        print 'Sorry, a profile with the name "%s" already exists.'% profilename
 
 def removeProfile(profilename):
     if not query("SELECT * FROM profiles"):

@@ -3,6 +3,7 @@ import Gesture as OwnGesture
 import Profile
 from kivy.gesture import Gesture, GestureDatabase
 import DatabaseAdapter as db
+from sqlite3 import IntegrityError
 
 gdb = GestureDatabase()
 
