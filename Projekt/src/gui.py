@@ -1027,9 +1027,11 @@ def removeProfile(profileName):
 #------------- Mappings ----------------#
 def createMapping(createCounter):
     """ Creates a new mapping with default values."""
-    mappingBox.addMapping(('Gesture' + str(createCounter[0]), 'Macro' + str(createCounter[0])))
+    gesturename = 'Gesture' + str(createCounter[0])
+    commandname = 'Macro' + str(createCounter[0])
+    Controller.createMapping(gesturename,commandname)
+    mappingBox.addMapping((gesturename,commandname))
     createCounter[0] += 1
-    pass
 
 def editMapping(index, newGesture, newMacro):
     """ Edits the mapping with the given index.

@@ -122,13 +122,25 @@ def createProfile(profilename):
         print 'Sorry, a profile with the name "%s" already exists.'% profilename
 
 def removeProfile(profilename):
-    if not query("SELECT * FROM profiles"):
-        raise sqlite3.IntegrityError
+    try:
+        if not query("SELECT * FROM profiles"):
+            raise sqlite3.IntegrityError
+    except sqlite3.IntegrityError as err:
+        print "Sorry, there has to be at least one profile available."
     delete("profiles","name = '%s'"% profilename)
 
 def renameProfile(old,new):
-    update("profiles","name","'%s'"% new,"name = '%s'"% old)
+    try:
+        update("profiles","name","'%s'"% new,"name = '%s'"% old)
+    except sqlite3.IntegrityError as err:
+        print 'Sorry, a profile with the name "%s" already exists.'% new
 
 def removeMacro(macroname):
     delete("commands","name = '%s'"% macroname)
 
+def insertMapping(profile,gesture,command):
+    try:
+        insert("profiles",(profile,gesture,command))
+    except sqlite3.IntegrityError as err:
+        print "Sorry, your insertion violates the functional dependency"
+        print "profile,gesture -> macro."
