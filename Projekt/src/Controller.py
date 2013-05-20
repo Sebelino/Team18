@@ -45,6 +45,6 @@ def removeMacro(name): ProfileManager.removeMacro(name)
 def createMapping(gesturename,commandname): ProfileManager.createMapping(gesturename,commandname)
 def removeMapping(gesturename): ProfileManager.removeMapping(gesturename)
 def createGesture(name,description,representation): ProfileManager.createGesture(name,description,representation)
-
+def removeGesture(name): ProfileManager.removeGesture(name)
 
 

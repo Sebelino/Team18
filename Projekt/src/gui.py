@@ -1017,7 +1017,6 @@ def selectProfile(profileName):
     """ Selects the profile with the given name."""
     print "Selecting profile " + profileName
     Controller.setProfile(profileName)
-    pass
 
 def removeProfile(profileName):
     """ Removes the profile with the given name."""
@@ -1051,17 +1050,19 @@ def removeMapping(index):
     """ Removes the mapping with the given index."""
     print 'removing mapping ' + str(index)
     Controller.removeMapping(gesturename)
+    #TODO 
+    #Change function parameters/arguments perhaps
     pass
 
 #-------------- Gestures ----------------#
-def createGesture(gesture, representation, descType, description): #TODO
+def createGesture(gesture, representation, descType, description):
     """ Creates the gesture. """
     print gesture, representation, "\n" ,descType, representation
     Controller.createGesture(gesture,description,representation)
 
 def removeGesture(gesture): #TODO
     """ Removes the specified gesture. """
-    pass
+    Controller.removeGesture(gesture)
 
 #-------------- Macros/Windows functions ------------------#
 def createMacro(): #TODO
@@ -1079,7 +1080,7 @@ def removeMacro(macro): #TODO
     Controller.removeMacro(macro);
 
 ##################################################################
-# ------------------ Components --------------------------------_#
+# ------------------ Components ---------------------------------#
 ##################################################################
 
 #------------------ ProfileBar ----------------------------------#

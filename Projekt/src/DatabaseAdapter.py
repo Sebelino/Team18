@@ -156,4 +156,5 @@ def removeMapping(profile,gesture):
 def insertGesture(gesture,description,representation):
     insert("gestures",(gesture,description,representation))
 
-
+def removeGesture(name):
+    delete("gestures","name = '%s'"% name)
