@@ -115,15 +115,17 @@ def getProfiles():
     return query("SELECT name FROM profiles")
 
 def createProfile(profilename):
-    (somegesture,somecommand) = query("SELECT gesturename,commandname FROM profiles")[0]
     try:
+        (somegesture,somecommand) = query("SELECT gesturename,commandname FROM profiles")[0]
         insert("profiles",(profilename,somegesture,somecommand))
+    except IndexError:
+        print "This should not happen."
     except sqlite3.IntegrityError as err:
         print 'Sorry, a profile with the name "%s" already exists.'% profilename
 
 def removeProfile(profilename):
     try:
-        if int(query("SELECT COUNT(*) FROM profiles")) <= 1:
+        if int(query("SELECT COUNT(*) FROM profiles")[0][0]) <= 1:
             raise sqlite3.IntegrityError
         delete("profiles","name = '%s'"% profilename)
     except sqlite3.IntegrityError as err:
@@ -147,7 +149,7 @@ def insertMapping(profile,gesture,command):
 
 def removeMapping(profile,gesture):
     try:
-        if int(query("SELECT COUNT(*) FROM profiles")) <= 1:
+        if int(query("SELECT COUNT(*) FROM profiles")[0][0]) <= 1:
             raise sqlite3.IntegrityError
         delete("profiles","name = %s AND gesturename = %s"% (profile,gesture))
     except sqlite3.IntegrityError as err:
@@ -156,5 +158,7 @@ def removeMapping(profile,gesture):
 def insertGesture(gesture,description,representation):
     insert("gestures",(gesture,description,representation))
 
-def removeGesture(name):
-    delete("gestures","name = '%s'"% name)
+def removeGesture(name): delete("gestures","name = '%s'"% name)
+
+def getCurrentProfile(): return query("SELECT name FROM activeprofile")
+def setCurrentProfile(name): update("activeprofile","name","'%s'"% name,"1=1")

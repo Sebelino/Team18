@@ -5,16 +5,17 @@ from kivy.gesture import Gesture, GestureDatabase
 import DatabaseAdapter as db
 from sqlite3 import IntegrityError
 
+def getCurrentProfile(): return db.getCurrentProfile()[0][0]
+def setCurrentProfile(name): db.setCurrentProfile(name)
+
 gdb = GestureDatabase()
 
-currentProfile = 'Sebbes profil'
-
 kivygestures = dict()
-for row in db.getProfileGestures(currentProfile):
+for row in db.getProfileGestures(getCurrentProfile()):
     kivygestures.update({row[2]:row[0]})
     gest = gdb.str_to_gesture(row[2].encode("ascii"))
     gdb.add_gesture(gest)
-print "profilegestures="+str(db.getProfileGestures(currentProfile))
+print "profilegestures="+str(db.getProfileGestures(getCurrentProfile()))
 
 def getCommand(gesture):
     g = gdb.str_to_gesture(gesture.toString())
@@ -42,7 +43,7 @@ def createProfile(profilename): db.createProfile(profilename)
 def removeProfile(profilename): db.removeProfile(profilename)
 def renameProfile(old,new): db.renameProfile(old,new)
 def removeMacro(name): db.removeMacro(name)
-def createMapping(gesturename,commandname): db.insertMapping(currentProfile,gesturename,commandname)
-def removeMapping(gesturename): db.removeMapping(currentProfile,gesturename)
+def createMapping(gesturename,commandname): db.insertMapping(getCurrentProfile(),gesturename,commandname)
+def removeMapping(gesturename): db.removeMapping(getCurrentProfile(),gesturename)
 def createGesture(name,description,representation): db.insertGesture(name,description,representation)
 def removeGesture(name): db.removeGesture(name)

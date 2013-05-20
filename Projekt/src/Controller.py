@@ -35,11 +35,11 @@ def getListOfMappings(): return ProfileManager.getMappings()
 def getListOfGestures(): return ProfileManager.getGestures()
 def getListOfMacros(): return ProfileManager.getCommands()
 def getListOfProfiles(): return ProfileManager.getProfiles()
-def getCurrentProfile(): return ProfileManager.currentProfile
-def setCurrentProfile(newProfile): ProfileManager.currentProfile = newProfile
+def getCurrentProfile(): return ProfileManager.getCurrentProfile()
+def setCurrentProfile(newProfile): ProfileManager.setCurrentProfile(newProfile)
 def createProfile(profilename): ProfileManager.createProfile(profilename)
 def removeProfile(profilename): ProfileManager.removeProfile(profilename)
-def setProfile(profilename): ProfileManager.currentProfile = profilename
+def setProfile(profilename): ProfileManager.setCurrentProfile(profilename)
 def renameProfile(old,new): ProfileManager.renameProfile(old,new)
 def removeMacro(name): ProfileManager.removeMacro(name)
 def createMapping(gesturename,commandname): ProfileManager.createMapping(gesturename,commandname)

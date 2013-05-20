@@ -1043,16 +1043,14 @@ def editMapping(index, newGesture, newMacro):
     print [index, newGesture, newMacro]
     mappingBox.editMapping(index, newGesture, newMacro)
     #TODO 
-    #Change function parameters/arguments perhaps
-    pass
+    #Change function parameters/arguments
 
 def removeMapping(index):
     """ Removes the mapping with the given index."""
     print 'removing mapping ' + str(index)
-    Controller.removeMapping(gesturename)
     #TODO 
-    #Change function parameters/arguments perhaps
-    pass
+    #Change function parameters/arguments to gesturename
+    Controller.removeMapping(gesturename)
 
 #-------------- Gestures ----------------#
 def createGesture(gesture, representation, descType, description):
@@ -1060,7 +1058,7 @@ def createGesture(gesture, representation, descType, description):
     print gesture, representation, "\n" ,descType, representation
     Controller.createGesture(gesture,description,representation)
 
-def removeGesture(gesture): #TODO
+def removeGesture(gesture):
     """ Removes the specified gesture. """
     Controller.removeGesture(gesture)
 
