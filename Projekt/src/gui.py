@@ -972,6 +972,7 @@ Return value: list of strings that are profile names, example:
 [Dmitrij's profil, Sebbes Profil]"""
 #TODO vet inte om den fungerar korrekt nu men databasen verkar konstig.
 def getListOfProfiles():
+    print str(Controller.getListOfProfiles())
     return Controller.getListOfProfiles()
 
 """Returns the currently selected profile, requested from Controller.
