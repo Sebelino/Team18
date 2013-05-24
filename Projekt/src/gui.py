@@ -1093,12 +1093,12 @@ def editMapping(gesture, newGesture, newMacro):
     gesture - the gesture in the old mapping, the key in the database.
     newGesture - Gesture value, the new Gesture.
     newMacro - Macro value, the new Windows Macro/Function.
-    In practise, either newGesture or newMacro will be None.
+    In practice, either newGesture or newMacro will be None.
     """
     print [gesture, newGesture, newMacro]
+    Controller.editMapping(gesture,newGesture,newMacro)
     #TODO koppla till databasen.
     #TODO ta bort print
-
     #should not return anything
 
 def removeMapping(gestureName):
