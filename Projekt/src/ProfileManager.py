@@ -51,9 +51,9 @@ def createMapping(gesturename,commandname): db.insertMapping(getCurrentProfile()
 def removeMapping(gesturename): db.removeMapping(getCurrentProfile(),gesturename)
 def editMapping(oldGesture,newGesture,newCommand):
     if newGesture:
-        db.update("profiles","gesturename","'%s'"% newGesture,"gesturename = '%s'"% oldGesture)
+        db.updateGesture(oldGesture,newGesture)
     if newCommand:
-        db.update("profiles","commandname","'%s'"% newCommand,"gesturename = '%s'"% newGesture)
+        db.updateCommand(oldGesture,newCommand)
 def createGesture(name,description,representation): db.insertGesture(name,description,representation)
 def removeGesture(name):
     if name == "(No gesture)":
