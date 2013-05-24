@@ -103,13 +103,8 @@ def getScript(gesturename):
     print gesturename
     return result[0][0]
 
-def getMappings():
-    conn = sqlite3.connect(database)
-    c = conn.cursor()
-    result = select(c,"","gesturename,commandname","profiles")
-    conn.commit()
-    conn.close()
-    return result
+def getMappings(): return query("SELECT gesturename,commandname FROM profiles WHERE\
+        name=(SELECT name FROM activeprofile)")
 
 def getProfiles():
     return query("SELECT name FROM profiles")

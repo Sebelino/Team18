@@ -968,9 +968,8 @@ the specifics. See Controller for more info about the functions.
 
 #-------- Requests -------------------#
 """Returns a list of profiles, requested from Controller.
-Return value: list of strings that are profile names, example:
+Return value: list of strings that are profile names; example:
 [Dmitrij's profil, Sebbes Profil]"""
-#TODO vet inte om den fungerar korrekt nu men databasen verkar konstig.
 def getListOfProfiles():
     print str(Controller.getListOfProfiles())
     return Controller.getListOfProfiles()
