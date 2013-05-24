@@ -150,7 +150,7 @@ def removeMapping(profile,gesture):
     try:
         if int(query("SELECT COUNT(*) FROM profiles")[0][0]) <= 1:
             raise sqlite3.IntegrityError
-        delete("profiles","name = %s AND gesturename = %s"% (profile,gesture))
+        delete("profiles","name = '%s' AND gesturename = '%s'"% (profile,gesture))
     except sqlite3.IntegrityError as err:
         print "Sorry, there has to be at least one mapping available."
 
