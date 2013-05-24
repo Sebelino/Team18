@@ -1305,7 +1305,7 @@ counter = [1]
 def createMappingButton_callback(btn):
     createMapping(counter)
     mappingBox.updateMappings()
-addMappingButton.bind(on_release=lambda btn:createMapping(counter))
+addMappingButton.bind(on_release=createMappingButton_callback)
 
 #popups from infobutton
 gesturePopup = EventPopup('gesture')
