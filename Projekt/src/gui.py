@@ -96,6 +96,7 @@ def simplegesture(name, point_list):
     g.normalize()
     g.name = name
     return g
+
 class MappingDisplay(FloatLayout):
     #if have_background is true, a background image is set
     have_background = False
@@ -210,30 +211,57 @@ class MappingDisplay(FloatLayout):
         mappingWidget.add_widget(delBtn)
         mappingWidget.bindButtons()
         self.layout.add_widget(mappingWidget)
-        self.updateMappings()
 
     def removeMapping(self, index):
         i = len(self.layout.children) - 1 - index
-        self.layout.remove_widget(self.layout.children[i])
+        gestureName = self.layout.children[i].children[1].text
+        removeMapping(gestureName)
         self.updateMappings()
-        removeMapping(index)
 
     def updateMappings(self):
-        self.layout.size = (self.size[0], \
-                            len(self.layout.children)*self.mappingHeight)
+        allMappings = getListOfMappings(getCurrentProfile())
+        self.layout.clear_widgets()
+        self.layout.size = (self.size[0], len(allMappings)*self.mappingHeight)
+        for mapping in allMappings:
+            self.addMapping(mapping)
         for i in reversed(range(len(self.layout.children))):
             self.layout.children[i].index = len(self.layout.children) - i - 1
 
     def editMapping(self,index,gesture,macro):
+        print(index, gesture, macro)
         i = len(self.layout.children) - index - 1
         mapping = self.layout.children[i]
         if gesture != None:
+            editMapping(mapping.children[1].text, gesture, None)
             mapping.children[1].text = gesture
         if macro != None:
+            editMapping(mapping.children[1].text, None, macro)
             mapping.children[3].text = macro
 
     def showInfo(self,index,which):
         displayEditMappingPopup(index, which)
+
+class MappingInstance(FloatLayout):
+    index = 0
+    owner = None
+    
+    def __init__(self,**kwargs):
+        super(MappingInstance,self).__init__(**kwargs)
+
+    def __delBtn_callback(self,btn):
+        self.owner.removeMapping(self.index)
+
+    def __infoBtnGest_callback(self,btn):
+        self.owner.showInfo(self.index, 'gesture')
+
+    def __infoBtnMac_callback(self,btn):
+        self.owner.showInfo(self.index, 'macro')
+
+    def bindButtons(self):
+        self.children[0].bind(on_release=self.__delBtn_callback)
+        self.children[2].bind(on_release=self.__infoBtnGest_callback)
+        self.children[4].bind(on_release=self.__infoBtnMac_callback)
+        
         
 class GestureCreator(FloatLayout):
     '''On touch events'''
@@ -295,26 +323,7 @@ class GestureCreator(FloatLayout):
         return not queue.empty()
     '''End of on-touch events'''
 
-class MappingInstance(FloatLayout):
-    index = 0
-    owner = None
-    
-    def __init__(self,**kwargs):
-        super(MappingInstance,self).__init__(**kwargs)
 
-    def __delBtn_callback(self,btn):
-        self.owner.removeMapping(self.index)
-
-    def __infoBtnGest_callback(self,btn):
-        self.owner.showInfo(self.index, 'gesture')
-
-    def __infoBtnMac_callback(self,btn):
-        self.owner.showInfo(self.index, 'macro')
-
-    def bindButtons(self):
-        self.children[0].bind(on_release=self.__delBtn_callback)
-        self.children[2].bind(on_release=self.__infoBtnGest_callback)
-        self.children[4].bind(on_release=self.__infoBtnMac_callback)
 
 
 ##################################################################
@@ -425,9 +434,11 @@ class EventPopup(Popup):
     
         def doneBtn_callback(btn):
             if self.gestureOrMacro == 'gesture':
-                editMapping(self.index, self.container.children[1].text, None)
+                mappingBox.editMapping(
+                    self.index, self.container.children[1].text, None)
             elif self.gestureOrMacro == 'macro':
-                editMapping(self.index, None, self.container.children[1].text)
+                mappingBox.editMapping(
+                    self.index, None, self.container.children[1].text)
             self.dismiss()
         doneBtn.bind(on_release=doneBtn_callback)
 
@@ -495,8 +506,7 @@ class EventPopup(Popup):
                 
         def selectEvent(ind):
             dd.select(ind)
-            pickEventBtn.text='[color=000000]'  \
-                                        + allEvents[ind][0]
+            pickEventBtn.text= allEvents[ind][0]
             self.container.remove_widget(self.container.children[0])
             self.container.add_widget(allEvents[ind][1])
        
@@ -585,7 +595,6 @@ class CustomizeEventPopup(Popup):
                                     pos_hint = {'x':0, 'y':0.2})
         content.add_widget(self.container)
         self.content = content
-        
 
         self.refresh()
         
@@ -958,42 +967,70 @@ the specifics. See Controller for more info about the functions.
 """
 
 #-------- Requests -------------------#
-"""Returns a list of profiles, requested from Controller."""
+"""Returns a list of profiles, requested from Controller.
+Return value: list of strings that are profile names, example:
+[Dmitrij's profil, Sebbes Profil]"""
+#TODO vet inte om den fungerar korrekt nu men databasen verkar konstig.
 def getListOfProfiles():
     return Controller.getListOfProfiles()
 
-"""Returns the currently selected profile, requested from Controller."""
+"""Returns the currently selected profile, requested from Controller.
+Return value: simple string which is the name of the currently selected profile."""
+#TODO se det dar dokumentet jag laddade upp om TODO och att uppdatera currentProfile.
 def getCurrentProfile():
     return Controller.getCurrentProfile()
     
-
 def getListOfMappings(profile):
-    """Returns a list of mappings, requested from Controller."""
+    #TODO maste returnera lista på mappningar i den givna profilen,
+    #inte alla mappningar!
+    """Returns a list of mappings bound to the given profile.
+    List of mappings should be on format (all are strings):
+    [ [gesture1,macro1], [gesture2,macro2] ]"""
     return Controller.getListOfMappings()
 
 def getListOfGestures():
-    """Returns a list of available Gestures, requested from Controller."""
+    """Returns a list of ALL available Gestures, requested from Controller.
+    Return value must be:
+    [ [gest1name, gest1descWidget], [gest2name, gest2DescWidget], ... ] """
+    #TODO - detta verkar vara korrekt nu och fungerar bra, men viktigt:
+    #returnera ALLA gestures, inte bara custom
     table = Controller.getListOfGestures()
     return [(r[0],TextInput(text=('' if r[1] is None else r[1]),readonly=True)) for r in table]
 
 def getListOfCustomGestures():
-    """Returns a list of all Custom gestures"""
+    """Returns a list of all Custom gestures,
+    return value should be list of strings:
+    [customGest1, customGest2, ...]"""
+    #TODO - ska bara returnera en lista pa Custom gestures, inte alla gestures!
     print "\n\n\n"
     table = Controller.getListOfGestures()
     return [r[0] for r in table]
     
 
 def getListOfMacros():
-    """Returns a list of Macros/Windows Functions, requested from Controller."""
+    """Returns a list of Macros/Windows Functions, requested from Controller.
+    OBS!!!!!! returns ALL available and pickable Windows functions and macros,
+    both built-in and custom!!! Compare to getListOfGestures()!!!!
+    return value: see geListOfGestures (typ samma men med windowsfunctioner)"""
+    #TODO - las kommentaren ovan, se till att den faktiskt gor det!
     table = Controller.getListOfMacros()
     return [(r[0],TextInput(text=('' if r[1] is None else r[1]),readonly=True)) for r in table]
 
 def getListOfCustomMacros():
-    """Returns a list of all Custom gestures"""
+    """Returns a list of all Custom macros.
+    return value: list of strings of custom macro names:
+    [customMacro1Name, customMacro2Name, ...]"""
+    #TODO - returnera endast custom macros, ej alla windows-funktioner!
     table = Controller.getListOfMacros()
     return [r[0] for r in table]
 
 def getMacroInfo(macro):
+    """Returns info about the given macro.
+    return value: tupel or list with 4 elements, all strings:
+    [ macroName (== macro), macroScript, descType (unused), description]
+    """
+    #TODO - verkar fungera korrekt
+    #OBS: kommer endast ga att editera custom macros.
     table = Controller.getListOfMacros()
     row = filter(lambda r: r[0]==macro,table)[0]
     return [row[0],row[2],"text",row[1]]
@@ -1002,80 +1039,124 @@ def getMacroInfo(macro):
 
 def createProfile(profileName):
     """ Creates a new profile with the given name.
-    Must return the name of the newly created profile."""
-    print "Creating profile " + profileName
-    Controller.createProfile(profileName) # TODO - MUST RETURN!!!
+    Must return the name of the newly created profile.
+    It is expected that the newly created profile is the one
+    stored in the database."""
+    #TODO - MASTE returnera den nya profilens namn. Detta e for att
+    #untitled profile grejen. Om man skapar en profil, och det redan
+    #finns en "Untitled Profile", sa ska den nya heta "Untitled Profile 1"
+    #, finns en sadan sa ska nasta heta "Untitled Profile 2" osv.
+    #Detta ska Database Adapter halla koll pa, och darfor returnera
+    #den nya profilens namn!
+    #TODO Byt currentProfile till den nya profilen!
+    #det gors antingen har genom att kalla pa selectProfile, eller i database
+    Controller.createProfile(profileName)
     return profileName
 
 def editProfile(oldProfileName, newProfileName):
     """ Changes the name of a profile to the new name."""
-    print "Changing name from " + oldProfileName + " to " + newProfileName 
+    #TODO - om man forsoker byta namn till en profil ska det nya namnet
+    #bli lite annorlunda, se TODO-kommentaren i createProfile.
+    #maste darfor returnera den nya profilens namn.
+    #TODO - andra variabeln currentProfile i databasen nar man editerar profil!
     Controller.renameProfile(oldProfileName,newProfileName)
-    return newProfileName #TODO, must return!!!!
+    return newProfileName 
 
 def selectProfile(profileName):
     """ Selects the profile with the given name."""
-    print "Selecting profile " + profileName
+    #TODO - verkar fungera men andra metoder maste byta currentProfile,
+    #se andra kommentarer.
     Controller.setProfile(profileName)
 
 def removeProfile(profileName):
     """ Removes the profile with the given name."""
-    print "Removing profile " + profileName
+    #TODO - just nu finns krashar programmet, men det har att gora med
+    #att programmet krashar nar man tar bort mappningar ur databasen.
+    #se TODO-kommentaren i removeMapping
+    #TODO - byt currentProfile, annars sa pekar den pa en borttagen profil...
     Controller.removeProfile(profileName)
 
 #------------- Mappings ----------------#
 def createMapping(createCounter):
     """ Creates a new mapping with default values."""
+    #TODO, just nu skapar GUI:t nya namn, vet inte om det blir problem
+    # men det far du reda ut pa nat satt. Hade helst flyttat countern till
+    # controller eller databaseAdapter.
+    # annars verkar det funka bra.
     gesturename = 'Gesture' + str(createCounter[0])
     commandname = 'Macro' + str(createCounter[0])
     Controller.createMapping(gesturename,commandname)
     mappingBox.addMapping((gesturename,commandname))
     createCounter[0] += 1
+    #should not return anything.
 
-def editMapping(index, newGesture, newMacro):
-    """ Edits the mapping with the given index.
+def editMapping(gesture, newGesture, newMacro):
+    """ Edits the mapping with the given key gesture.
 
-    The parameters specify:
+    The parameters specify (all strings):
+    gesture - the gesture in the old mapping, the key in the database.
     newGesture - Gesture value, the new Gesture.
     newMacro - Macro value, the new Windows Macro/Function.
-    If they are set to None, nothing will change.
+    In practise, either newGesture or newMacro will be None.
     """
-    print [index, newGesture, newMacro]
-    mappingBox.editMapping(index, newGesture, newMacro)
-    #TODO 
-    #Change function parameters/arguments
+    print [gesture, newGesture, newMacro]
+    #TODO koppla till databasen.
+    #TODO ta bort print
 
-def removeMapping(index):
-    """ Removes the mapping with the given index."""
-    print 'removing mapping ' + str(index)
-    #TODO 
-    #Change function parameters/arguments to gesturename
-    Controller.removeMapping(gesturename)
+    #should not return anything
+
+def removeMapping(gestureName):
+    """ Removes the mapping with the given key gesture."""
+    print 'removing mapping ' + gestureName
+    Controller.removeMapping(gestureName)
+    #TODO - tidigare sa togs ju mapping bort med ett index.
+    #det utfors nagon aritmetisk operation och just nu pga
+    #att gestureName e en string, sa blir det en krash.
+
+    #should not return anything
 
 #-------------- Gestures ----------------#
 def createGesture(gesture, representation, descType, description):
     """ Creates the gesture. """
     print gesture, representation, "\n" ,descType, representation
     Controller.createGesture(gesture,description,representation)
+    #TODO - kontrollera att den nya gestens namn inte e samma som
+    #en annan gests, detta bor goras i databaseAdapter.
+    #TODO ta bort print
+    
+    #should not return anything
 
 def removeGesture(gesture):
     """ Removes the specified gesture. """
     Controller.removeGesture(gesture)
+    #TODO - man ska bara kunna ta bort custom gestures. However,
+    #om getListOfCustomGestures fungerar korrekt, sa bor det
+    #vara lungt.
+
+    #should not return anything
 
 #-------------- Macros/Windows functions ------------------#
 def createMacro(): #TODO
-    """ Creates a new Macro. """
+    """ Creates a new Macro, default name and everything. """
     pass
+    # should not return anything
 
-def editMacro(macro, newScript, descType, desc): #TODO
+def editMacro(macro, newScript, descType, desc):
     """edits macro 'macro' from the script newScript,
        to description desc, which is of type descType"""
     print macro, newScript, "\n" ,descType, desc
+    #TODO ta bort print
+    #TODO - se bl.a. till att makrots nya namn inte e tagit,
+    #och byt det i sa fall. Ska fixas i databaseAdapter.
+
+    #should not return anything
 
 def removeMacro(macro): #TODO
     """ Removes the specified Macro. """
     print "removing macro ", macro
     Controller.removeMacro(macro);
+    #TODO ta bort print
+    #should not return anything
 
 ##################################################################
 # ------------------ Components ---------------------------------#
@@ -1118,6 +1199,7 @@ def updateProfileList():
 profileSelection.bind(on_release=d.open)
 def pickProf(inst, name):
     selectProfile(name)
+    mappingBox.updateMappings()
     updateTextBoxes(name)
     
 d.bind(on_select=pickProf)
@@ -1214,8 +1296,7 @@ mappingBox.gestureEditButtonImageUp = PICPATH+'/button_up.png'
 mappingBox.gestureEditButtonImageDown = PICPATH+'/button_down.png'
 mappingBox.macroEditButtonImageUp = PICPATH+'/button_up.png'
 mappingBox.macroEditButtonImageDown = PICPATH+'/button_down.png'
-for mapp in getListOfMappings(getCurrentProfile()): #update mappings
-    mappingBox.addMapping(mapp)
+mappingBox.updateMappings()
 
 #add mapping button
 addMappingButton = Button(text = 'New Mapping',
@@ -1225,6 +1306,9 @@ addMappingButton = Button(text = 'New Mapping',
                           background_normal = PICPATH+'/button_up.png',
                           background_down = PICPATH+'/button_down.png')
 counter = [1]
+def createMappingButton_callback(btn):
+    createMapping(counter)
+    mappingBox.updateMappings()
 addMappingButton.bind(on_release=lambda btn:createMapping(counter))
 
 #popups from infobutton
