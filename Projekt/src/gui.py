@@ -1080,11 +1080,10 @@ def createMapping(createCounter):
     # men det far du reda ut pa nat satt. Hade helst flyttat countern till
     # controller eller databaseAdapter.
     # annars verkar det funka bra.
-    gesturename = 'Gesture' + str(createCounter[0])
-    commandname = 'Macro' + str(createCounter[0])
+    gesturename = '(No gesture)'
+    commandname = '(No macro)'
     Controller.createMapping(gesturename,commandname)
     mappingBox.addMapping((gesturename,commandname))
-    createCounter[0] += 1
     #should not return anything.
 
 def editMapping(gesture, newGesture, newMacro):
