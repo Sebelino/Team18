@@ -161,3 +161,12 @@ def removeGesture(name): delete("gestures","name = '%s'"% name)
 
 def getCurrentProfile(): return query("SELECT name FROM activeprofile")
 def setCurrentProfile(name): update("activeprofile","name","'%s'"% name,"1=1")
+
+def updateGesture(name,newname):
+    try:
+        update("profiles","gesturename","'%s'"% newname,"gesturename = '%s'"% name)
+    except sqlite3.IntegrityError as err:
+        print "Sorry, your update violates the functional dependency"
+        print "profile,gesture -> macro."
+def updateCommand(name,newname):
+    update("profiles","commandname","'%s'"% newname,"gesturename = '%s'"% name)
