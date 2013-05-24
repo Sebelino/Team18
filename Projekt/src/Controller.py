@@ -33,6 +33,7 @@ def on_touch_up(touch):
 # For the database
 def getListOfMappings(): return ProfileManager.getMappings()
 def getListOfGestures(): return ProfileManager.getGestures()
+def getCurrentGestures(): return ProfileManager.getCurrentGestures()
 def getListOfMacros(): return ProfileManager.getCommands()
 def getListOfProfiles(): return ProfileManager.getProfiles()
 def getCurrentProfile(): return ProfileManager.getCurrentProfile()

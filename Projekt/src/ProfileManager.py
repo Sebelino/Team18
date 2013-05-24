@@ -36,6 +36,7 @@ def getCommand(gesture):
     return Command.Command("No operation","Does nothing.","nop")
 
 def getGestures(): return db.getGestures()
+def getCurrentGestures(): return db.getCurrentGestures()
 def getCommands(): return db.getCommands()
 def getMappings(): return db.getMappings()
 def getProfiles(): return set([x[0] for x in db.getProfiles()])
@@ -49,4 +50,8 @@ def removeMacro(name): db.removeMacro(name)
 def createMapping(gesturename,commandname): db.insertMapping(getCurrentProfile(),gesturename,commandname)
 def removeMapping(gesturename): db.removeMapping(getCurrentProfile(),gesturename)
 def createGesture(name,description,representation): db.insertGesture(name,description,representation)
-def removeGesture(name): db.removeGesture(name)
+def removeGesture(name):
+    if name == "(No gesture)":
+        print "Sorry, that gesture is special. Get your filthy hand off of it!"
+    else:
+        db.removeGesture(name)

@@ -81,6 +81,10 @@ database = '../resources/profiles.db'
 def getGestures():
     return query("SELECT * FROM gestures")
 
+def getCurrentGestures():
+    return query("SELECT * FROM gestures,profiles,activeprofile WHERE\
+            activeprofile.name=profiles.name AND gestures.name=profiles.gesturename")
+
 def getProfileGestures(profilename):
     return query("SELECT gesturename,description,representation FROM gestures,profiles WHERE\
         gestures.name = gesturename AND profiles.name = '%s'"% profilename)

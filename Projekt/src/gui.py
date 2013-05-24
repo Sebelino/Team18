@@ -1000,7 +1000,6 @@ def getListOfCustomGestures():
     return value should be list of strings:
     [customGest1, customGest2, ...]"""
     #TODO - ska bara returnera en lista pa Custom gestures, inte alla gestures!
-    print "\n\n\n"
     table = Controller.getListOfGestures()
     return [r[0] for r in table]
     
