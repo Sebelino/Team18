@@ -40,7 +40,10 @@ def getCommands(): return db.getCommands()
 def getMappings(): return db.getMappings()
 def getProfiles(): return set([x[0] for x in db.getProfiles()])
 def createProfile(profilename): db.createProfile(profilename)
-def removeProfile(profilename): db.removeProfile(profilename)
+def removeProfile(profilename):
+    db.removeProfile(profilename)
+    anyOtherProfile = list(getProfiles())[0]
+    setCurrentProfile(anyOtherProfile)
 def renameProfile(old,new): db.renameProfile(old,new)
 def removeMacro(name): db.removeMacro(name)
 def createMapping(gesturename,commandname): db.insertMapping(getCurrentProfile(),gesturename,commandname)

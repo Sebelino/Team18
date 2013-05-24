@@ -981,8 +981,6 @@ def getCurrentProfile():
     return Controller.getCurrentProfile()
     
 def getListOfMappings(profile):
-    #TODO maste returnera lista på mappningar i den givna profilen,
-    #inte alla mappningar!
     """Returns a list of mappings bound to the given profile.
     List of mappings should be on format (all are strings):
     [ [gesture1,macro1], [gesture2,macro2] ]"""
