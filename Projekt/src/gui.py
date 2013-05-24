@@ -210,7 +210,7 @@ class MappingDisplay(FloatLayout):
         mappingWidget.add_widget(gesture)
         mappingWidget.add_widget(delBtn)
         mappingWidget.bindButtons()
-        self.layout.add_widget(mappingWidget)
+        self.layout.add_widget(mappingWidget, len(self.layout.children))
 
     def removeMapping(self, index):
         i = len(self.layout.children) - 1 - index
@@ -228,7 +228,11 @@ class MappingDisplay(FloatLayout):
             self.layout.children[i].index = len(self.layout.children) - i - 1
 
     def editMapping(self,index,gesture,macro):
-        print(index, gesture, macro)
+        i = len(self.layout.children) - index - 1
+        mapping = self.layout.children[i]
+        editMapping(mapping.children[1].text, gesture, macro)
+        self.updateMappings()
+        """print(index, gesture, macro)
         i = len(self.layout.children) - index - 1
         mapping = self.layout.children[i]
         if gesture != None:
@@ -236,7 +240,7 @@ class MappingDisplay(FloatLayout):
             mapping.children[1].text = gesture
         if macro != None:
             editMapping(mapping.children[1].text, None, macro)
-            mapping.children[3].text = macro
+            mapping.children[3].text = macro"""
 
     def showInfo(self,index,which):
         displayEditMappingPopup(index, which)
