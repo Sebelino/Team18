@@ -115,10 +115,7 @@ def getProfiles():
 
 def createProfile(profilename):
     try:
-        (somegesture,somecommand) = query("SELECT gesturename,commandname FROM profiles")[0]
-        insert("profiles",(profilename,somegesture,somecommand))
-    except IndexError:
-        print "This should not happen."
+        insertMapping(profilename,"(No gesture)","(No macro)")
     except sqlite3.IntegrityError as err:
         print 'Sorry, a profile with the name "%s" already exists.'% profilename
 
@@ -143,6 +140,7 @@ def removeMacro(macroname):
 
 def insertMapping(profile,gesture,command):
     try:
+        print "INSERTING MAPPING %s: %s->%s"% (profile,gesture,command)
         insert("profiles",(profile,gesture,command))
     except sqlite3.IntegrityError as err:
         print "Sorry, your insertion violates the functional dependency"
@@ -166,9 +164,9 @@ def setCurrentProfile(name): update("activeprofile","name","'%s'"% name,"1=1")
 
 def updateGesture(name,newname):
     try:
-        update("profiles","gesturename","'%s'"% newname,"gesturename = '%s'"% name)
+        update("profiles","gesturename","'%s'"% newname,"gesturename = '%s' AND profiles.name = (SELECT name from activeprofile)"% name)
     except sqlite3.IntegrityError as err:
         print "Sorry, your update violates the functional dependency"
         print "profile,gesture -> macro."
 def updateCommand(name,newname):
-    update("profiles","commandname","'%s'"% newname,"gesturename = '%s'"% name)
+    update("profiles","commandname","'%s'"% newname,"gesturename = '%s' AND profiles.name = (SELECT name from activeprofile)"% name)
