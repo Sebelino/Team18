@@ -6,7 +6,9 @@ import DatabaseAdapter as db
 from sqlite3 import IntegrityError
 
 def getCurrentProfile(): return db.getCurrentProfile()[0][0]
-def setCurrentProfile(name): db.setCurrentProfile(name)
+def setCurrentProfile(name):
+    print "SETTING PROFILE TO %s!"% name
+    db.setCurrentProfile(name)
 
 gdb = GestureDatabase()
 
@@ -40,7 +42,9 @@ def getCurrentGestures(): return db.getCurrentGestures()
 def getCommands(): return db.getCommands()
 def getMappings(): return db.getMappings()
 def getProfiles(): return set([x[0] for x in db.getProfiles()])
-def createProfile(profilename): db.createProfile(profilename)
+def createProfile(profilename):
+    db.createProfile(profilename)
+    setCurrentProfile(profilename)
 def removeProfile(profilename):
     db.removeProfile(profilename)
     anyOtherProfile = list(getProfiles())[0]

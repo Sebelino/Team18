@@ -1043,12 +1043,6 @@ def createProfile(profileName):
     Must return the name of the newly created profile.
     It is expected that the newly created profile is the one
     stored in the database."""
-    #TODO - MASTE returnera den nya profilens namn. Detta e for att
-    #untitled profile grejen. Om man skapar en profil, och det redan
-    #finns en "Untitled Profile", sa ska den nya heta "Untitled Profile 1"
-    #, finns en sadan sa ska nasta heta "Untitled Profile 2" osv.
-    #Detta ska Database Adapter halla koll pa, och darfor returnera
-    #den nya profilens namn!
     #TODO Byt currentProfile till den nya profilen!
     #det gors antingen har genom att kalla pa selectProfile, eller i database
     Controller.createProfile(profileName)
