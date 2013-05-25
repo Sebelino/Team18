@@ -9,10 +9,12 @@ def getCurrentProfile(): return db.getCurrentProfile()[0][0]
 def setCurrentProfile(name):
     print "SETTING PROFILE TO %s!"% name
     db.setCurrentProfile(name)
+def getGestures(): return db.query("SELECT * FROM gestures")
+def getCommands(): return db.query("SELECT * FROM commands")
 def getCurrentGestures():
-    return set(db.query("SELECT gestures.name,gestures.description,gestures.representation FROM\
-            gestures,profiles,activeprofile WHERE activeprofile.name=profiles.name AND\
-            gestures.name=profiles.gesturename"))
+    return filter(lambda r: r[0] != u'(No gesture)',getGestures())
+def getCurrentCommands():
+    return filter(lambda r: r[0] != u'(No macro)',getCommands())
 
 gdb = GestureDatabase()
 
@@ -40,11 +42,6 @@ def getCommand(gesture):
     print("NOP")
     return Command.Command("No operation","Does nothing.","nop")
 
-def getGestures(): return db.query("SELECT * FROM gestures")
-def getCurrentMacros():
-    return set(db.query("SELECT commands.name,commands.description,commands.script FROM commands,profiles,activeprofile WHERE\
-            activeprofile.name=profiles.name AND commands.name=profiles.commandname"))
-def getCommands(): return db.query("SELECT * FROM commands")
 def getMappings(): return db.getMappings()
 def getProfiles(): return set([x[0] for x in db.getProfiles()])
 def createProfile(profilename):
