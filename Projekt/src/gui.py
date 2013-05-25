@@ -981,7 +981,6 @@ def getListOfProfiles():
 
 """Returns the currently selected profile, requested from Controller.
 Return value: simple string which is the name of the currently selected profile."""
-#TODO se det dar dokumentet jag laddade upp om TODO och att uppdatera currentProfile.
 def getCurrentProfile():
     return Controller.getCurrentProfile()
     
@@ -1004,8 +1003,7 @@ def getListOfCustomGestures():
     """Returns a list of all Custom gestures,
     return value should be list of strings:
     [customGest1, customGest2, ...]"""
-    #TODO - ska bara returnera en lista pa Custom gestures, inte alla gestures!
-    table = Controller.getListOfGestures()
+    table = Controller.getCurrentGestures()
     return [r[0] for r in table]
     
 
@@ -1014,8 +1012,8 @@ def getListOfMacros():
     OBS!!!!!! returns ALL available and pickable Windows functions and macros,
     both built-in and custom!!! Compare to getListOfGestures()!!!!
     return value: see geListOfGestures (typ samma men med windowsfunctioner)"""
-    #TODO - las kommentaren ovan, se till att den faktiskt gor det!
     table = Controller.getListOfMacros()
+    print "Det som returneras är %s."% table
     return [(r[0],TextInput(text=('' if r[1] is None else r[1]),readonly=True)) for r in table]
 
 def getListOfCustomMacros():
@@ -1023,7 +1021,7 @@ def getListOfCustomMacros():
     return value: list of strings of custom macro names:
     [customMacro1Name, customMacro2Name, ...]"""
     #TODO - returnera endast custom macros, ej alla windows-funktioner!
-    table = Controller.getListOfMacros()
+    table = Controller.getCurrentMacros()
     return [r[0] for r in table]
 
 def getMacroInfo(macro):

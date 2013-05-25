@@ -85,8 +85,12 @@ def getGestures():
     return query("SELECT * FROM gestures")
 
 def getCurrentGestures():
-    return query("SELECT * FROM gestures,profiles,activeprofile WHERE\
+    return query("SELECT gestures.name,gestures.description,gestures.representation FROM gestures,profiles,activeprofile WHERE\
             activeprofile.name=profiles.name AND gestures.name=profiles.gesturename")
+
+def getCurrentCommands():
+    return query("SELECT commands.name,commands.description,commands.script FROM commands,profiles,activeprofile WHERE\
+            activeprofile.name=profiles.name AND commands.name=profiles.commandname")
 
 def getProfileGestures(profilename):
     return query("SELECT gesturename,description,representation FROM gestures,profiles WHERE\
@@ -140,7 +144,10 @@ def renameProfile(old,new):
         print 'Sorry, a profile with the name "%s" already exists.'% new
 
 def removeMacro(macroname):
-    delete("commands","name = '%s'"% macroname)
+    try:
+        delete("commands","name = '%s'"% macroname)
+    except sqlite3.IntegrityError as err:
+        print 'Sorry, some other profile uses that macro.'
 
 def insertMapping(profile,gesture,command):
     try:
