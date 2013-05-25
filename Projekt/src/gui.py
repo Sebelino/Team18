@@ -475,7 +475,7 @@ class EventPopup(Popup):
         self.container.add_widget(eventBtn)
 
     def setDropdownWithExplanation(self, allEvents):
-
+        allEvents = sorted(allEvents)
         #remove the previous widgets
         self.container.remove_widget(self.children[0])
         self.container.remove_widget(self.children[0])
@@ -498,6 +498,7 @@ class EventPopup(Popup):
         dd = DropDown(max_height=250, bar_width=5)
 
         i = 0
+        #for eve in (r[0] for r in allEvents):
         for eve in allEvents:
             btn = IndexButton(text=eve[0], color=(0,0,0,1),
                          size_hint_y=None, height=20,
@@ -1046,6 +1047,7 @@ def createProfile(profileName):
     #TODO Byt currentProfile till den nya profilen!
     #det gors antingen har genom att kalla pa selectProfile, eller i database
     Controller.createProfile(profileName)
+    #selectProfile(profileName)
     return profileName
 
 def editProfile(oldProfileName, newProfileName):
@@ -1055,6 +1057,7 @@ def editProfile(oldProfileName, newProfileName):
     #maste darfor returnera den nya profilens namn.
     #TODO - andra variabeln currentProfile i databasen nar man editerar profil!
     Controller.renameProfile(oldProfileName,newProfileName)
+    selectProfile(newProfileName)
     return newProfileName 
 
 def selectProfile(profileName):
@@ -1062,6 +1065,7 @@ def selectProfile(profileName):
     #TODO - verkar fungera men andra metoder maste byta currentProfile,
     #se andra kommentarer.
     Controller.setProfile(profileName)
+    mappingBox.updateMappings()
 
 def removeProfile(profileName):
     """ Removes the profile with the given name."""
@@ -1070,6 +1074,7 @@ def removeProfile(profileName):
     #se TODO-kommentaren i removeMapping
     #TODO - byt currentProfile, annars sa pekar den pa en borttagen profil...
     Controller.removeProfile(profileName)
+    #selectProfile(getCurrentProfile())
 
 #------------- Mappings ----------------#
 def createMapping(createCounter):
@@ -1181,7 +1186,7 @@ profileSelection = Button(size_hint = (None, None), size = (250, 30),
 d = DropDown(max_height=410, bar_width=15)
 def updateProfileList():
     d.clear_widgets()
-    for profile in getListOfProfiles():
+    for profile in sorted(getListOfProfiles()):
         btn = Button(text=profile, color=(0,0,0,1), size_hint_y=None,
                      height=20,
                      background_normal = PICPATH+'/dropdown_choice.png',
