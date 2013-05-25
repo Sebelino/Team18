@@ -61,6 +61,7 @@ def editMapping(oldGesture,newGesture,newCommand):
     if newCommand:
         db.updateCommand(oldGesture,newCommand)
 def createGesture(name,description,representation): db.insertGesture(name,description,representation)
+def createCommand(): db.insert("commands",("Untitled macro","",""))
 def removeGesture(name):
     if name == "(No gesture)":
         print "Sorry, that gesture is special. Get your filthy hand off of it!"

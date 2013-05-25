@@ -1135,8 +1135,7 @@ def removeGesture(gesture):
 #-------------- Macros/Windows functions ------------------#
 def createMacro(): #TODO
     """ Creates a new Macro, default name and everything. """
-    pass
-    # should not return anything
+    Controller.createMacro()
 
 def editMacro(macro, newScript, descType, desc):
     """edits macro 'macro' from the script newScript,
