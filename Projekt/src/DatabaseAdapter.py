@@ -121,7 +121,7 @@ def createProfile(profilename):
 
 def removeProfile(profilename):
     try:
-        if int(query("SELECT COUNT(*) FROM profiles")[0][0]) <= 1:
+        if int(len(set([r[0] for r in query("SELECT name FROM profiles")]))) <= 1:
             raise sqlite3.IntegrityError
         delete("profiles","name = '%s'"% profilename)
     except sqlite3.IntegrityError as err:
