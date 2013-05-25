@@ -148,7 +148,7 @@ def insertMapping(profile,gesture,command):
 
 def removeMapping(profile,gesture):
     try:
-        if int(query("SELECT COUNT(*) FROM profiles")[0][0]) <= 1:
+        if int(len(set([r[0] for r in query("SELECT gesturename FROM profiles,activeprofile WHERE profiles.name = activeprofile.name")]))) <= 1:
             raise sqlite3.IntegrityError
         delete("profiles","name = '%s' AND gesturename = '%s'"% (profile,gesture))
     except sqlite3.IntegrityError as err:
