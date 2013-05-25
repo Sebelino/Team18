@@ -28,6 +28,7 @@ def tableToString(table):
 # Inserts the row into the table.
 def insert(tablename,args):
     conn = sqlite3.connect(database)
+    conn.execute("PRAGMA foreign_keys=ON")
     c = conn.cursor()
     questionmarks = "?"
     for _ in range(1,len(args)):
@@ -40,8 +41,8 @@ def insert(tablename,args):
 # Alters the table.
 def update(tablename,attribute,newValue,condition):
     conn = sqlite3.connect(database)
+    conn.execute("PRAGMA foreign_keys=ON")
     c = conn.cursor()
-    questionmarks = "?"
     print "UPDATE %s SET %s=%s WHERE %s"% (tablename,attribute,newValue,condition)
     c.execute("UPDATE %s SET %s=%s WHERE %s"% (tablename,attribute,newValue,condition))
     conn.commit()
@@ -51,6 +52,7 @@ def update(tablename,attribute,newValue,condition):
 # Deletes the rows satisfying the condition.
 def delete(tablename,condition):
     conn = sqlite3.connect(database)
+    conn.execute("PRAGMA foreign_keys=ON")
     c = conn.cursor()
     c.execute("DELETE FROM %s WHERE %s"% (tablename,condition))
     conn.commit()
@@ -69,6 +71,7 @@ def select(c,condition,columns,table):
 # Executes the query and returns the results, if any.
 def query(query):
     conn = sqlite3.connect(database)
+    conn.execute("PRAGMA foreign_keys=ON")
     c = conn.cursor()
     c.execute(query)
     result = c.fetchall()
@@ -99,6 +102,7 @@ def getCommand(gesturename):
 
 def getScript(gesturename):
     conn = sqlite3.connect(database)
+    conn.execute("PRAGMA foreign_keys=ON")
     c = conn.cursor()
     result = select(c,"profiles.commandname = commands.name AND gesturename = '%s' AND profiles.name='Sebbes profil'"% gesturename,"script","profiles,commands")
     conn.commit()
