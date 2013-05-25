@@ -9,15 +9,18 @@ def getCurrentProfile(): return db.getCurrentProfile()[0][0]
 def setCurrentProfile(name):
     print "SETTING PROFILE TO %s!"% name
     db.setCurrentProfile(name)
+def getCurrentGestures():
+    return set(db.query("SELECT gestures.name,gestures.description,gestures.representation FROM\
+            gestures,profiles,activeprofile WHERE activeprofile.name=profiles.name AND\
+            gestures.name=profiles.gesturename"))
 
 gdb = GestureDatabase()
 
 kivygestures = dict()
-for row in db.getProfileGestures(getCurrentProfile()):
+for row in getCurrentGestures():
     kivygestures.update({row[2]:row[0]})
     gest = gdb.str_to_gesture(row[2].encode("ascii"))
     gdb.add_gesture(gest)
-print "profilegestures="+str(db.getProfileGestures(getCurrentProfile()))
 
 def getCommand(gesture):
     g = gdb.str_to_gesture(gesture.toString())
@@ -37,10 +40,11 @@ def getCommand(gesture):
     print("NOP")
     return Command.Command("No operation","Does nothing.","nop")
 
-def getGestures(): return db.getGestures()
-def getCurrentGestures(): return db.getCurrentGestures()
-def getCurrentMacros(): return set(db.getCurrentCommands())
-def getCommands(): return db.getCommands()
+def getGestures(): return db.query("SELECT * FROM gestures")
+def getCurrentMacros():
+    return set(db.query("SELECT commands.name,commands.description,commands.script FROM commands,profiles,activeprofile WHERE\
+            activeprofile.name=profiles.name AND commands.name=profiles.commandname"))
+def getCommands(): return db.query("SELECT * FROM commands")
 def getMappings(): return db.getMappings()
 def getProfiles(): return set([x[0] for x in db.getProfiles()])
 def createProfile(profilename):

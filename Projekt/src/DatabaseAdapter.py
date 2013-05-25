@@ -59,15 +59,6 @@ def delete(tablename,condition):
     conn.close()
     return 'Deletion successful.'
 
-# Returns the rows satisfying the condition.
-def select(c,condition,columns,table):
-    if len(condition) == 0:
-        c.execute("SELECT %s FROM %s"% (columns,table))
-    else:
-        print("SELECT %s FROM %s WHERE %s"% (columns,table,condition))
-        c.execute("SELECT %s FROM %s WHERE %s"% (columns,table,condition))
-    return c.fetchall()
-
 # Executes the query and returns the results, if any.
 def query(query):
     conn = sqlite3.connect(database)
@@ -80,24 +71,6 @@ def query(query):
     return result
 
 database = '../resources/profiles.db'
-
-def getGestures():
-    return query("SELECT * FROM gestures")
-
-def getCurrentGestures():
-    return query("SELECT gestures.name,gestures.description,gestures.representation FROM gestures,profiles,activeprofile WHERE\
-            activeprofile.name=profiles.name AND gestures.name=profiles.gesturename")
-
-def getCurrentCommands():
-    return query("SELECT commands.name,commands.description,commands.script FROM commands,profiles,activeprofile WHERE\
-            activeprofile.name=profiles.name AND commands.name=profiles.commandname")
-
-def getProfileGestures(profilename):
-    return query("SELECT gesturename,description,representation FROM gestures,profiles WHERE\
-        gestures.name = gesturename AND profiles.name = '%s'"% profilename)
-
-def getCommands():
-    return query("SELECT * FROM commands")
 
 def getCommand(gesturename):
     return query("SELECT commands.name,commands.description,commands.script FROM\
