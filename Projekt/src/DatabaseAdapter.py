@@ -132,6 +132,8 @@ def removeProfile(profilename):
 
 def renameProfile(old,new):
     try:
+        if query("SELECT name from profiles WHERE name = '%s'"% new):
+            raise sqlite3.IntegrityError
         update("profiles","name","'%s'"% new,"name = '%s'"% old)
     except sqlite3.IntegrityError as err:
         print 'Sorry, a profile with the name "%s" already exists.'% new
