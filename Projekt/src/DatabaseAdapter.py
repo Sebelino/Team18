@@ -165,7 +165,10 @@ def updateGesture(name,newname):
     try:
         update("profiles","gesturename","'%s'"% newname,"gesturename = '%s' AND profiles.name = (SELECT name from activeprofile)"% name)
     except sqlite3.IntegrityError as err:
-        print "Sorry, your update violates the functional dependency"
-        print "profile,gesture -> macro."
+        print "Sorry, you can't touch that gesture."
 def updateCommand(name,newname):
-    update("profiles","commandname","'%s'"% newname,"gesturename = '%s' AND profiles.name = (SELECT name from activeprofile)"% name)
+    try:
+        update("profiles","commandname","'%s'"% newname,"gesturename = '%s' AND\
+                profiles.name = (SELECT name from activeprofile)"% name)
+    except sqlite3.IntegrityError as err:
+        print "Sorry, you can't touch that macro."

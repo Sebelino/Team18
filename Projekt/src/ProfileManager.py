@@ -62,8 +62,12 @@ def editMapping(oldGesture,newGesture,newCommand):
     if newCommand:
         db.updateCommand(oldGesture,newCommand)
 def editCommand(oldName,name,description,script):
-    db.updateMulti("commands",("name","description","script"),("'%s'"% name,"'%s'"%
-                description,"'%s'"% script),"name = '%s'"% oldName)
+    try:
+        db.updateMulti("commands",("name","description","script"),("'%s'"% name,"'%s'"%
+                    description,"'%s'"% script),"name = '%s'"% oldName)
+    except IntegrityError:
+        print "Sorry, you can't edit that. Either you are trying to rename it to a macro that\
+already exists, or you are trying to edit a macro used by someone else."
 def createGesture(name,description,representation): db.insertGesture(name,description,representation)
 def createCommand(): db.insert("commands",("Untitled macro","",""))
 def removeGesture(name):

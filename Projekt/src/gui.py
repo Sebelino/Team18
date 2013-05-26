@@ -1019,7 +1019,6 @@ def getListOfMacros():
     both built-in and custom!!! Compare to getListOfGestures()!!!!
     return value: see geListOfGestures (typ samma men med windowsfunctioner)"""
     table = Controller.getListOfMacros()
-    print "Det som returneras är %s."% table
     return [(r[0],TextInput(text=('' if r[1] is None else r[1]),readonly=True)) for r in table]
 
 def getListOfCustomMacros():
