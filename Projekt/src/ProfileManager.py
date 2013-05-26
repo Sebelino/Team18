@@ -10,7 +10,7 @@ def setCurrentProfile(name):
     print "SETTING PROFILE TO %s!"% name
     db.setCurrentProfile(name)
 def getGestures(): return db.query("SELECT * FROM gestures ORDER BY LOWER(name)")
-def getCommands(): return list(set(db.query("SELECT * FROM commands ORDER BY LOWER(name)")))
+def getCommands(): return db.query("SELECT * FROM commands ORDER BY LOWER(name)")
 def getCurrentGestures():
     return filter(lambda r: r[0] != u'(No gesture)',getGestures())
 def getCurrentCommands():
