@@ -1130,8 +1130,7 @@ def createMacro():
 def editMacro(oldMacroName, newMacroName, newScript, descType, desc):
     """edits macro 'macro' from the script newScript,
        to description desc, which is of type descType"""
-    print macro, newScript, "\n" ,descType, desc
-    Controller.editMacro(macro,desc,newScript)
+    Controller.editMacro(oldMacroName,newMacroName,desc,newScript)
 
 def removeMacro(macro):
     """ Removes the specified Macro. """
