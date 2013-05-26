@@ -15,8 +15,8 @@ def printTable_depr(table):
 def tableToString(table):
     max_char_lengths = [max(map(lambda x:len(str(x)),c)) for c in zip(*table)]
     padding = 2
-    tableString = "Gestures\n"
-    tableString += "-------"
+    tableString =  "Gestures\n"
+    tableString += "--------"
     for row in table:
         tableString += "\n"
         for pair in zip(row,max_char_lengths):
@@ -86,75 +86,3 @@ def query(query):
     return result
 
 database = '../resources/profiles.db'
-
-def getCommand(gesturename):
-    return query("SELECT commands.name,commands.description,commands.script FROM\
-        profiles,commands WHERE profiles.commandname = commands.name AND\
-        gesturename = '%s' AND profiles.name='Sebbes profil'"% gesturename)[0]
-
-def getScript(gesturename):
-    conn = sqlite3.connect(database)
-    conn.execute("PRAGMA foreign_keys=ON")
-    c = conn.cursor()
-    result = select(c,"profiles.commandname = commands.name AND gesturename = '%s' AND profiles.name='Sebbes profil'"% gesturename,"script","profiles,commands")
-    conn.commit()
-    conn.close()
-    print result
-    print gesturename
-    return result[0][0]
-
-def getMappings(): return query("SELECT gesturename,commandname FROM profiles WHERE\
-        name=(SELECT name FROM activeprofile) ORDER BY LOWER(gesturename)")
-
-def createProfile(profilename):
-    try:
-        insertMapping(profilename,"(No gesture)","(No macro)")
-    except sqlite3.IntegrityError as err:
-        print 'Sorry, a profile with the name "%s" already exists.'% profilename
-
-def removeProfile(profilename):
-    try:
-        if int(len(set([r[0] for r in query("SELECT name FROM profiles")]))) <= 1:
-            raise sqlite3.IntegrityError
-        delete("profiles","name = '%s'"% profilename)
-    except sqlite3.IntegrityError as err:
-        print "Sorry, there has to be at least one profile available."
-
-def renameProfile(old,new):
-    try:
-        if query("SELECT name from profiles WHERE name = '%s'"% new):
-            raise sqlite3.IntegrityError
-        update("profiles","name","'%s'"% new,"name = '%s'"% old)
-    except sqlite3.IntegrityError as err:
-        print 'Sorry, a profile with the name "%s" already exists.'% new
-
-def removeMacro(macroname):
-    try:
-        delete("commands","name = '%s'"% macroname)
-    except sqlite3.IntegrityError as err:
-        print 'Sorry, some other profile uses that macro.'
-
-def removeMapping(profile,gesture):
-    try:
-        if int(len(set([r[0] for r in query("SELECT gesturename FROM profiles,activeprofile WHERE profiles.name = activeprofile.name")]))) <= 1:
-            raise sqlite3.IntegrityError
-        delete("profiles","name = '%s' AND gesturename = '%s'"% (profile,gesture))
-    except sqlite3.IntegrityError as err:
-        print "Sorry, there has to be at least one mapping available."
-
-def insertGesture(gesture,description,representation):
-    insert("gestures",(gesture,description,representation))
-
-def removeGesture(name): delete("gestures","name = '%s'"% name)
-
-def getCurrentProfile(): return query("SELECT name FROM activeprofile")
-def setCurrentProfile(name): update("activeprofile","name","'%s'"% name,"1=1")
-
-def updateGesture(name,newname):
-    try:
-        update("profiles","gesturename","'%s'"% newname,"gesturename = '%s' AND profiles.name = (SELECT name from activeprofile)"% name)
-    except sqlite3.IntegrityError as err:
-        print "Sorry, your update violates the functional dependency"
-        print "profile,gesture -> macro."
-def updateCommand(name,newname):
-    update("profiles","commandname","'%s'"% newname,"gesturename = '%s' AND profiles.name = (SELECT name from activeprofile)"% name)
