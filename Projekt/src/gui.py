@@ -571,9 +571,11 @@ class CustomizeEventPopup(Popup):
         def createBtn_callback(btn):
             if gestureOrMacro == 'gesture':
                 createGestureCallback()
+                gesturePopup.setDropdownWithExplanation(getListOfGestures())
             else:
                 createMacro()
                 self.refresh()
+                macroPopup.setDropdownWithExplanation(getListOfMacros())
         createBtn.bind(on_release=createBtn_callback)
         
         #set done button
@@ -646,6 +648,7 @@ class CustomGestureWidget(BoxLayout):
         def delBtn_callback(btn):
             removeGesture(name)
             owner.refresh()
+            gesturePopup.setDropdownWithExplanation(getListOfGestures())
             print "Removing gesture ", name
         delBtn.bind(on_release=delBtn_callback)
         #build self
@@ -688,6 +691,7 @@ class CustomMacroWidget(BoxLayout):
             #print "Removing macro ", name
             removeMacro(name)
             owner.refresh()
+            macroPopup.setDropdownWithExplanation(getListOfMacros())
         delBtn.bind(on_release=delBtn_callback)
         
         #build self
@@ -730,6 +734,7 @@ class EditMacroPopup(Popup):
             editMacro(self.oldMacro, self.textAreaName.text, self.textAreaScript.text,
                       'text', self.textAreaDesc.text)
             cepm.refresh()
+            macroPopup.setDropdownWithExplanation(getListOfMacros())
             self.dismiss()
         acceptButton.bind(on_release=acceptButton_callback)
         cancelButton = Button(size_hint = (None, None), size = (120, 26),
@@ -808,6 +813,7 @@ class CreateGesturePopup(Popup):
             createGesture(self.textAreaName.text, self.gestString,
                       'text', self.textAreaDesc.text)
             cepg.refresh()
+            gesturePopup.setDropdownWithExplanation(getListOfGestures())
             self.dismiss()
         acceptButton.bind(on_release=acceptButton_callback)
         cancelButton = Button(size_hint = (None, None), size = (120, 26),
@@ -1067,15 +1073,25 @@ def selectProfile(profileName):
 
 def removeProfile(profileName):
     """ Removes the profile with the given name."""
+    #TODO - just nu finns krashar programmet, men det har att gora med
+    #att programmet krashar nar man tar bort mappningar ur databasen.
+    #se TODO-kommentaren i removeMapping
+    #TODO - byt currentProfile, annars sa pekar den pa en borttagen profil...
     Controller.removeProfile(profileName)
+    #selectProfile(getCurrentProfile())
 
 #------------- Mappings ----------------#
 def createMapping(createCounter):
     """ Creates a new mapping with default values."""
+    #TODO, just nu skapar GUI:t nya namn, vet inte om det blir problem
+    # men det far du reda ut pa nat satt. Hade helst flyttat countern till
+    # controller eller databaseAdapter.
+    # annars verkar det funka bra.
     gesturename = '(No gesture)'
     commandname = '(No macro)'
-    Controller.createMapping()
+    Controller.createMapping(gesturename,commandname)
     mappingBox.addMapping((gesturename,commandname))
+    #should not return anything.
 
 def editMapping(gesture, newGesture, newMacro):
     """ Edits the mapping with the given key gesture.
@@ -1123,18 +1139,27 @@ def removeGesture(gesture):
     #should not return anything
 
 #-------------- Macros/Windows functions ------------------#
-def createMacro():
+def createMacro(): #TODO
     """ Creates a new Macro, default name and everything. """
-    Controller.createMacro()
+    pass
+    # should not return anything
 
 def editMacro(oldMacroName, newMacroName, newScript, descType, desc):
     """edits macro 'macro' from the script newScript,
        to description desc, which is of type descType"""
-    Controller.editMacro(oldMacroName,newMacroName,desc,newScript)
+    print oldMacroName, newMacroName, newScript, "\n" ,descType, desc
+    #TODO ta bort print
+    #TODO - se bl.a. till att makrots nya namn inte e tagit,
+    #och byt det i sa fall. Ska fixas i databaseAdapter.
 
-def removeMacro(macro):
+    #should not return anything
+
+def removeMacro(macro): #TODO
     """ Removes the specified Macro. """
+    print "removing macro ", macro
     Controller.removeMacro(macro);
+    #TODO ta bort print
+    #should not return anything
 
 ##################################################################
 # ------------------ Components ---------------------------------#
