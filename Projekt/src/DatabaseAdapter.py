@@ -43,8 +43,23 @@ def update(tablename,attribute,newValue,condition):
     conn = sqlite3.connect(database)
     conn.execute("PRAGMA foreign_keys=ON")
     c = conn.cursor()
-    print "UPDATE %s SET %s=%s WHERE %s"% (tablename,attribute,newValue,condition)
     c.execute("UPDATE %s SET %s=%s WHERE %s"% (tablename,attribute,newValue,condition))
+    conn.commit()
+    conn.close()
+    return 'Update successful.'
+
+# Alters the table.
+def updateMulti(tablename,attributes,newValues,condition):
+    conn = sqlite3.connect(database)
+    conn.execute("PRAGMA foreign_keys=ON")
+    c = conn.cursor()
+    queryString = "UPDATE %s SET "% tablename
+    for (a,v) in zip(attributes,newValues):
+        queryString += "%s = %s, "% (a,v)
+    queryString = queryString[0:-2]
+    queryString += " WHERE %s"% condition
+    print queryString
+    c.execute(queryString)
     conn.commit()
     conn.close()
     return 'Update successful.'
@@ -59,15 +74,6 @@ def delete(tablename,condition):
     conn.close()
     return 'Deletion successful.'
 
-# Returns the rows satisfying the condition.
-def select(c,condition,columns,table):
-    if len(condition) == 0:
-        c.execute("SELECT %s FROM %s"% (columns,table))
-    else:
-        print("SELECT %s FROM %s WHERE %s"% (columns,table,condition))
-        c.execute("SELECT %s FROM %s WHERE %s"% (columns,table,condition))
-    return c.fetchall()
-
 # Executes the query and returns the results, if any.
 def query(query):
     conn = sqlite3.connect(database)
@@ -80,24 +86,6 @@ def query(query):
     return result
 
 database = '../resources/profiles.db'
-
-def getGestures():
-    return query("SELECT * FROM gestures")
-
-def getCurrentGestures():
-    return query("SELECT gestures.name,gestures.description,gestures.representation FROM gestures,profiles,activeprofile WHERE\
-            activeprofile.name=profiles.name AND gestures.name=profiles.gesturename")
-
-def getCurrentCommands():
-    return query("SELECT commands.name,commands.description,commands.script FROM commands,profiles,activeprofile WHERE\
-            activeprofile.name=profiles.name AND commands.name=profiles.commandname")
-
-def getProfileGestures(profilename):
-    return query("SELECT gesturename,description,representation FROM gestures,profiles WHERE\
-        gestures.name = gesturename AND profiles.name = '%s'"% profilename)
-
-def getCommands():
-    return query("SELECT * FROM commands")
 
 def getCommand(gesturename):
     return query("SELECT commands.name,commands.description,commands.script FROM\
