@@ -5,6 +5,8 @@ from kivy.gesture import Gesture, GestureDatabase
 import DatabaseAdapter as db
 from sqlite3 import IntegrityError
 
+error = None
+
 def getCurrentProfile():
     return db.query("SELECT name FROM activeprofile")[0][0]
 
@@ -145,3 +147,8 @@ def removeGesture(name):
         print "Sorry, that gesture is special. Get your filthy hand off of it!"
     else:
         db.delete("gestures","name = %s"% name)
+
+def popError():
+    temp = error
+    error = None
+    return temp
