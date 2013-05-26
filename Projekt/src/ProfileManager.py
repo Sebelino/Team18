@@ -5,10 +5,12 @@ from kivy.gesture import Gesture, GestureDatabase
 import DatabaseAdapter as db
 from sqlite3 import IntegrityError
 
-def getCurrentProfile(): return db.getCurrentProfile()[0][0]
+def getCurrentProfile():
+    return db.query("SELECT name FROM activeprofile")[0][0]
+
 def setCurrentProfile(name):
-    print "SETTING PROFILE TO %s!"% name
-    db.setCurrentProfile(name)
+    db.update("activeprofile","name","'%s'"% name,"1=1")
+
 def getGestures(): return db.query("SELECT * FROM gestures ORDER BY LOWER(name)")
 def getCommands(): return db.query("SELECT * FROM commands ORDER BY LOWER(name)")
 def getCurrentGestures():
@@ -37,26 +39,39 @@ def getCommand(gesture):
     if identifiedGesture != None:
         strang = gdb.gesture_to_str(identifiedGesture)
         gesturename = kivygestures[strang]
-        (name,description,script) = db.getCommand(gesturename)
+        (name,description,script) = db.query("SELECT\
+                commands.name,commands.description,commands.script FROM\
+                profiles,commands WHERE profiles.commandname = commands.name AND\
+                gesturename = '%s' AND profiles.name='Sebbes profil'"% gesturename)[0]
         return Command.Command(name,description,script)
     print("NOP")
     return Command.Command("No operation","Does nothing.","nop")
 
-def getMappings(): return db.getMappings()
+def getMappings():
+    return db.query("SELECT gesturename,commandname FROM profiles WHERE\
+        name=(SELECT name FROM activeprofile) ORDER BY LOWER(gesturename)")
+
 def getProfiles():
     profiles = list(set([x[0] for x in db.query("SELECT name from profiles")]))
     profiles.sort()
     return profiles
 def createProfile(profilename):
     try:
-        insertMapping(profilename,"(No gesture)","(No macro)")
+        db.insert('profiles',(profilename,'(No gesture)','(No macro)'))
         setCurrentProfile(profilename)
     except IntegrityError as err:
         print 'Sorry, a profile with the name "%s" already exists.'% profilename
+
 def removeProfile(profilename):
-    db.removeProfile(profilename)
-    anyOtherProfile = list(getProfiles())[0]
-    setCurrentProfile(anyOtherProfile)
+    try:
+        if int(len(set([r[0] for r in db.query("SELECT name FROM profiles")]))) <= 1:
+            raise IntegrityError
+        db.delete("profiles","name = '%s'"% profilename)
+        anyOtherProfile = list(getProfiles())[0]
+        setCurrentProfile(anyOtherProfile)
+    except IntegrityError:
+        print "Sorry, there has to be at least one profile available."
+
 def renameProfile(old,new):
     try:
         if db.query("SELECT name from profiles WHERE name = '%s'"% new):
@@ -65,7 +80,12 @@ def renameProfile(old,new):
         setCurrentProfile(new)
     except IntegrityError as err:
         print 'Sorry, a profile with the name "%s" already exists.'% new
-def removeMacro(name): db.removeMacro(name)
+def removeMacro(macroname):
+    try:
+        db.delete("commands","name = '%s'"% macroname)
+    except IntegrityError:
+        print 'Sorry, some other profile uses that macro.'
+
 def createMapping():
     availableGestures = [r[0] for r in db.query("SELECT name from gestures WHERE name NOT IN\
             (SELECT profiles.gesturename FROM profiles,activeprofile WHERE profiles.name =\
@@ -74,12 +94,27 @@ def createMapping():
         print "Sorry, all gestures are occupied."
         return
     db.insert("profiles",(getCurrentProfile(),availableGestures[0],'(No macro)'))
-def removeMapping(gesturename): db.removeMapping(getCurrentProfile(),gesturename)
+
+def removeMapping(gesture):
+    profile = getCurrentProfile()
+    try:
+        if int(len(set([r[0] for r in db.query("SELECT gesturename FROM profiles,activeprofile\
+                            WHERE profiles.name = activeprofile.name")]))) <= 1:
+            raise IntegrityError
+        db.delete("profiles","name = '%s' AND gesturename = '%s'"% (profile,gesture))
+    except IntegrityError:
+        print "Sorry, there has to be at least one mapping available."
 def editMapping(oldGesture,newGesture,newCommand):
     if newGesture:
-        db.updateGesture(oldGesture,newGesture)
+        try:
+            update("profiles","gesturename","'%s'"% newname,
+                    "gesturename = '%s' AND profiles.name = (SELECT name from activeprofile)"% name)
+        except sqlite3.IntegrityError as err:
+            print "Sorry, your update violates the functional dependency"
+            print "profile,gesture -> macro."
     if newCommand:
-        db.updateCommand(oldGesture,newCommand)
+        update("profiles","commandname","'%s'"% newname,
+                "gesturename = '%s' AND profiles.name = (SELECT name from activeprofile)"% name)
 def editCommand(oldName,name,description,script):
     try:
         db.updateMulti("commands",("name","description","script"),("'%s'"% name,"'%s'"%
@@ -87,11 +122,13 @@ def editCommand(oldName,name,description,script):
     except IntegrityError:
         print "Sorry, you can't edit that. Either you are trying to rename it to a macro that\
 already exists, or you are trying to edit a macro used by someone else."
+
 def createGesture(name,description,representation):
     try:
-        db.insertGesture(name,description,representation)
+        db.insert("gestures",(name,description,representation))
     except IntegrityError:
         print "Sorry, there already exists a gesture with that name."
+
 def createCommand():
     usedNumbers = [r[0][len('Untitled macro '):] for r in db.query("SELECT name FROM commands WHERE name LIKE 'Untitled macro %'")]
     usedNumbers = filter(lambda x: x.isdigit(),usedNumbers)
@@ -104,4 +141,4 @@ def removeGesture(name):
     if name == "(No gesture)":
         print "Sorry, that gesture is special. Get your filthy hand off of it!"
     else:
-        db.removeGesture(name)
+        db.delete("gestures","name = %s"% name)
