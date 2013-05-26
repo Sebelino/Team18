@@ -215,6 +215,11 @@ class MappingDisplay(FloatLayout):
         i = len(self.layout.children) - 1 - index
         gestureName = self.layout.children[i].children[1].text
         removeMapping(gestureName)
+        #check status
+        status = getErrorStatus()
+        if status != None:
+            errorPopup.open("Error!", status)
+        #update mappings
         self.updateMappings()
 
     def updateMappings(self):
@@ -439,7 +444,13 @@ class EventPopup(Popup):
             elif self.gestureOrMacro == 'macro':
                 mappingBox.editMapping(
                     self.index, None, self.container.children[1].text)
-            self.dismiss()
+            #check for errors
+            status = getErrorStatus()
+            if status == None:
+                self.dismiss()
+            else:
+                errorPopup.open("Error!", status)
+            
         doneBtn.bind(on_release=doneBtn_callback)
 
         #add buttons to container
@@ -572,6 +583,9 @@ class CustomizeEventPopup(Popup):
                 createMacro()
                 self.refresh()
                 macroPopup.setDropdownWithExplanation(getListOfMacros())
+                status = getErrorStatus()
+                if status != None:
+                    errorPopup.open("Error!", status)
         createBtn.bind(on_release=createBtn_callback)
         
         #set done button
@@ -645,7 +659,10 @@ class CustomGestureWidget(BoxLayout):
             removeGesture(name)
             owner.refresh()
             gesturePopup.setDropdownWithExplanation(getListOfGestures())
-            print "Removing gesture ", name
+            #check status
+            status = getErrorStatus()
+            if status != None:
+                errorPopup.open("Error!", status)
         delBtn.bind(on_release=delBtn_callback)
         #build self
         self.add_widget(Button(text=name, color = (0,0,0,1),
@@ -684,10 +701,13 @@ class CustomMacroWidget(BoxLayout):
         #bind buttons
         editBtn.bind(on_release=lambda(btn):editMacroCallback(name))
         def delBtn_callback(btn):
-            #print "Removing macro ", name
             removeMacro(name)
             owner.refresh()
             macroPopup.setDropdownWithExplanation(getListOfMacros())
+            #check status
+            status = getErrorStatus()
+            if status != None:
+                errorPopup.open("Error!", status)
         delBtn.bind(on_release=delBtn_callback)
         
         #build self
@@ -736,7 +756,12 @@ class EditMacroPopup(Popup):
                           'text', self.textAreaDesc.text)
                 cepm.refresh()
                 macroPopup.setDropdownWithExplanation(getListOfMacros())
-                self.dismiss()
+                #check status
+                status = getErrorStatus()
+                if status == None:
+                    self.dismiss()
+                else:
+                    errorPopup.open("Error!", status)
         acceptButton.bind(on_release=acceptButton_callback)
         cancelButton = Button(size_hint = (None, None), size = (120, 26),
                               pos_hint = {'right':0.95, 'y':0}, color = (0,0,0,1),
@@ -811,19 +836,16 @@ class CreateGesturePopup(Popup):
                               background_normal = PICPATH+'/button_up.png',
                               background_down = PICPATH+'/button_down.png')
         def acceptButton_callback(btn):
-            if self.textAreaName.text == "":
-                errorPopup.open("Warning!",
-                                "Cannot create gesture with empty\nname.")
-            elif self.gestString == None:
-                #user didnt draw a gesture
-                errorPopup.open("Warning!",
-                                "No gesture was drawn.")
-            else:
-                createGesture(self.textAreaName.text, self.gestString,
-                              'text', self.textAreaDesc.text)
-                cepg.refresh()
-                gesturePopup.setDropdownWithExplanation(getListOfGestures())
+            createGesture(self.textAreaName.text, self.gestString,
+                          'text', self.textAreaDesc.text)
+            cepg.refresh()
+            gesturePopup.setDropdownWithExplanation(getListOfGestures())
+            #check if error
+            status = getErrorStatus()
+            if status == None:
                 self.dismiss()
+            else:
+                errorPopup.open("Error!", status)                
                 
         acceptButton.bind(on_release=acceptButton_callback)
         cancelButton = Button(size_hint = (None, None), size = (120, 26),
@@ -1169,6 +1191,12 @@ def removeMacro(macro):
     """ Removes the specified Macro. """
     Controller.removeMacro(macro);
 
+#-------------- error status ------------------#
+''' Used for letting the GUI know if something went wrong so that an
+error message can be shown. '''
+def getErrorStatus():
+    return Controller.popError()
+
 ##################################################################
 # ------------------ Components ---------------------------------#
 ##################################################################
@@ -1210,8 +1238,13 @@ def updateProfileList():
 profileSelection.bind(on_release=d.open)
 def pickProf(inst, name):
     selectProfile(name)
+    #check if error occured
+    status = getErrorStatus()
+    if status != None: 
+        errorPopup.open("Error!", status)
+    #update anyway
+    updateTextBoxes(getCurrentProfile())
     mappingBox.updateMappings()
-    updateTextBoxes(name)
     
 d.bind(on_select=pickProf)
                                  
@@ -1226,10 +1259,17 @@ createProfileButton = Button( size_hint = (None,None),
 
 def createProfileButtonAction(btn):
     createProfile('Untitled Profile')
-    updateProfileList()
-    updateTextBoxes(getCurrentProfile())
-    profileNameTextBox.focus = True
-    profileNameTextBox.select_all()
+    status = getErrorStatus()
+    if status == None:
+        #fine
+        updateProfileList()
+        updateTextBoxes(getCurrentProfile())
+        mappingBox.updateMappings()
+        profileNameTextBox.focus = True
+        profileNameTextBox.select_all()
+    else:
+        #some error occured
+        errorPopup.open("Error!", status)
 createProfileButton.bind(on_release=createProfileButtonAction)
 
 #Profile name box
@@ -1249,6 +1289,11 @@ profileNameBox.add_widget(profileNameTextBox)
 
 def profileNameTextBoxAction(txtbox):
     editProfile(getCurrentProfile(), txtbox.text)
+    #see if error occured
+    status = getErrorStatus()
+    if status != None:
+        errorPopup.open("Error!", status)
+    #update anyway
     updateProfileList()
     updateTextBoxes(getCurrentProfile())
 profileNameTextBox.bind(on_text_validate = profileNameTextBoxAction)
@@ -1266,8 +1311,17 @@ def deleteProfileButtonAction(btn):
     
 def delProf():
     removeProfile(getCurrentProfile())
-    updateProfileList()
-    updateTextBoxes(getCurrentProfile())
+    #check if error occured
+    status = getErrorStatus()
+    if status == None: #fine
+        mappingBox.updateMappings()
+        updateProfileList()
+        updateTextBoxes(getCurrentProfile())
+    else: #bad
+        errorPopup.open("Error!", status)
+    
+    
+    
     
 deleteProfileButton.bind(on_release = deleteProfileButtonAction)   
 #bind actions
@@ -1320,6 +1374,11 @@ addMappingButton = Button(text = 'New Mapping',
 counter = [1]
 def createMappingButton_callback(btn):
     createMapping(counter)
+    #check if error occured
+    status = getErrorStatus()
+    if status != None: #bad
+        errorPopup.open("Error!", status)
+    #update anyway
     mappingBox.updateMappings()
 addMappingButton.bind(on_release=createMappingButton_callback)
 
