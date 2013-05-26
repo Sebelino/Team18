@@ -129,6 +129,9 @@ def editCommand(oldName,name,description,script):
 
 def createGesture(name,description,representation):
     try:
+        if not representation:
+            error = 'Sorry, you need to draw a gesture.'
+            return
         db.insert("gestures",(name,description,representation))
     except IntegrityError:
         error = "Sorry, there already exists a gesture with that name."
