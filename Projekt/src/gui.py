@@ -708,7 +708,7 @@ class EditMacroPopup(Popup):
     textAreaDesc = None
     textAreaScript = None
     container = None
-    macro = "the awesome macro"
+    oldMacro = "ye old macro"
     
     def __init__(self, **kwargs):
         super(EditMacroPopup, self).__init__(**kwargs)
@@ -727,7 +727,7 @@ class EditMacroPopup(Popup):
                               background_normal = PICPATH+'/button_up.png',
                               background_down = PICPATH+'/button_down.png')
         def acceptButton_callback(btn):
-            editMacro(self.textAreaName.text, self.textAreaScript.text,
+            editMacro(self.oldMacro, self.textAreaName.text, self.textAreaScript.text,
                       'text', self.textAreaDesc.text)
             cepm.refresh()
             self.dismiss()
@@ -774,7 +774,7 @@ class EditMacroPopup(Popup):
 
     def open(self, macro):
         '''overriding open function'''
-        self.macro = macro
+        self.oldMacro = macro
         macInfo = getMacroInfo(macro)
         self.textAreaName.text = macInfo[0]
         self.textAreaDesc.text = macInfo[3]
@@ -1138,7 +1138,7 @@ def createMacro(): #TODO
     pass
     # should not return anything
 
-def editMacro(macro, newScript, descType, desc):
+def editMacro(oldMacroName, newMacroName, newScript, descType, desc):
     """edits macro 'macro' from the script newScript,
        to description desc, which is of type descType"""
     print macro, newScript, "\n" ,descType, desc
