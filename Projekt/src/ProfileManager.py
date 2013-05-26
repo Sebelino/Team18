@@ -48,13 +48,23 @@ def getProfiles():
     profiles.sort()
     return profiles
 def createProfile(profilename):
-    db.createProfile(profilename)
-    setCurrentProfile(profilename)
+    try:
+        insertMapping(profilename,"(No gesture)","(No macro)")
+        setCurrentProfile(profilename)
+    except IntegrityError as err:
+        print 'Sorry, a profile with the name "%s" already exists.'% profilename
 def removeProfile(profilename):
     db.removeProfile(profilename)
     anyOtherProfile = list(getProfiles())[0]
     setCurrentProfile(anyOtherProfile)
-def renameProfile(old,new): db.renameProfile(old,new)
+def renameProfile(old,new):
+    try:
+        if db.query("SELECT name from profiles WHERE name = '%s'"% new):
+            raise IntegrityError
+        db.update("profiles","name","'%s'"% new,"name = '%s'"% old)
+        setCurrentProfile(new)
+    except IntegrityError as err:
+        print 'Sorry, a profile with the name "%s" already exists.'% new
 def removeMacro(name): db.removeMacro(name)
 def createMapping():
     availableGestures = [r[0] for r in db.query("SELECT name from gestures WHERE name NOT IN\

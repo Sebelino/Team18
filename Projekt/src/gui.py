@@ -1048,7 +1048,6 @@ def createProfile(profileName):
 def editProfile(oldProfileName, newProfileName):
     """ Changes the name of a profile to the new name."""
     Controller.renameProfile(oldProfileName,newProfileName)
-    selectProfile(newProfileName)
     return newProfileName 
 
 def selectProfile(profileName):

@@ -106,12 +106,6 @@ def getScript(gesturename):
 def getMappings(): return query("SELECT gesturename,commandname FROM profiles WHERE\
         name=(SELECT name FROM activeprofile) ORDER BY LOWER(gesturename)")
 
-def createProfile(profilename):
-    try:
-        insertMapping(profilename,"(No gesture)","(No macro)")
-    except sqlite3.IntegrityError as err:
-        print 'Sorry, a profile with the name "%s" already exists.'% profilename
-
 def removeProfile(profilename):
     try:
         if int(len(set([r[0] for r in query("SELECT name FROM profiles")]))) <= 1:
@@ -119,14 +113,6 @@ def removeProfile(profilename):
         delete("profiles","name = '%s'"% profilename)
     except sqlite3.IntegrityError as err:
         print "Sorry, there has to be at least one profile available."
-
-def renameProfile(old,new):
-    try:
-        if query("SELECT name from profiles WHERE name = '%s'"% new):
-            raise sqlite3.IntegrityError
-        update("profiles","name","'%s'"% new,"name = '%s'"% old)
-    except sqlite3.IntegrityError as err:
-        print 'Sorry, a profile with the name "%s" already exists.'% new
 
 def removeMacro(macroname):
     try:
