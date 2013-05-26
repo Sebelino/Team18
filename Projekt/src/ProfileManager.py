@@ -9,8 +9,8 @@ def getCurrentProfile(): return db.getCurrentProfile()[0][0]
 def setCurrentProfile(name):
     print "SETTING PROFILE TO %s!"% name
     db.setCurrentProfile(name)
-def getGestures(): return db.query("SELECT * FROM gestures")
-def getCommands(): return db.query("SELECT * FROM commands")
+def getGestures(): return db.query("SELECT * FROM gestures ORDER BY LOWER(name)")
+def getCommands(): return db.query("SELECT * FROM commands ORDER BY LOWER(name)")
 def getCurrentGestures():
     return filter(lambda r: r[0] != u'(No gesture)',getGestures())
 def getCurrentCommands():
@@ -43,7 +43,7 @@ def getCommand(gesture):
     return Command.Command("No operation","Does nothing.","nop")
 
 def getMappings(): return db.getMappings()
-def getProfiles(): return set([x[0] for x in db.getProfiles()])
+def getProfiles(): return list(set([x[0] for x in db.getProfiles()]))
 def createProfile(profilename):
     db.createProfile(profilename)
     setCurrentProfile(profilename)

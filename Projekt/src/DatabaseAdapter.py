@@ -104,7 +104,7 @@ def getScript(gesturename):
     return result[0][0]
 
 def getMappings(): return query("SELECT gesturename,commandname FROM profiles WHERE\
-        name=(SELECT name FROM activeprofile)")
+        name=(SELECT name FROM activeprofile) ORDER BY LOWER(gesturename)")
 
 def getProfiles():
     return query("SELECT name FROM profiles")
