@@ -53,13 +53,17 @@ def removeProfile(profilename):
     setCurrentProfile(anyOtherProfile)
 def renameProfile(old,new): db.renameProfile(old,new)
 def removeMacro(name): db.removeMacro(name)
-def createMapping(gesturename,commandname): db.insertMapping(getCurrentProfile(),gesturename,commandname)
+def createMapping():
+    db.insertMapping(getCurrentProfile(),'(No gesture)','(No macro)')
 def removeMapping(gesturename): db.removeMapping(getCurrentProfile(),gesturename)
 def editMapping(oldGesture,newGesture,newCommand):
     if newGesture:
         db.updateGesture(oldGesture,newGesture)
     if newCommand:
         db.updateCommand(oldGesture,newCommand)
+def editCommand(oldName,name,description,script):
+    db.updateMulti("commands",("name","description","script"),("'%s'"% name,"'%s'"%
+                description,"'%s'"% script),"name = '%s'"% oldName)
 def createGesture(name,description,representation): db.insertGesture(name,description,representation)
 def createCommand(): db.insert("commands",("Untitled macro","",""))
 def removeGesture(name):

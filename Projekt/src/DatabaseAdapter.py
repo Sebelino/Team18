@@ -43,8 +43,23 @@ def update(tablename,attribute,newValue,condition):
     conn = sqlite3.connect(database)
     conn.execute("PRAGMA foreign_keys=ON")
     c = conn.cursor()
-    print "UPDATE %s SET %s=%s WHERE %s"% (tablename,attribute,newValue,condition)
     c.execute("UPDATE %s SET %s=%s WHERE %s"% (tablename,attribute,newValue,condition))
+    conn.commit()
+    conn.close()
+    return 'Update successful.'
+
+# Alters the table.
+def updateMulti(tablename,attributes,newValues,condition):
+    conn = sqlite3.connect(database)
+    conn.execute("PRAGMA foreign_keys=ON")
+    c = conn.cursor()
+    queryString = "UPDATE %s SET "% tablename
+    for (a,v) in zip(attributes,newValues):
+        queryString += "%s = %s, "% (a,v)
+    queryString = queryString[0:-2]
+    queryString += " WHERE %s"% condition
+    print queryString
+    c.execute(queryString)
     conn.commit()
     conn.close()
     return 'Update successful.'

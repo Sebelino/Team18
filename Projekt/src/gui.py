@@ -1067,25 +1067,15 @@ def selectProfile(profileName):
 
 def removeProfile(profileName):
     """ Removes the profile with the given name."""
-    #TODO - just nu finns krashar programmet, men det har att gora med
-    #att programmet krashar nar man tar bort mappningar ur databasen.
-    #se TODO-kommentaren i removeMapping
-    #TODO - byt currentProfile, annars sa pekar den pa en borttagen profil...
     Controller.removeProfile(profileName)
-    #selectProfile(getCurrentProfile())
 
 #------------- Mappings ----------------#
 def createMapping(createCounter):
     """ Creates a new mapping with default values."""
-    #TODO, just nu skapar GUI:t nya namn, vet inte om det blir problem
-    # men det far du reda ut pa nat satt. Hade helst flyttat countern till
-    # controller eller databaseAdapter.
-    # annars verkar det funka bra.
     gesturename = '(No gesture)'
     commandname = '(No macro)'
-    Controller.createMapping(gesturename,commandname)
+    Controller.createMapping()
     mappingBox.addMapping((gesturename,commandname))
-    #should not return anything.
 
 def editMapping(gesture, newGesture, newMacro):
     """ Edits the mapping with the given key gesture.
@@ -1133,7 +1123,7 @@ def removeGesture(gesture):
     #should not return anything
 
 #-------------- Macros/Windows functions ------------------#
-def createMacro(): #TODO
+def createMacro():
     """ Creates a new Macro, default name and everything. """
     Controller.createMacro()
 
@@ -1141,18 +1131,11 @@ def editMacro(macro, newScript, descType, desc):
     """edits macro 'macro' from the script newScript,
        to description desc, which is of type descType"""
     print macro, newScript, "\n" ,descType, desc
-    #TODO ta bort print
-    #TODO - se bl.a. till att makrots nya namn inte e tagit,
-    #och byt det i sa fall. Ska fixas i databaseAdapter.
+    Controller.editMacro(macro,desc,newScript)
 
-    #should not return anything
-
-def removeMacro(macro): #TODO
+def removeMacro(macro):
     """ Removes the specified Macro. """
-    print "removing macro ", macro
     Controller.removeMacro(macro);
-    #TODO ta bort print
-    #should not return anything
 
 ##################################################################
 # ------------------ Components ---------------------------------#

@@ -44,10 +44,12 @@ def removeProfile(profilename): ProfileManager.removeProfile(profilename)
 def setProfile(profilename): ProfileManager.setCurrentProfile(profilename)
 def renameProfile(old,new): ProfileManager.renameProfile(old,new)
 def removeMacro(name): ProfileManager.removeMacro(name)
-def createMapping(gesturename,commandname): ProfileManager.createMapping(gesturename,commandname)
+def createMapping(): ProfileManager.createMapping()
 def removeMapping(gesturename): ProfileManager.removeMapping(gesturename)
 def editMapping(oldGesture,newGesture,newMacro):
     ProfileManager.editMapping(oldGesture,newGesture,newMacro)
+def editMacro(macro,description,script): ProfileManager.editCommand(oldMacro,macro,description,script)
+                                         #TODO
 def createGesture(name,description,representation): ProfileManager.createGesture(name,description,representation)
 def createMacro(): ProfileManager.createCommand()
 def removeGesture(name): ProfileManager.removeGesture(name)
