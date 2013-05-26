@@ -1089,7 +1089,7 @@ def createMapping(createCounter):
     # annars verkar det funka bra.
     gesturename = '(No gesture)'
     commandname = '(No macro)'
-    Controller.createMapping(gesturename,commandname)
+    Controller.createMapping()
     mappingBox.addMapping((gesturename,commandname))
     #should not return anything.
 
@@ -1139,27 +1139,18 @@ def removeGesture(gesture):
     #should not return anything
 
 #-------------- Macros/Windows functions ------------------#
-def createMacro(): #TODO
+def createMacro():
     """ Creates a new Macro, default name and everything. """
-    pass
-    # should not return anything
+    Controller.createMacro()
 
 def editMacro(oldMacroName, newMacroName, newScript, descType, desc):
     """edits macro 'macro' from the script newScript,
        to description desc, which is of type descType"""
-    print oldMacroName, newMacroName, newScript, "\n" ,descType, desc
-    #TODO ta bort print
-    #TODO - se bl.a. till att makrots nya namn inte e tagit,
-    #och byt det i sa fall. Ska fixas i databaseAdapter.
+    Controller.editMacro(oldMacroName,newMacroName,desc,newScript)
 
-    #should not return anything
-
-def removeMacro(macro): #TODO
+def removeMacro(macro):
     """ Removes the specified Macro. """
-    print "removing macro ", macro
     Controller.removeMacro(macro);
-    #TODO ta bort print
-    #should not return anything
 
 ##################################################################
 # ------------------ Components ---------------------------------#
