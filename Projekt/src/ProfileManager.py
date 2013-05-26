@@ -43,7 +43,10 @@ def getCommand(gesture):
     return Command.Command("No operation","Does nothing.","nop")
 
 def getMappings(): return db.getMappings()
-def getProfiles(): return list(set([x[0] for x in db.getProfiles()]))
+def getProfiles():
+    profiles = list(set([x[0] for x in db.query("SELECT name from profiles")]))
+    profiles.sort()
+    return profiles
 def createProfile(profilename):
     db.createProfile(profilename)
     setCurrentProfile(profilename)
@@ -68,7 +71,11 @@ def editCommand(oldName,name,description,script):
     except IntegrityError:
         print "Sorry, you can't edit that. Either you are trying to rename it to a macro that\
 already exists, or you are trying to edit a macro used by someone else."
-def createGesture(name,description,representation): db.insertGesture(name,description,representation)
+def createGesture(name,description,representation):
+    try:
+        db.insertGesture(name,description,representation)
+    except IntegrityError:
+        print "Sorry, there already exists a gesture with that name."
 def createCommand():
     usedNumbers = [r[0][len('Untitled macro '):] for r in db.query("SELECT name FROM commands WHERE name LIKE 'Untitled macro %'")]
     usedNumbers = filter(lambda x: x.isdigit(),usedNumbers)

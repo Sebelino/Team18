@@ -106,9 +106,6 @@ def getScript(gesturename):
 def getMappings(): return query("SELECT gesturename,commandname FROM profiles WHERE\
         name=(SELECT name FROM activeprofile) ORDER BY LOWER(gesturename)")
 
-def getProfiles():
-    return query("SELECT name FROM profiles")
-
 def createProfile(profilename):
     try:
         insertMapping(profilename,"(No gesture)","(No macro)")
@@ -165,10 +162,7 @@ def updateGesture(name,newname):
     try:
         update("profiles","gesturename","'%s'"% newname,"gesturename = '%s' AND profiles.name = (SELECT name from activeprofile)"% name)
     except sqlite3.IntegrityError as err:
-        print "Sorry, you can't touch that gesture."
+        print "Sorry, your update violates the functional dependency"
+        print "profile,gesture -> macro."
 def updateCommand(name,newname):
-    try:
-        update("profiles","commandname","'%s'"% newname,"gesturename = '%s' AND\
-                profiles.name = (SELECT name from activeprofile)"% name)
-    except sqlite3.IntegrityError as err:
-        print "Sorry, you can't touch that macro."
+    update("profiles","commandname","'%s'"% newname,"gesturename = '%s' AND profiles.name = (SELECT name from activeprofile)"% name)
