@@ -69,7 +69,14 @@ def editCommand(oldName,name,description,script):
         print "Sorry, you can't edit that. Either you are trying to rename it to a macro that\
 already exists, or you are trying to edit a macro used by someone else."
 def createGesture(name,description,representation): db.insertGesture(name,description,representation)
-def createCommand(): db.insert("commands",("Untitled macro","",""))
+def createCommand():
+    usedNumbers = [r[0][len('Untitled macro '):] for r in db.query("SELECT name FROM commands WHERE name LIKE 'Untitled macro %'")]
+    usedNumbers = filter(lambda x: x.isdigit(),usedNumbers)
+    usedNumbers = [int(n) for n in usedNumbers]
+    for i in range(1,len(usedNumbers)+2):
+        if not i in usedNumbers:
+            db.insert("commands",("Untitled macro "+str(i),"",""))
+            return
 def removeGesture(name):
     if name == "(No gesture)":
         print "Sorry, that gesture is special. Get your filthy hand off of it!"
