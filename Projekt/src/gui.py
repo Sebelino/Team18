@@ -475,7 +475,7 @@ class EventPopup(Popup):
         self.container.add_widget(eventBtn)
 
     def setDropdownWithExplanation(self, allEvents):
-        allEvents = sorted(allEvents)
+        allEvents = sorted(allEvents, key=lambda li: li[0].upper())
         #remove the previous widgets
         self.container.remove_widget(self.children[0])
         self.container.remove_widget(self.children[0])
@@ -1181,7 +1181,7 @@ profileSelection = Button(size_hint = (None, None), size = (250, 30),
 d = DropDown(max_height=410, bar_width=15)
 def updateProfileList():
     d.clear_widgets()
-    for profile in sorted(getListOfProfiles()):
+    for profile in sorted(getListOfProfiles(),key=lambda li: li[0].upper()):
         btn = Button(text=profile, color=(0,0,0,1), size_hint_y=None,
                      height=20,
                      background_normal = PICPATH+'/dropdown_choice.png',
