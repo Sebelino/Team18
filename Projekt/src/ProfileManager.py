@@ -109,7 +109,7 @@ def editMapping(oldGesture,newGesture,newCommand):
         try:
             update("profiles","gesturename","'%s'"% newname,
                     "gesturename = '%s' AND profiles.name = (SELECT name from activeprofile)"% name)
-        except sqlite3.IntegrityError as err:
+        except IntegrityError as err:
             print "Sorry, your update violates the functional dependency"
             print "profile,gesture -> macro."
     if newCommand:
