@@ -84,7 +84,7 @@ def removeMacro(macroname):
     try:
         db.delete("commands","name = '%s'"% macroname)
     except IntegrityError:
-        print 'Sorry, some other profile uses that macro.'
+        print 'Sorry, that macro is currently in use.'
 
 def createMapping():
     availableGestures = [r[0] for r in db.query("SELECT name from gestures WHERE name NOT IN\
@@ -114,8 +114,9 @@ def editMapping(oldGesture,newGesture,newCommand):
             print "Sorry, your update violates the functional dependency"
             print "profile,gesture -> macro."
     if newCommand:
-        db.update("profiles","commandname","'%s'"% newGesture,
-                "gesturename = '%s' AND profiles.name = (SELECT name from activeprofile)"% name)
+        db.update("profiles","commandname","'%s'"% newCommand,
+                "gesturename = '%s' AND profiles.name = (SELECT name from activeprofile)"%
+                oldGesture)
 
 def editCommand(oldName,name,description,script):
     try:
@@ -123,7 +124,7 @@ def editCommand(oldName,name,description,script):
                     description,"'%s'"% script),"name = '%s'"% oldName)
     except IntegrityError:
         print "Sorry, you can't edit that. Either you are trying to rename it to a macro that\
-already exists, or you are trying to edit a macro used by someone else."
+ already exists, or you are trying to edit a macro used by someone else."
 
 def createGesture(name,description,representation):
     try:
