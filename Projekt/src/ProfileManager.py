@@ -107,14 +107,16 @@ def removeMapping(gesture):
 def editMapping(oldGesture,newGesture,newCommand):
     if newGesture:
         try:
-            db.update("profiles","gesturename","'%s'"% newname,
-                    "gesturename = '%s' AND profiles.name = (SELECT name from activeprofile)"% name)
+            db.update("profiles","gesturename","'%s'"% newGesture,
+                    "gesturename = '%s' AND profiles.name = (SELECT name from activeprofile)"%
+                    oldGesture)
         except IntegrityError as err:
             print "Sorry, your update violates the functional dependency"
             print "profile,gesture -> macro."
     if newCommand:
-        db.update("profiles","commandname","'%s'"% newname,
+        db.update("profiles","commandname","'%s'"% newGesture,
                 "gesturename = '%s' AND profiles.name = (SELECT name from activeprofile)"% name)
+
 def editCommand(oldName,name,description,script):
     try:
         db.updateMulti("commands",("name","description","script"),("'%s'"% name,"'%s'"%
