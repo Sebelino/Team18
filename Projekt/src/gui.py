@@ -140,7 +140,6 @@ class MappingDisplay(FloatLayout):
         s.bind(value_normalized=scrollMoves)
         self.add_widget(s, 1)
         
-
     def setBackgroundImage(self, image_widget):
         lastIndex = len(self.children)
         if self.have_background == False:
@@ -326,9 +325,6 @@ class GestureCreator(FloatLayout):
     def containsGesture():
         return not queue.empty()
     '''End of on-touch events'''
-
-
-
 
 ##################################################################
 #-------------------- touch block Popup Class -------------------#
@@ -731,11 +727,16 @@ class EditMacroPopup(Popup):
                               background_normal = PICPATH+'/button_up.png',
                               background_down = PICPATH+'/button_down.png')
         def acceptButton_callback(btn):
-            editMacro(self.oldMacro, self.textAreaName.text, self.textAreaScript.text,
-                      'text', self.textAreaDesc.text)
-            cepm.refresh()
-            macroPopup.setDropdownWithExplanation(getListOfMacros())
-            self.dismiss()
+            if self.textAreaName.text == "":
+                errorPopup.open("Warning!",
+                                "Cannot create macro with empty\nname.")
+            else:
+                editMacro(self.oldMacro, self.textAreaName.text,
+                          self.textAreaScript.text,
+                          'text', self.textAreaDesc.text)
+                cepm.refresh()
+                macroPopup.setDropdownWithExplanation(getListOfMacros())
+                self.dismiss()
         acceptButton.bind(on_release=acceptButton_callback)
         cancelButton = Button(size_hint = (None, None), size = (120, 26),
                               pos_hint = {'right':0.95, 'y':0}, color = (0,0,0,1),
@@ -790,7 +791,7 @@ class CreateGesturePopup(Popup):
     textAreaName = None
     textAreaDesc = None
     gcreator = None #Widget for tracing user's gesture
-    gestString = "SOME LONG STRING"
+    gestString = None
     container = None
     
     def __init__(self, **kwargs):
@@ -810,11 +811,20 @@ class CreateGesturePopup(Popup):
                               background_normal = PICPATH+'/button_up.png',
                               background_down = PICPATH+'/button_down.png')
         def acceptButton_callback(btn):
-            createGesture(self.textAreaName.text, self.gestString,
-                      'text', self.textAreaDesc.text)
-            cepg.refresh()
-            gesturePopup.setDropdownWithExplanation(getListOfGestures())
-            self.dismiss()
+            if self.textAreaName.text == "":
+                errorPopup.open("Warning!",
+                                "Cannot create gesture with empty\nname.")
+            elif self.gestString == None:
+                #user didnt draw a gesture
+                errorPopup.open("Warning!",
+                                "No gesture was drawn.")
+            else:
+                createGesture(self.textAreaName.text, self.gestString,
+                              'text', self.textAreaDesc.text)
+                cepg.refresh()
+                gesturePopup.setDropdownWithExplanation(getListOfGestures())
+                self.dismiss()
+                
         acceptButton.bind(on_release=acceptButton_callback)
         cancelButton = Button(size_hint = (None, None), size = (120, 26),
                               pos_hint = {'right':0.95, 'y':0}, color = (0,0,0,1),
@@ -868,6 +878,7 @@ class CreateGesturePopup(Popup):
         self.textAreaName.text = "My gesture"
         self.textAreaDesc.text = "My description"
         self.gestString = None
+        self.gcreator.canvas.clear()
         super(CreateGesturePopup, self).open()
 
 
@@ -952,6 +963,57 @@ class ConfirmPopup(Popup):
 
 confirm = ConfirmPopup()
 
+##################################################################
+#-------------- Error Popup Class and function-------------------#
+##################################################################
+'''
+Class ErrorPopup
+Used for giving the user an error message.
+Usage of class:
+an instance of the class has been created, name is errorPopup.
+Call errorPopup.open(title, message) to display the message.
+The title will be in red text and slightly larger text,
+and the message is, well, the message to show the user.
+
+'''
+class ErrorPopup(Popup):
+    def __init__(self,**kwargs):
+        super(ErrorPopup,self).__init__(**kwargs)
+        self.size_hint = (None, None)
+        self.size = (240, 150)
+        self.title = ""
+        self.background = PICPATH+'/background_white.png'
+        self.separator_color = (1, 1, 1, 0)
+        self.content = BoxLayout(orientation='vertical')
+        #autodismiss is left True intentionally!
+        self.content.add_widget(Label(markup = True, font_name = font,
+                                      text_size = (None, 120),
+                                      valign = 'top'))
+        dismissBtn = Button(size_hint_y = 0.4, text = "Dismiss",
+                            color = (0,0,0,1), font_size = 16,
+                            background_normal = PICPATH+'/button_up.png',
+                            background_down = PICPATH+'/button_down.png')
+        dismissBtn.bind(on_release=lambda btn: self.dismiss())
+        self.content.add_widget(dismissBtn)
+
+    def open(self, title, message):
+        #escape markup
+        if title == None:
+            title = ""
+        else:
+            title = kivy.utils.escape_markup(title)
+
+        message = kivy.utils.escape_markup(message)
+
+        #set text
+        self.content.children[1].text = "[color=880000][size=18][b]          " \
+                            + title + "[/color][/size][/b]\n" + \
+                            "[color=000000][size=15]" + message
+        #open
+        super(ErrorPopup,self).open()    
+
+
+errorPopup = ErrorPopup()
 
 ##################################################################
 #-------------------- Load Images -------------------------------#
@@ -1162,10 +1224,11 @@ createProfileButton = Button( size_hint = (None,None),
                               background_down = PICPATH+'/button_down.png',
                               font_name = font, color = (0,0,0,1),
                               text = "New profile", font_size = 15)
+
 def createProfileButtonAction(btn):
-    newProfileName = createProfile('Untitled Profile')
+    createProfile('Untitled Profile')
     updateProfileList()
-    updateTextBoxes(newProfileName)
+    updateTextBoxes(getCurrentProfile())
     profileNameTextBox.focus = True
     profileNameTextBox.select_all()
 createProfileButton.bind(on_release=createProfileButtonAction)
@@ -1186,9 +1249,9 @@ profileNameTextBox = TextInput(multiline = False, font_size = 13)
 profileNameBox.add_widget(profileNameTextBox)
 
 def profileNameTextBoxAction(txtbox):
-    newProfile = editProfile(getCurrentProfile(), txtbox.text)
+    editProfile(getCurrentProfile(), txtbox.text)
     updateProfileList()
-    updateTextBoxes(newProfile)
+    updateTextBoxes(getCurrentProfile())
 profileNameTextBox.bind(on_text_validate = profileNameTextBoxAction)
 
 #delete profile button
