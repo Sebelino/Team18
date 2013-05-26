@@ -62,7 +62,7 @@ def createProfile(profilename):
         db.insert('profiles',(profilename,'(No gesture)','(No macro)'))
         setCurrentProfile(profilename)
     except IntegrityError as err:
-        print 'Sorry, a profile with the name "%s" already exists.'% profilename
+        error = 'Sorry, a profile with the name "%s" already exists.'% profilename
 
 def removeProfile(profilename):
     try:
@@ -72,7 +72,7 @@ def removeProfile(profilename):
         anyOtherProfile = list(getProfiles())[0]
         setCurrentProfile(anyOtherProfile)
     except IntegrityError:
-        print "Sorry, there has to be at least one profile available."
+        error = "Sorry, there has to be at least one profile available."
 
 def renameProfile(old,new):
     try:
@@ -81,19 +81,19 @@ def renameProfile(old,new):
         db.update("profiles","name","'%s'"% new,"name = '%s'"% old)
         setCurrentProfile(new)
     except IntegrityError as err:
-        print 'Sorry, a profile with the name "%s" already exists.'% new
+        error = 'Sorry, a profile with the name "%s" already exists.'% new
 def removeMacro(macroname):
     try:
         db.delete("commands","name = '%s'"% macroname)
     except IntegrityError:
-        print 'Sorry, that macro is currently in use.'
+        error = 'Sorry, that macro is currently in use.'
 
 def createMapping():
     availableGestures = [r[0] for r in db.query("SELECT name from gestures WHERE name NOT IN\
             (SELECT profiles.gesturename FROM profiles,activeprofile WHERE profiles.name =\
              activeprofile.name)")]
     if not availableGestures:
-        print "Sorry, all gestures are occupied."
+        error = "Sorry, all gestures are occupied."
         return
     db.insert("profiles",(getCurrentProfile(),availableGestures[0],'(No macro)'))
 
@@ -105,7 +105,7 @@ def removeMapping(gesture):
             raise IntegrityError
         db.delete("profiles","name = '%s' AND gesturename = '%s'"% (profile,gesture))
     except IntegrityError:
-        print "Sorry, there has to be at least one mapping available."
+        error = "Sorry, there has to be at least one mapping available."
 def editMapping(oldGesture,newGesture,newCommand):
     if newGesture:
         try:
@@ -113,8 +113,7 @@ def editMapping(oldGesture,newGesture,newCommand):
                     "gesturename = '%s' AND profiles.name = (SELECT name from activeprofile)"%
                     oldGesture)
         except IntegrityError as err:
-            print "Sorry, your update violates the functional dependency"
-            print "profile,gesture -> macro."
+            error = "Sorry, your update violates the functional dependency\nprofile,gesture -> macro."
     if newCommand:
         db.update("profiles","commandname","'%s'"% newCommand,
                 "gesturename = '%s' AND profiles.name = (SELECT name from activeprofile)"%
@@ -125,14 +124,14 @@ def editCommand(oldName,name,description,script):
         db.updateMulti("commands",("name","description","script"),("'%s'"% name,"'%s'"%
                     description,"'%s'"% script),"name = '%s'"% oldName)
     except IntegrityError:
-        print "Sorry, you can't edit that. Either you are trying to rename it to a macro that\
+        error = "Sorry, you can't edit that. Either you are trying to rename it to a macro that\
  already exists, or you are trying to edit a macro used by someone else."
 
 def createGesture(name,description,representation):
     try:
         db.insert("gestures",(name,description,representation))
     except IntegrityError:
-        print "Sorry, there already exists a gesture with that name."
+        error = "Sorry, there already exists a gesture with that name."
 
 def createCommand():
     usedNumbers = [r[0][len('Untitled macro '):] for r in db.query("SELECT name FROM commands WHERE name LIKE 'Untitled macro %'")]
@@ -144,7 +143,7 @@ def createCommand():
             return
 def removeGesture(name):
     if name == "(No gesture)":
-        print "Sorry, that gesture is special. Get your filthy hand off of it!"
+        error = "Sorry, that gesture is special. Get your filthy hand off of it!"
     else:
         db.delete("gestures","name = %s"% name)
 

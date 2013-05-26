@@ -52,6 +52,6 @@ def editMacro(oldMacro,newMacro,description,script): ProfileManager.editCommand(
 def createGesture(name,description,representation): ProfileManager.createGesture(name,description,representation)
 def createMacro(): ProfileManager.createCommand()
 def removeGesture(name): ProfileManager.removeGesture(name)
-def popError(): ProfileManager.popError()
+def popError(): return ProfileManager.popError()
 
 
