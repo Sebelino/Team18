@@ -57,7 +57,13 @@ def removeProfile(profilename):
 def renameProfile(old,new): db.renameProfile(old,new)
 def removeMacro(name): db.removeMacro(name)
 def createMapping():
-    db.insertMapping(getCurrentProfile(),'(No gesture)','(No macro)')
+    availableGestures = [r[0] for r in db.query("SELECT name from gestures WHERE name NOT IN\
+            (SELECT profiles.gesturename FROM profiles,activeprofile WHERE profiles.name =\
+             activeprofile.name)")]
+    if not availableGestures:
+        print "Sorry, all gestures are occupied."
+        return
+    db.insert("profiles",(getCurrentProfile(),availableGestures[0],'(No macro)'))
 def removeMapping(gesturename): db.removeMapping(getCurrentProfile(),gesturename)
 def editMapping(oldGesture,newGesture,newCommand):
     if newGesture:

@@ -1000,8 +1000,6 @@ def getListOfGestures():
     """Returns a list of ALL available Gestures, requested from Controller.
     Return value must be:
     [ [gest1name, gest1descWidget], [gest2name, gest2DescWidget], ... ] """
-    #TODO - detta verkar vara korrekt nu och fungerar bra, men viktigt:
-    #returnera ALLA gestures, inte bara custom
     table = Controller.getListOfGestures()
     return [(r[0],TextInput(text=('' if r[1] is None else r[1]),readonly=True)) for r in table]
 
@@ -1025,7 +1023,6 @@ def getListOfCustomMacros():
     """Returns a list of all Custom macros.
     return value: list of strings of custom macro names:
     [customMacro1Name, customMacro2Name, ...]"""
-    #TODO - returnera endast custom macros, ej alla windows-funktioner!
     table = Controller.getCurrentMacros()
     return [r[0] for r in table]
 
@@ -1034,8 +1031,6 @@ def getMacroInfo(macro):
     return value: tupel or list with 4 elements, all strings:
     [ macroName (== macro), macroScript, descType (unused), description]
     """
-    #TODO - verkar fungera korrekt
-    #OBS: kommer endast ga att editera custom macros.
     table = Controller.getListOfMacros()
     row = filter(lambda r: r[0]==macro,table)[0]
     return [row[0],row[2],"text",row[1]]
@@ -1047,50 +1042,31 @@ def createProfile(profileName):
     Must return the name of the newly created profile.
     It is expected that the newly created profile is the one
     stored in the database."""
-    #TODO Byt currentProfile till den nya profilen!
-    #det gors antingen har genom att kalla pa selectProfile, eller i database
     Controller.createProfile(profileName)
-    #selectProfile(profileName)
     return profileName
 
 def editProfile(oldProfileName, newProfileName):
     """ Changes the name of a profile to the new name."""
-    #TODO - om man forsoker byta namn till en profil ska det nya namnet
-    #bli lite annorlunda, se TODO-kommentaren i createProfile.
-    #maste darfor returnera den nya profilens namn.
-    #TODO - andra variabeln currentProfile i databasen nar man editerar profil!
     Controller.renameProfile(oldProfileName,newProfileName)
     selectProfile(newProfileName)
     return newProfileName 
 
 def selectProfile(profileName):
     """ Selects the profile with the given name."""
-    #TODO - verkar fungera men andra metoder maste byta currentProfile,
-    #se andra kommentarer.
     Controller.setProfile(profileName)
     mappingBox.updateMappings()
 
 def removeProfile(profileName):
     """ Removes the profile with the given name."""
-    #TODO - just nu finns krashar programmet, men det har att gora med
-    #att programmet krashar nar man tar bort mappningar ur databasen.
-    #se TODO-kommentaren i removeMapping
-    #TODO - byt currentProfile, annars sa pekar den pa en borttagen profil...
     Controller.removeProfile(profileName)
-    #selectProfile(getCurrentProfile())
 
 #------------- Mappings ----------------#
 def createMapping(createCounter):
     """ Creates a new mapping with default values."""
-    #TODO, just nu skapar GUI:t nya namn, vet inte om det blir problem
-    # men det far du reda ut pa nat satt. Hade helst flyttat countern till
-    # controller eller databaseAdapter.
-    # annars verkar det funka bra.
     gesturename = '(No gesture)'
     commandname = '(No macro)'
     Controller.createMapping()
     mappingBox.addMapping((gesturename,commandname))
-    #should not return anything.
 
 def editMapping(gesture, newGesture, newMacro):
     """ Edits the mapping with the given key gesture.
@@ -1101,41 +1077,22 @@ def editMapping(gesture, newGesture, newMacro):
     newMacro - Macro value, the new Windows Macro/Function.
     In practice, either newGesture or newMacro will be None.
     """
-    print [gesture, newGesture, newMacro]
     Controller.editMapping(gesture,newGesture,newMacro)
-    #TODO koppla till databasen.
-    #TODO ta bort print
-    #should not return anything
 
 def removeMapping(gestureName):
     """ Removes the mapping with the given key gesture."""
-    print 'removing mapping ' + gestureName
     Controller.removeMapping(gestureName)
-    #TODO - tidigare sa togs ju mapping bort med ett index.
-    #det utfors nagon aritmetisk operation och just nu pga
-    #att gestureName e en string, sa blir det en krash.
-
-    #should not return anything
 
 #-------------- Gestures ----------------#
 def createGesture(gesture, representation, descType, description):
     """ Creates the gesture. """
-    print gesture, representation, "\n" ,descType, representation
     Controller.createGesture(gesture,description,representation)
-    #TODO - kontrollera att den nya gestens namn inte e samma som
-    #en annan gests, detta bor goras i databaseAdapter.
-    #TODO ta bort print
     
     #should not return anything
 
 def removeGesture(gesture):
     """ Removes the specified gesture. """
     Controller.removeGesture(gesture)
-    #TODO - man ska bara kunna ta bort custom gestures. However,
-    #om getListOfCustomGestures fungerar korrekt, sa bor det
-    #vara lungt.
-
-    #should not return anything
 
 #-------------- Macros/Windows functions ------------------#
 def createMacro():

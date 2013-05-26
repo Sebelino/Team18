@@ -134,14 +134,6 @@ def removeMacro(macroname):
     except sqlite3.IntegrityError as err:
         print 'Sorry, some other profile uses that macro.'
 
-def insertMapping(profile,gesture,command):
-    try:
-        print "INSERTING MAPPING %s: %s->%s"% (profile,gesture,command)
-        insert("profiles",(profile,gesture,command))
-    except sqlite3.IntegrityError as err:
-        print "Sorry, your insertion violates the functional dependency"
-        print "profile,gesture -> macro."
-
 def removeMapping(profile,gesture):
     try:
         if int(len(set([r[0] for r in query("SELECT gesturename FROM profiles,activeprofile WHERE profiles.name = activeprofile.name")]))) <= 1:
