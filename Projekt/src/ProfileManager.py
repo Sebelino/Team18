@@ -182,10 +182,14 @@ def createCommand():
             db.insert("commands",("Untitled macro "+str(i),"",""))
             return
 def removeGesture(name):
-    if name == "(No gesture)":
-        error = "That is a default gesture and hence cannot be removed."
-    else:
+    try:
+        table = db.query("SELECT name,gesturename FROM profiles WHERE gesturename = '%s'"% name)
+        if table:
+            error = 'Profile "%s" is using that gesture.'% table[0][0]
+            return
         db.delete("gestures","name = '%s'"% name)
+    except IntegrityError as err:
+        error = 'A database integrity error was encountered: %s'% err
 
 def popError():
     global error
