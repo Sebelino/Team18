@@ -63,7 +63,7 @@ def createProfile(profilename):
         db.insert('profiles',(profilename,'(No gesture)','(No macro)'))
         setCurrentProfile(profilename)
     except IntegrityError as err:
-        error = 'Sorry, a profile with the name "%s" already exists.'% profilename
+        error = 'A profile with the name "%s" already exists.'% profilename
 
 def removeProfile(profilename):
     global error
@@ -86,7 +86,7 @@ def renameProfile(old,new):
     new = new.strip()
     try:
         if db.query("SELECT name from profiles WHERE name = '%s'"% new):
-            error = 'Sorry, a profile with the name "%s" already exists.'% new
+            error = 'A profile with the name "%s" already exists.'% new
             return
         if not new:
             error = 'The name cannot consist of whitespace only.'
@@ -113,7 +113,7 @@ def createMapping():
             (SELECT profiles.gesturename FROM profiles,activeprofile WHERE profiles.name =\
              activeprofile.name)")]
     if not availableGestures:
-        error = "Sorry, all available gestures are already mapped in this profile."
+        error = "All available gestures are already mapped in this profile."
         return
     db.insert("profiles",(getCurrentProfile(),availableGestures[0],'(No macro)'))
 
@@ -123,10 +123,11 @@ def removeMapping(gesture):
     try:
         if int(len(set([r[0] for r in db.query("SELECT gesturename FROM profiles,activeprofile\
                             WHERE profiles.name = activeprofile.name")]))) <= 1:
-            raise IntegrityError
+            error = "There has to be at least one mapping available."
+            return
         db.delete("profiles","name = '%s' AND gesturename = '%s'"% (profile,gesture))
     except IntegrityError:
-        error = "Sorry, there has to be at least one mapping available."
+        error = 'A database integrity error was encountered: %s'% err
         
 def editMapping(oldGesture,newGesture,newCommand):
     global error
@@ -159,8 +160,7 @@ def editCommand(oldName,name,description,script):
         db.updateMulti("commands",("name","description","script"),("'%s'"% name,"'%s'"%
                     description,"'%s'"% script),"name = '%s'"% oldName)
     except IntegrityError:
-        error = "Sorry, you can't edit that. Either you are trying to rename it to a macro that\
- already exists, or you are trying to edit a macro used by someone else."
+        error = 'A database integrity error was encountered: %s'% err
 
 def createGesture(name,description,representation):
     global error
@@ -181,6 +181,7 @@ def createCommand():
         if not i in usedNumbers:
             db.insert("commands",("Untitled macro "+str(i),"",""))
             return
+
 def removeGesture(name):
     try:
         table = db.query("SELECT name,gesturename FROM profiles WHERE gesturename = '%s'"% name)
