@@ -80,19 +80,4 @@ def on_touch_up(touch):
 
 
 
-
-
-
-
 gdb = GestureDatabase()
-# add pre-recorded gestures to database
-gdb.add_gesture(cross)
-gdb.add_gesture(check)
-gdb.add_gesture(circle)
-gdb.add_gesture(square)
-gdb.add_gesture(s)
-
-
-
-
-

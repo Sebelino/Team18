@@ -120,7 +120,7 @@ def editMapping(oldGesture,newGesture,newCommand):
                     "gesturename = '%s' AND profiles.name = (SELECT name from activeprofile)"%
                     oldGesture)
         except IntegrityError as err:
-            error = "That name is already\ntaken."
+            error = "That name is already taken."
     if newCommand:
         db.update("profiles","commandname","'%s'"% newCommand,
                 "gesturename = '%s' AND profiles.name = (SELECT name from activeprofile)"%
