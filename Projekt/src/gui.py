@@ -1002,16 +1002,22 @@ class ErrorPopup(Popup):
     def __init__(self,**kwargs):
         super(ErrorPopup,self).__init__(**kwargs)
         self.size_hint = (None, None)
-        self.size = (240, 150)
+        self.size = (240, 170)
         self.title = ""
         self.background = PICPATH+'/background_white.png'
         self.separator_color = (1, 1, 1, 0)
         self.content = BoxLayout(orientation='vertical')
         #autodismiss is left True intentionally!
-        self.content.add_widget(Label(markup = True, font_name = font,
-                                      text_size = (None, 120),
+        self.content.add_widget(Label(font_name = font,
+                                      color = (0.7,0,0,1), font_size = 18,
+                                      text_size = (240, 100), bold = True,
+                                      valign = 'top', size_hint_y = 0.8,
+                                      halign = 'center'))
+        self.content.add_widget(Label(font_name = font, color = (0,0,0,1),
+                                      font_size = 15,
+                                      text_size = (None, 140),
                                       valign = 'top'))
-        dismissBtn = Button(size_hint_y = 0.4, text = "Dismiss",
+        dismissBtn = Button(size_hint_y = 0.5, text = "Dismiss",
                             color = (0,0,0,1), font_size = 16,
                             background_normal = PICPATH+'/button_up.png',
                             background_down = PICPATH+'/button_down.png')
@@ -1019,18 +1025,9 @@ class ErrorPopup(Popup):
         self.content.add_widget(dismissBtn)
 
     def open(self, title, message):
-        #escape markup
-        if title == None:
-            title = ""
-        else:
-            title = kivy.utils.escape_markup(title)
-
-        message = kivy.utils.escape_markup(message)
-
         #set text
-        self.content.children[1].text = "[color=880000][size=18][b]          " \
-                            + title + "[/color][/size][/b]\n" + \
-                            "[color=000000][size=15]" + message
+        self.content.children[2].text = title
+        self.content.children[1].text = message
         #open
         super(ErrorPopup,self).open()    
 
