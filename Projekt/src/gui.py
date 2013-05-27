@@ -218,7 +218,7 @@ class MappingDisplay(FloatLayout):
         #check status
         status = getErrorStatus()
         if status != None:
-            errorPopup.open("Error!", status)
+            errorPopup.open("    Error!", status)
         #update mappings
         self.updateMappings()
 
@@ -449,7 +449,7 @@ class EventPopup(Popup):
             if status == None:
                 self.dismiss()
             else:
-                errorPopup.open("Error!", status)
+                errorPopup.open("    Error!", status)
             
         doneBtn.bind(on_release=doneBtn_callback)
 
@@ -585,7 +585,7 @@ class CustomizeEventPopup(Popup):
                 macroPopup.setDropdownWithExplanation(getListOfMacros())
                 status = getErrorStatus()
                 if status != None:
-                    errorPopup.open("Error!", status)
+                    errorPopup.open("    Error!", status)
         createBtn.bind(on_release=createBtn_callback)
         
         #set done button
@@ -662,7 +662,7 @@ class CustomGestureWidget(BoxLayout):
             #check status
             status = getErrorStatus()
             if status != None:
-                errorPopup.open("Error!", status)
+                errorPopup.open("    Error!", status)
         delBtn.bind(on_release=delBtn_callback)
         #build self
         self.add_widget(Button(text=name, color = (0,0,0,1),
@@ -707,7 +707,7 @@ class CustomMacroWidget(BoxLayout):
             #check status
             status = getErrorStatus()
             if status != None:
-                errorPopup.open("Error!", status)
+                errorPopup.open("    Error!", status)
         delBtn.bind(on_release=delBtn_callback)
         
         #build self
@@ -761,7 +761,7 @@ class EditMacroPopup(Popup):
                 if status == None:
                     self.dismiss()
                 else:
-                    errorPopup.open("Error!", status)
+                    errorPopup.open("    Error!", status)
         acceptButton.bind(on_release=acceptButton_callback)
         cancelButton = Button(size_hint = (None, None), size = (120, 26),
                               pos_hint = {'right':0.95, 'y':0}, color = (0,0,0,1),
@@ -845,7 +845,7 @@ class CreateGesturePopup(Popup):
             if status == None:
                 self.dismiss()
             else:
-                errorPopup.open("Error!", status)                
+                errorPopup.open("    Error!", status)                
                 
         acceptButton.bind(on_release=acceptButton_callback)
         cancelButton = Button(size_hint = (None, None), size = (120, 26),
@@ -1241,7 +1241,7 @@ def pickProf(inst, name):
     #check if error occured
     status = getErrorStatus()
     if status != None: 
-        errorPopup.open("Error!", status)
+        errorPopup.open("    Error!", status)
     #update anyway
     updateTextBoxes(getCurrentProfile())
     mappingBox.updateMappings()
@@ -1269,7 +1269,7 @@ def createProfileButtonAction(btn):
         profileNameTextBox.select_all()
     else:
         #some error occured
-        errorPopup.open("Error!", status)
+        errorPopup.open("    Error!", status)
 createProfileButton.bind(on_release=createProfileButtonAction)
 
 #Profile name box
@@ -1292,7 +1292,7 @@ def profileNameTextBoxAction(txtbox):
     #see if error occured
     status = getErrorStatus()
     if status != None:
-        errorPopup.open("Error!", status)
+        errorPopup.open("    Error!", status)
     #update anyway
     updateProfileList()
     updateTextBoxes(getCurrentProfile())
@@ -1318,7 +1318,7 @@ def delProf():
         updateProfileList()
         updateTextBoxes(getCurrentProfile())
     else: #bad
-        errorPopup.open("Error!", status)
+        errorPopup.open("    Error!", status)
     
     
     
@@ -1377,7 +1377,7 @@ def createMappingButton_callback(btn):
     #check if error occured
     status = getErrorStatus()
     if status != None: #bad
-        errorPopup.open("Error!", status)
+        errorPopup.open("    Error!", status)
     #update anyway
     mappingBox.updateMappings()
 addMappingButton.bind(on_release=createMappingButton_callback)
