@@ -158,7 +158,7 @@ def removeGesture(name):
     if name == "(No gesture)":
         error = "Sorry, that gesture is special. Get your filthy hand off of it!"
     else:
-        db.delete("gestures","name = %s"% name)
+        db.delete("gestures","name = '%s'"% name)
 
 def popError():
     global error
