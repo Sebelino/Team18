@@ -67,31 +67,45 @@ def createProfile(profilename):
 
 def removeProfile(profilename):
     global error
+    profilename = profilename.strip()
     try:
+        if not profilename:
+            error = 'The name cannot consist of whitespace only.'
+            return
         if int(len(set([r[0] for r in db.query("SELECT name FROM profiles")]))) <= 1:
-            raise IntegrityError
+            error = "There has to be at least one profile available."
+            return
         db.delete("profiles","name = '%s'"% profilename)
         anyOtherProfile = list(getProfiles())[0]
         setCurrentProfile(anyOtherProfile)
-    except IntegrityError:
-        error = "Sorry, there has to be at least one profile available."
+    except IntegrityError as err:
+        error = 'A database integrity error was encountered: %s'% err
 
 def renameProfile(old,new):
     global error
+    new = new.strip()
     try:
         if db.query("SELECT name from profiles WHERE name = '%s'"% new):
-            raise IntegrityError
+            error = 'Sorry, a profile with the name "%s" already exists.'% new
+            return
+        if not new:
+            error = 'The name cannot consist of whitespace only.'
+            return
         db.update("profiles","name","'%s'"% new,"name = '%s'"% old)
         setCurrentProfile(new)
     except IntegrityError as err:
-        error = 'Sorry, a profile with the name "%s" already exists.'% new
+        error = 'A database integrity error was encountered: %s'% err
         
 def removeMacro(macroname):
     global error
     try:
+        table = db.query("SELECT name,commandname FROM profiles WHERE commandname = '%s'"% macroname)
+        if table:
+            error = 'Profile "%s" is using that macro.'% table[0][0]
+            return
         db.delete("commands","name = '%s'"% macroname)
-    except IntegrityError: #TODO possible to know what profile the macro is in?
-        error = 'Sorry, that macro is currently in use.'
+    except IntegrityError as err:
+        error = 'A database integrity error was encountered: %s'% err
 
 def createMapping():
     global error
@@ -122,7 +136,7 @@ def editMapping(oldGesture,newGesture,newCommand):
                     "gesturename = '%s' AND profiles.name = (SELECT name from activeprofile)"%
                     oldGesture)
         except IntegrityError as err:
-            error = "Gesture '%s' is already mapped in this profile."
+            error = "That name is already used by some mapping."
     if newCommand:
         db.update("profiles","commandname","'%s'"% newCommand,
                 "gesturename = '%s' AND profiles.name = (SELECT name from activeprofile)"%
@@ -130,7 +144,18 @@ def editMapping(oldGesture,newGesture,newCommand):
 
 def editCommand(oldName,name,description,script):
     global error
+    name = name.strip()
     try:
+        if not name:
+            error = 'The name cannot consist of whitespace only.'
+            return
+        if db.query("SELECT name FROM commands WHERE name = '%s'"% name):
+            error = 'A macro with that name already exists.'
+            return
+        table = db.query("SELECT name,commandname FROM profiles WHERE commandname = '%s'"% oldname)
+        if table:
+            error = 'Profile "%s" is using that macro.'% table[0][0]
+            return
         db.updateMulti("commands",("name","description","script"),("'%s'"% name,"'%s'"%
                     description,"'%s'"% script),"name = '%s'"% oldName)
     except IntegrityError:
@@ -141,11 +166,11 @@ def createGesture(name,description,representation):
     global error
     try:
         if not representation:
-            error = 'Sorry, you need to draw a gesture.'
+            error = 'You need to draw a gesture.'
             return
         db.insert("gestures",(name,description,representation))
     except IntegrityError:
-        error = "Sorry, there already exists a gesture with that name."
+        error = "There already exists a gesture with that name."
 
 def createCommand():
     global error
@@ -158,7 +183,7 @@ def createCommand():
             return
 def removeGesture(name):
     if name == "(No gesture)":
-        error = "Sorry, that gesture is special. Get your filthy hand off of it!"
+        error = "That is a default gesture and hence cannot be removed."
     else:
         db.delete("gestures","name = '%s'"% name)
 
