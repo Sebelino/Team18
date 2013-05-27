@@ -747,21 +747,18 @@ class EditMacroPopup(Popup):
                               background_normal = PICPATH+'/button_up.png',
                               background_down = PICPATH+'/button_down.png')
         def acceptButton_callback(btn):
-            if self.textAreaName.text == "":
-                errorPopup.open("Warning!",
-                                "Cannot create macro with empty\nname.")
+
+            editMacro(self.oldMacro, self.textAreaName.text,
+                      self.textAreaScript.text,
+                      'text', self.textAreaDesc.text)
+            cepm.refresh()
+            macroPopup.setDropdownWithExplanation(getListOfMacros())
+            #check status
+            status = getErrorStatus()
+            if status == None:
+                self.dismiss()
             else:
-                editMacro(self.oldMacro, self.textAreaName.text,
-                          self.textAreaScript.text,
-                          'text', self.textAreaDesc.text)
-                cepm.refresh()
-                macroPopup.setDropdownWithExplanation(getListOfMacros())
-                #check status
-                status = getErrorStatus()
-                if status == None:
-                    self.dismiss()
-                else:
-                    errorPopup.open("Error!", status)
+                errorPopup.open("Error!", status)
         acceptButton.bind(on_release=acceptButton_callback)
         cancelButton = Button(size_hint = (None, None), size = (120, 26),
                               pos_hint = {'right':0.95, 'y':0}, color = (0,0,0,1),
@@ -1377,7 +1374,14 @@ def createMappingButton_callback(btn):
         errorPopup.open("Error!", status)
     #update anyway
     mappingBox.updateMappings()
+
 addMappingButton.bind(on_release=createMappingButton_callback)
+
+#TODO ta bort detta senare
+#def testErrorPopup(btn):
+#    errorPopup.open("Error!",
+ #           "WWWWWWWWWWWWWWWWWWWWWWWWWWWWWW\nMMMMMMMMMMMMMMMMMMMMMMMMMMMMMM")
+#addMappingButton.bind(on_release=testErrorPopup)
 
 #popups from infobutton
 gesturePopup = EventPopup('gesture')

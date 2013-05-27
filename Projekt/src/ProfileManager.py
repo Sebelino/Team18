@@ -85,11 +85,12 @@ def renameProfile(old,new):
         setCurrentProfile(new)
     except IntegrityError as err:
         error = 'Sorry, a profile with the name "%s" already exists.'% new
+        
 def removeMacro(macroname):
     global error
     try:
         db.delete("commands","name = '%s'"% macroname)
-    except IntegrityError:
+    except IntegrityError: #TODO possible to know what profile the macro is in?
         error = 'Sorry, that macro is currently in use.'
 
 def createMapping():
@@ -98,7 +99,7 @@ def createMapping():
             (SELECT profiles.gesturename FROM profiles,activeprofile WHERE profiles.name =\
              activeprofile.name)")]
     if not availableGestures:
-        error = "Sorry, all gestures are occupied."
+        error = "Sorry, all available gestures are already mapped in this profile."
         return
     db.insert("profiles",(getCurrentProfile(),availableGestures[0],'(No macro)'))
 
@@ -112,6 +113,7 @@ def removeMapping(gesture):
         db.delete("profiles","name = '%s' AND gesturename = '%s'"% (profile,gesture))
     except IntegrityError:
         error = "Sorry, there has to be at least one mapping available."
+        
 def editMapping(oldGesture,newGesture,newCommand):
     global error
     if newGesture:
@@ -120,7 +122,7 @@ def editMapping(oldGesture,newGesture,newCommand):
                     "gesturename = '%s' AND profiles.name = (SELECT name from activeprofile)"%
                     oldGesture)
         except IntegrityError as err:
-            error = "That name is already taken."
+            error = "Gesture '%s' is already mapped in this profile."
     if newCommand:
         db.update("profiles","commandname","'%s'"% newCommand,
                 "gesturename = '%s' AND profiles.name = (SELECT name from activeprofile)"%
