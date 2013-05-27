@@ -120,7 +120,7 @@ def editMapping(oldGesture,newGesture,newCommand):
                     "gesturename = '%s' AND profiles.name = (SELECT name from activeprofile)"%
                     oldGesture)
         except IntegrityError as err:
-            error = "Sorry, your update violates the functional dependency\nprofile,gesture -> macro."
+            error = "That name is already\ntaken."
     if newCommand:
         db.update("profiles","commandname","'%s'"% newCommand,
                 "gesturename = '%s' AND profiles.name = (SELECT name from activeprofile)"%
