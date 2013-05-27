@@ -58,6 +58,7 @@ def getProfiles():
     profiles.sort()
     return profiles
 def createProfile(profilename):
+    global error
     try:
         db.insert('profiles',(profilename,'(No gesture)','(No macro)'))
         setCurrentProfile(profilename)
@@ -65,6 +66,7 @@ def createProfile(profilename):
         error = 'Sorry, a profile with the name "%s" already exists.'% profilename
 
 def removeProfile(profilename):
+    global error
     try:
         if int(len(set([r[0] for r in db.query("SELECT name FROM profiles")]))) <= 1:
             raise IntegrityError
@@ -75,6 +77,7 @@ def removeProfile(profilename):
         error = "Sorry, there has to be at least one profile available."
 
 def renameProfile(old,new):
+    global error
     try:
         if db.query("SELECT name from profiles WHERE name = '%s'"% new):
             raise IntegrityError
@@ -83,12 +86,14 @@ def renameProfile(old,new):
     except IntegrityError as err:
         error = 'Sorry, a profile with the name "%s" already exists.'% new
 def removeMacro(macroname):
+    global error
     try:
         db.delete("commands","name = '%s'"% macroname)
     except IntegrityError:
         error = 'Sorry, that macro is currently in use.'
 
 def createMapping():
+    global error
     availableGestures = [r[0] for r in db.query("SELECT name from gestures WHERE name NOT IN\
             (SELECT profiles.gesturename FROM profiles,activeprofile WHERE profiles.name =\
              activeprofile.name)")]
@@ -98,6 +103,7 @@ def createMapping():
     db.insert("profiles",(getCurrentProfile(),availableGestures[0],'(No macro)'))
 
 def removeMapping(gesture):
+    global error
     profile = getCurrentProfile()
     try:
         if int(len(set([r[0] for r in db.query("SELECT gesturename FROM profiles,activeprofile\
@@ -107,6 +113,7 @@ def removeMapping(gesture):
     except IntegrityError:
         error = "Sorry, there has to be at least one mapping available."
 def editMapping(oldGesture,newGesture,newCommand):
+    global error
     if newGesture:
         try:
             db.update("profiles","gesturename","'%s'"% newGesture,
@@ -120,6 +127,7 @@ def editMapping(oldGesture,newGesture,newCommand):
                 oldGesture)
 
 def editCommand(oldName,name,description,script):
+    global error
     try:
         db.updateMulti("commands",("name","description","script"),("'%s'"% name,"'%s'"%
                     description,"'%s'"% script),"name = '%s'"% oldName)
@@ -128,6 +136,7 @@ def editCommand(oldName,name,description,script):
  already exists, or you are trying to edit a macro used by someone else."
 
 def createGesture(name,description,representation):
+    global error
     try:
         if not representation:
             error = 'Sorry, you need to draw a gesture.'
@@ -137,6 +146,7 @@ def createGesture(name,description,representation):
         error = "Sorry, there already exists a gesture with that name."
 
 def createCommand():
+    global error
     usedNumbers = [r[0][len('Untitled macro '):] for r in db.query("SELECT name FROM commands WHERE name LIKE 'Untitled macro %'")]
     usedNumbers = filter(lambda x: x.isdigit(),usedNumbers)
     usedNumbers = [int(n) for n in usedNumbers]
@@ -151,6 +161,8 @@ def removeGesture(name):
         db.delete("gestures","name = %s"% name)
 
 def popError():
+    global error
     temp = error
     error = None
     return temp
+
