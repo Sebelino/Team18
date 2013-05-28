@@ -998,8 +998,9 @@ and the message is, well, the message to show the user.
 class ErrorPopup(Popup):
     def __init__(self,**kwargs):
         super(ErrorPopup,self).__init__(**kwargs)
+        width = 300
         self.size_hint = (None, None)
-        self.size = (240, 170)
+        self.size = (width, 170)
         self.title = ""
         self.background = PICPATH+'/background_white.png'
         self.separator_color = (1, 1, 1, 0)
@@ -1007,12 +1008,12 @@ class ErrorPopup(Popup):
         #autodismiss is left True intentionally!
         self.content.add_widget(Label(font_name = font,
                                       color = (0.7,0,0,1), font_size = 18,
-                                      text_size = (240, 100), bold = True,
+                                      text_size = (width, 100), bold = True,
                                       valign = 'top', size_hint_y = 0.8,
                                       halign = 'center'))
         self.content.add_widget(Label(font_name = font, color = (0,0,0,1),
-                                      font_size = 15,
-                                      text_size = (None, 140),
+                                      font_size = 14,
+                                      text_size = (width-10, 160),
                                       valign = 'top'))
         dismissBtn = Button(size_hint_y = 0.5, text = "Dismiss",
                             color = (0,0,0,1), font_size = 16,
@@ -1379,8 +1380,8 @@ addMappingButton.bind(on_release=createMappingButton_callback)
 
 #TODO ta bort detta senare
 #def testErrorPopup(btn):
-#    errorPopup.open("Error!",
- #           "WWWWWWWWWWWWWWWWWWWWWWWWWWWWWW\nMMMMMMMMMMMMMMMMMMMMMMMMMMMMMM")
+ #   errorPopup.open("Error!",
+ #           "Many Problems Arise FroM The DestructiOnaaaaaaaaa Of CHAOS!!")
 #addMappingButton.bind(on_release=testErrorPopup)
 
 #popups from infobutton
