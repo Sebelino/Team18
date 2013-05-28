@@ -183,6 +183,7 @@ def createCommand():
             return
 
 def removeGesture(name):
+    global error
     try:
         table = db.query("SELECT name,gesturename FROM profiles WHERE gesturename = '%s'"% name)
         if table:
