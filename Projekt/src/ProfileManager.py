@@ -153,7 +153,7 @@ def editCommand(oldName,name,description,script):
         if db.query("SELECT name FROM commands WHERE name = '%s'"% name):
             error = 'A macro with that name already exists.'
             return
-        table = db.query("SELECT name,commandname FROM profiles WHERE commandname = '%s'"% oldname)
+        table = db.query("SELECT name,commandname FROM profiles WHERE commandname = '%s'"% oldName)
         if table:
             error = 'Profile "%s" is using that macro.'% table[0][0]
             return
