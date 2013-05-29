@@ -1475,12 +1475,6 @@ class TouchArea(BoxLayout):
 
     #On touch events
     def on_touch_down(self, touch):
-        print "Touch down!"
-        #print "Touch uid: " + str(touch.uid)
-
-        if len(EventLoop.touches) > 1:
-            print "Multi touch!"
-        
         if str(touch.device) == "mouse":
             super(TouchArea, self).on_touch_down(touch)
             Controller.on_touch_down(touch)
@@ -1489,8 +1483,6 @@ class TouchArea(BoxLayout):
             Controller.on_touch_down(touch)
         
     def on_touch_move(self, touch):
-        print "Touch move!"
-        #print "uid: " + str(touch.uid)
         if str(touch.device) == "mouse":
             super(TouchArea, self).on_touch_move(touch)
             Controller.on_touch_move(touch)
@@ -1499,8 +1491,6 @@ class TouchArea(BoxLayout):
             Controller.on_touch_move(touch)
         
     def on_touch_up(self, touch):
-        print "Touch up!"
-        #print "uid: " + str(touch.uid)
         if str(touch.device) == "mouse":
             super(TouchArea, self).on_touch_up(touch)
             Controller.on_touch_up(touch)

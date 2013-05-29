@@ -5,25 +5,32 @@ import Gesture
 import Command
 
 def signalCommand(g):
-    #print g
-    if g == None:
-        #print "g is None\n\n\n!!!"
+    if not g:
         pass
     else:
         c = ProfileManager.getCommand(g)
         CommandHandler.execute(c)
 
+moveprinted = False
 #On touch events
 def on_touch_down(touch):
+    global moveprinted
     g = GestureHandler.on_touch_down(touch)
+    print "Touch down"
     signalCommand(g)
-    
+
 def on_touch_move(touch):
+    global moveprinted
     g = GestureHandler.on_touch_move(touch)
+    if not moveprinted:
+        print "Touch move"
+        moveprinted = True
     signalCommand(g)
     
 def on_touch_up(touch):
+    global moveprinted
     g = GestureHandler.on_touch_up(touch)
+    print "Touch up"
     signalCommand(g)
 
 
