@@ -5,9 +5,9 @@ import Gesture
 import Command
 
 def signalCommand(g):
-    print g
+    #print g
     if g == None:
-        print "g is None\n\n\n!!!"
+        #print "g is None\n\n\n!!!"
         pass
     else:
         c = ProfileManager.getCommand(g)
@@ -17,17 +17,14 @@ def signalCommand(g):
 def on_touch_down(touch):
     g = GestureHandler.on_touch_down(touch)
     signalCommand(g)
-    print "DOWN!!!"
     
 def on_touch_move(touch):
     g = GestureHandler.on_touch_move(touch)
     signalCommand(g)
-    print "MOVE!!!!!!!!"
     
 def on_touch_up(touch):
     g = GestureHandler.on_touch_up(touch)
     signalCommand(g)
-    print "UP"
 
 
 # For the database

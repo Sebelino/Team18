@@ -52,7 +52,7 @@ def on_touch_move(touch):
     try:
         touch.ud['line'].points += [touch.x, touch.y]
         activeTouches[touch.uid].update({(len(activeTouches[touch.uid])) : (touch.x, touch.y)})
-        print activeTouches
+        #print activeTouches
     except (KeyError), e:
         pass
 
@@ -70,7 +70,7 @@ def on_touch_up(touch):
             )
     # print the gesture representation, you can use that to add
     # gestures to my_gestures.py
-    print "gesture representation:", gdb.gesture_to_str(g)
+    #print "gesture representation:", gdb.gesture_to_str(g)
 
     gesture = OwnGesture.Gesture("name", False, gdb.gesture_to_str(g))
     
