@@ -46,7 +46,7 @@ def getCommand(gesture):
         (name,description,script) = db.query("SELECT\
                 commands.name,commands.description,commands.script FROM\
                 profiles,commands WHERE profiles.commandname = commands.name AND\
-                gesturename = '%s' AND profiles.name='Sebbes profil'"% gesturename)[0]
+                gesturename = '%s' AND profiles.name='%s'"% (gesturename,getCurrentProfile()))[0]
         return Command.Command(name,description,script)
     print("NOP")
     return Command.Command("No operation","Does nothing.","nop")
