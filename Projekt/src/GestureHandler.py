@@ -8,15 +8,11 @@ from kivy.uix.widget import Widget
 from kivy.uix.button import Button
 from kivy.graphics import Color, Ellipse, Line
 from kivy.gesture import Gesture, GestureDatabase
+from my_gestures import cross, circle, check, square, s
+import Queue
 #import win32api
 #import win32con
 
-from my_gestures import cross, circle, check, square, s
-import Queue
-
-activeTouches = dict()
-
-twoPointGest = dict() #points used for recognizing two point gestures
 
 def simplegesture(name, point_list):
     """
@@ -36,11 +32,6 @@ def on_touch_down(touch):
     userdata = touch.ud
     userdata['line'] = Line(points=(touch.x, touch.y))
     
-    activeTouches.update({touch.uid : {0 : (touch.x, touch.y)}})
-    
-    if (len(twoPointGest) < 2):
-        twoPointGest.update({touch.uid : {0 : (touch.x, touch.y)}})
-    
     return None    #TODO Return actual gesture object
 
 
@@ -51,8 +42,6 @@ def on_touch_move(touch):
 
     try:
         touch.ud['line'].points += [touch.x, touch.y]
-        activeTouches[touch.uid].update({(len(activeTouches[touch.uid])) : (touch.x, touch.y)})
-        print activeTouches
     except (KeyError), e:
         pass
 
@@ -73,11 +62,10 @@ def on_touch_up(touch):
     print "gesture representation:", gdb.gesture_to_str(g)
 
     gesture = OwnGesture.Gesture("name", False, gdb.gesture_to_str(g))
-    
-    del activeTouches[touch.uid]
+
     
     return gesture    #TODO Return actual gesture object
 
 
-
 gdb = GestureDatabase()
+
