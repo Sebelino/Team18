@@ -30,10 +30,13 @@ import Queue
 
 
 #Screen size constants.
-'''import Tkinter
+
+'''
+import Tkinter
 SCREEN_WIDTH = Tkinter.Tk().winfo_screenwidth()
 SCREEN_HEIGHT = Tkinter.Tk().winfo_screenheight()
 '''
+
 #If you use Windows, uncomment these:
 
 import win32api
