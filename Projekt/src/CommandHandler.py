@@ -1,4 +1,4 @@
-#import win32api, win32con, win32gui
+import win32api, win32con, win32gui
 import time, os
 
 VK_CODE = {'backspace':0x08,
@@ -256,5 +256,5 @@ def minimize():
     win32gui.ShowWindow(hwnd, win32con.SW_MINIMIZE)
 
     
-windows7 = False
+windows7 = True
 
