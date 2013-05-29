@@ -55,7 +55,9 @@ def getMultitouchedCommand(gesture):
     table = db.query("SELECT name, description, script FROM commands WHERE name IN\
             (SELECT commandname FROM profiles,activeprofile WHERE profiles.name = activeprofile.name AND\
              gesturename='%s')"% gesture.stringRepresentation)
-    return Command.Command(table[0][0],table[0][1],table[0][2])
+    if not table:
+        return Command.Command(table[0][0],table[0][1],table[0][2])
+    return Command.Command("No operation","Does nothing.","nop")
 
 def getMappings():
     return db.query("SELECT gesturename,commandname FROM profiles WHERE\
