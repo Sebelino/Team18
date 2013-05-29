@@ -30,17 +30,17 @@ import Queue
 
 
 #Screen size constants.
-import Tkinter
+'''import Tkinter
 SCREEN_WIDTH = Tkinter.Tk().winfo_screenwidth()
 SCREEN_HEIGHT = Tkinter.Tk().winfo_screenheight()
-
-#If you use Windows, uncomment these:
 '''
+#If you use Windows, uncomment these:
+
 import win32api
 from win32api import GetSystemMetrics
 print "width =", GetSystemMetrics (0)
 print "height =",GetSystemMetrics (1)
-'''
+
 
 ##################################################################
 #---------------------- Config ----------------------------------#
@@ -224,9 +224,10 @@ class MappingDisplay(FloatLayout):
 
     def updateMappings(self):
         allMappings = getListOfMappings(getCurrentProfile())
+        print allMappings
         self.layout.clear_widgets()
         self.layout.size = (self.size[0], len(allMappings)*self.mappingHeight)
-        for mapping in allMappings:
+        for mapping in reversed(allMappings):
             self.addMapping(mapping)
         for i in reversed(range(len(self.layout.children))):
             self.layout.children[i].index = len(self.layout.children) - i - 1
@@ -248,6 +249,18 @@ class MappingDisplay(FloatLayout):
 
     def showInfo(self,index,which):
         displayEditMappingPopup(index, which)
+
+    def getGestureInMappingNumber(self, index):
+        i = len(self.layout.children) - index - 1
+        print "getGestureInMappingNumber"
+        print self.layout.children[i].children[1].text
+        return self.layout.children[i].children[1].text
+
+    def getMacroInMappingNumber(self, index):
+        i = len(self.layout.children) - index - 1
+        print "getMacroInMappingNumber"
+        print self.layout.children[i].children[3].text
+        return self.layout.children[i].children[3].text
 
 class MappingInstance(FloatLayout):
     index = 0
@@ -378,6 +391,8 @@ class EventPopup(Popup):
     container = None
     gestureOrMacro = 'gesture'
     index = 0
+    currentEvent = None
+    currentEventIndex = 0
     
     def __init__(self, gestureOrMacro, **kwargs):
         super(EventPopup,self).__init__(**kwargs)
@@ -402,6 +417,13 @@ class EventPopup(Popup):
         Call it like Popup's open, but with an index signaling
         which mapping (by index) the popup is for'''
         self.index = index
+        if(self.gestureOrMacro == 'gesture'):
+            self.currentEvent = mappingBox.getGestureInMappingNumber(index)
+            self.setDropdownWithExplanation(getListOfGestures())
+        else:
+            self.currentEvent = mappingBox.getMacroInMappingNumber(index)
+            self.setDropdownWithExplanation(getListOfMacros())
+
         super(EventPopup, self).open()
 
     # Now comes some private methods to keep the contructor clean.
@@ -483,6 +505,8 @@ class EventPopup(Popup):
 
     def setDropdownWithExplanation(self, allEvents):
         allEvents = sorted(allEvents, key=lambda li: li[0].upper())
+        self.currentEventIndex = self._findIndexOfEvent(
+                                           self.currentEvent, allEvents)
         #remove the previous widgets
         self.container.remove_widget(self.children[0])
         self.container.remove_widget(self.children[0])
@@ -493,7 +517,7 @@ class EventPopup(Popup):
             w.size_hint = (0.95, 0.6)
             w.pos_hint = {'x':0.025, 'y':0.2}
 
-        pickEventBtn = Button(text=allEvents[0][0], 
+        pickEventBtn = Button(text=allEvents[self.currentEventIndex][0], 
                           color = (0,0,0,1), size_hint=(0.7,0.12),
                           pos_hint = {'x':0.01, 'y': 0.85},
                           background_normal = PICPATH+'/button_up_dropdown.png',
@@ -518,13 +542,26 @@ class EventPopup(Popup):
                 
         def selectEvent(ind):
             dd.select(ind)
-            pickEventBtn.text= allEvents[ind][0]
+            pickEventBtn.text = allEvents[ind][0]
+            self.currentEvent = allEvents[ind][0]
+            self.currentEventIndex = ind
             self.container.remove_widget(self.container.children[0])
             self.container.add_widget(allEvents[ind][1])
-       
+            
         pickEventBtn.bind(on_release=dd.open)
         self.container.add_widget(pickEventBtn)
-        self.container.add_widget(allEvents[0][1])
+        self.container.add_widget(allEvents[self.currentEventIndex][1])
+
+    def _findIndexOfEvent(self, eventName, eventList):
+        '''Find the index of the given event in the given eventList'''
+        i = 0
+        for event in eventList:
+            if event[0] == eventName:
+                return i
+            i += 1
+
+        return 0
+            
     
 class IndexButton(Button):
     '''Helper class for EventPopup.
@@ -864,7 +901,8 @@ class CreateGesturePopup(Popup):
 
         fl = FloatLayout(size_hint = (1, 0.47), pos_hint = {'x':0, 'y':0.1})
         self.gcreator = GestureCreator(pos_hint = {'x':0, 'y':0})
-        fl.add_widget(Image(source=PICPATH+'/create_gesture_border.png',
+        #TODO black or white border?
+        fl.add_widget(Image(source=PICPATH+'/create_gesture_border_black.png',
                                        allow_stretch=True, keep_ratio=False,
                                        size_hint = (1,1), pos_hint={'x':0,'y':0}))
         fl.add_widget(self.gcreator)
@@ -1392,11 +1430,9 @@ macroPopup = EventPopup('macro')
 def displayEditMappingPopup(index, gestOrMacro):
     if gestOrMacro == 'gesture':
         allEvents=getListOfGestures()
-        gesturePopup.setDropdownWithExplanation(allEvents)
         gesturePopup.open(index)
     elif gestOrMacro == 'macro':
         allEvents=getListOfMacros()
-        macroPopup.setDropdownWithExplanation(allEvents)
         macroPopup.open(index)
 
 #manage custom macros and gestures
