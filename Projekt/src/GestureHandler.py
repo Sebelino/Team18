@@ -31,8 +31,8 @@ def simplegesture(name, point_list):
 
 def on_touch_down(touch):
     #start collecting points in touch.ud
-    CommandHandler.execute(Command("Mouse left click","Click the left mouse button",
-"leftclickdown " + str(touch.x) + " " + str(touch.y)));
+    #CommandHandler.execute(Command("Mouse left click","Click the left mouse button",
+#"leftclickdown " + str(touch.x) + " " + str(touch.y)));
     userdata = touch.ud
     userdata['line'] = Line(points=(touch.x, touch.y))
     
@@ -46,8 +46,8 @@ def on_touch_down(touch):
 
 def on_touch_move(touch):
     # store points of the touch movement
-    CommandHandler.execute(Command("Mouse drag","Move the mouse cursor",
-"leftclickmove " + str(touch.x) + " " + str(touch.y)));
+    #CommandHandler.execute(Command("Mouse drag","Move the mouse cursor",
+#"leftclickmove " + str(touch.x) + " " + str(touch.y)));
 
     try:
         touch.ud['line'].points += [touch.x, touch.y]
@@ -60,8 +60,8 @@ def on_touch_move(touch):
 
 
 def on_touch_up(touch):
-    CommandHandler.execute(Command("Mouse release","Release the mouse button",
-"leftclickup " + str(touch.x) + " " + str(touch.y)));
+    #CommandHandler.execute(Command("Mouse release","Release the mouse button",
+#"leftclickup " + str(touch.x) + " " + str(touch.y)));
     # touch is over, display informations, and check if it matches some
     # known gesture.
     g = simplegesture(

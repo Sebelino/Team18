@@ -29,6 +29,8 @@ for row in getCurrentGestures():
     gdb.add_gesture(gest)
 
 def getCommand(gesture):
+    if gesture.multitouch:
+        return getMultitouchedCommand(gesture)
     g = gdb.str_to_gesture(gesture.toString())
     identifiedGesture = None
     current_max = 0.7 # Minimum score
@@ -48,6 +50,12 @@ def getCommand(gesture):
         return Command.Command(name,description,script)
     print("NOP")
     return Command.Command("No operation","Does nothing.","nop")
+
+def getMultitouchedCommand(gesture):
+    table = db.query("SELECT name, description, script FROM commands WHERE name IN\
+            (SELECT commandname FROM profiles WHERE profiles.name = activeprofile.name AND\
+             gesturename='%s')"% gesture.stringRepresentation)
+    return Command.Command(table[0][0],table[0][1],table[0][2])
 
 def getMappings():
     return db.query("SELECT gesturename,commandname FROM profiles WHERE\

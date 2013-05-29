@@ -1483,6 +1483,7 @@ class TouchArea(BoxLayout):
         
         if str(touch.device) == "mouse":
             super(TouchArea, self).on_touch_down(touch)
+            Controller.on_touch_down(touch)
         elif str(touch.device) == "multitouchtable":
             touch.scale_to_screen(SCREEN_WIDTH,SCREEN_HEIGHT)
             Controller.on_touch_down(touch)
@@ -1492,6 +1493,7 @@ class TouchArea(BoxLayout):
         print "uid: " + str(touch.uid)
         if str(touch.device) == "mouse":
             super(TouchArea, self).on_touch_move(touch)
+            Controller.on_touch_move(touch)
         elif str(touch.device) == "multitouchtable":
             touch.scale_to_screen(SCREEN_WIDTH,SCREEN_HEIGHT)
             Controller.on_touch_move(touch)
@@ -1501,6 +1503,7 @@ class TouchArea(BoxLayout):
         print "uid: " + str(touch.uid)
         if str(touch.device) == "mouse":
             super(TouchArea, self).on_touch_up(touch)
+            Controller.on_touch_up(touch)
         elif str(touch.device) == "multitouchtable":
             touch.scale_to_screen(SCREEN_WIDTH,SCREEN_HEIGHT)
             Controller.on_touch_up(touch)
