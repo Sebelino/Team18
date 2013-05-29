@@ -24,6 +24,8 @@ gdb = GestureDatabase()
 
 kivygestures = dict()
 for row in getCurrentGestures():
+    if len(row[2]) < 20:
+        continue
     kivygestures.update({row[2]:row[0]})
     gest = gdb.str_to_gesture(row[2].encode("ascii"))
     gdb.add_gesture(gest)
