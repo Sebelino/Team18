@@ -161,34 +161,43 @@ def testExecuteString(command):
     parse(words)
 
 def parse(script):
-    words = script.split()
-    if words[0].lower() == "presskey":
-        time.sleep(3) #TODO
-        pressKey(VK_CODE[words[1]])
-    if words[0].lower() == "leftclick":
-        leftClick(words[1],words[2])
+    statements = [x.strip() for x in script.split(';')]
+    for stm in statements:
+        interpret(stm)
+
+def interpret(statement):
+    print 'Interpreting statement "%s"...'% statement
+    words = statement.split()
+    if not words:
+        return
+    command = words[0]
+    args = words[1:]
+    if command.lower() == "presskey":
+        pressKey(VK_CODE[args[0]])
+    if command.lower() == "leftclick":
+        leftClick(int(args[0]),int(args[1]))
 
     #Lade till dessa
-    if words[0].lower() == "leftclickdown":
-        leftClickDown(words[1],words[2])
-    if words[0].lower() == "leftclickmove":
-        leftClickMove(words[1],words[2])
-    if words[0].lower() == "leftclickup":
-        leftClickUp(words[1],words[2])
+    if command.lower() == "leftclickdown":
+        leftClickDown(int(args[0]),int(args[1]))
+    if command.lower() == "movemouse":
+        mouseMove(int(args[0]),int(args[1]))
+    if command.lower() == "leftclickup":
+        leftClickUp(int(args[0]),int(args[1]))
     
-    if words[0].lower() == "rightclick":
-        rightClick(words[1],words[2])
-    if words[0].lower() == "press2keys":
-        press2Keys(VK_CODE[words[1]],VK_CODE[words[2]])
-    if words[0].lower() == "scroll":
-        press2Keys(words[1],words[2],words[3])
-    if words[0].lower() == "sleep":
-        sleep(words[1])
-    if words[0].lower() == "open":
-        openPath(words[1])
-    if words[0].lower() == "press3keys":
-        press3Keys(VK_CODE[words[1]],VK_CODE[words[2]],VK_CODE[words[3]])
-    if words[0].lower() == "minimize":
+    if command.lower() == "rightclick":
+        rightClick(int(args[0]),int(args[1]))
+    if command.lower() == "press2keys":
+        press2Keys(VK_CODE[args[0]],VK_CODE[args[1]])
+    if command.lower() == "scroll":
+        press2Keys(int(args[0]),int(args[1]),int(args[2]))
+    if command.lower() == "sleep":
+        sleep(int(args[0]))
+    if command.lower() == "open":
+        openPath(args[0])
+    if command.lower() == "press3keys":
+        press3Keys(VK_CODE[args[0]],VK_CODE[args[1]],VK_CODE[args[2]])
+    if command.lower() == "minimize":
         minimize()
 
 
@@ -198,7 +207,7 @@ def leftClickDown(x,y):
     win32api.SetCursorPos((x, y))
     win32api.mouse_event(win32con.MOUSEEVENTF_LEFTDOWN,x,y,0,0)
 
-def leftClickMove(x,y):
+def mouseMove(x,y):
     win32api.SetCursorPos((x, y))
 
 def leftClickUp(x,y):
@@ -229,7 +238,7 @@ def press2Keys(w1,w2):
     win32api.keybd_event(w2,0 ,win32con.KEYEVENTF_KEYUP ,0)
     
 def sleep(ms):
-    time.sleep(ms/1000)
+    time.sleep(ms/1000.0)
 
 def openPath(w1):    
     os.startfile(w1)

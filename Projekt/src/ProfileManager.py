@@ -158,16 +158,17 @@ def editCommand(oldName,name,description,script):
         if not name:
             error = 'The name cannot consist of whitespace only.'
             return
-        if db.query("SELECT name FROM commands WHERE name = '%s'"% name):
+        if oldName != name and db.query("SELECT name FROM commands WHERE name = '%s'"% name):
             error = 'A macro with that name already exists.'
             return
-        table = db.query("SELECT name,commandname FROM profiles WHERE commandname = '%s'"% oldName)
+        table = db.query("SELECT profiles.name,commandname FROM profiles,activeprofile WHERE\
+                commandname = '%s' AND profiles.name <> activeprofile.name"% oldName)
         if table:
             error = 'Profile "%s" is using that macro.'% table[0][0]
             return
         db.updateMulti("commands",("name","description","script"),("'%s'"% name,"'%s'"%
                     description,"'%s'"% script),"name = '%s'"% oldName)
-    except IntegrityError:
+    except IntegrityError as err:
         error = 'A database integrity error was encountered: %s'% err
 
 def createGesture(name,description,representation):
