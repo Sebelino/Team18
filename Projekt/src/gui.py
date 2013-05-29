@@ -30,17 +30,17 @@ import Queue
 
 
 #Screen size constants.
-'''import Tkinter
+import Tkinter
 SCREEN_WIDTH = Tkinter.Tk().winfo_screenwidth()
 SCREEN_HEIGHT = Tkinter.Tk().winfo_screenheight()
-'''
-#If you use Windows, uncomment these:
 
+#If you use Windows, uncomment these:
+'''
 import win32api
 from win32api import GetSystemMetrics
 print "width =", GetSystemMetrics (0)
 print "height =",GetSystemMetrics (1)
-
+'''
 
 ##################################################################
 #---------------------- Config ----------------------------------#
@@ -281,10 +281,10 @@ class GestureCreator(FloatLayout):
     
     def on_touch_down(self, touch):
         if not self.collide_point(touch.x,touch.y):
-            print "UTANFOR!!!"
+            #print "UTANFOR!!!"
             return False
         self.canvas.clear()
-        print str(touch.device)
+        #print str(touch.device)
         if str(touch.device) == "multitouchtable":
             print "touch"
         elif str(touch.device) == "mouse":
@@ -300,7 +300,7 @@ class GestureCreator(FloatLayout):
 
     def on_touch_move(self, touch):
         if not self.collide_point(touch.x,touch.y):
-            print "UTANFOR!!!"
+            #print "UTANFOR!!!"
             return False
         # store points of the touch movement
         try:
@@ -317,7 +317,7 @@ class GestureCreator(FloatLayout):
 
     def on_touch_up(self, touch):
         if not self.collide_point(touch.x,touch.y):
-            print "UTANFOR!!!"
+            #print "UTANFOR!!!"
             return False
         # touch is over, display informations, and check if it matches some
         # known gesture.
@@ -340,7 +340,7 @@ class GestureCreator(FloatLayout):
 class touchBlockedPopup(Popup):
     #On touch events
     def on_touch_down(self, touch):
-        print "Touch down!"
+        #print "Touch down!"
         print "Touch uid: " + str(touch.uid)
 
         if len(EventLoop.touches) > 1:
@@ -350,13 +350,13 @@ class touchBlockedPopup(Popup):
             super(touchBlockedPopup, self).on_touch_down(touch)
 
     def on_touch_move(self, touch):
-        print "Touch move!"
+        #print "Touch move!"
         print "uid: " + str(touch.uid)
         if str(touch.device) == "mouse":
             super(touchBlockedPopup, self).on_touch_move(touch)
 
     def on_touch_up(self, touch):
-        print "Touch up!"
+        #print "Touch up!"
         print "uid: " + str(touch.uid)
         if str(touch.device) == "mouse":
             super(touchBlockedPopup, self).on_touch_up(touch)

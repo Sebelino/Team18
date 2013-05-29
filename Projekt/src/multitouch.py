@@ -67,15 +67,15 @@ class TouchArea(FloatLayout):
 
     def on_touch_down(self, touch):
 
-        global V2SWIPE_REF
-        global H2SWIPE_REF
-        global ROTATE_REF
-        global PINCH_REF
-        global GTHRESHOLD
-        global GTHRESHOLD2
-
         #The moment you have two touch points: use their locations as references.
         if len(EventLoop.touches) == 2:
+            global V2SWIPE_REF
+            global H2SWIPE_REF
+            global ROTATE_REF
+            global PINCH_REF
+            global GTHRESHOLD
+            global GTHRESHOLD2
+            
             print "Two touch points down"
             t = EventLoop.touches
             V2SWIPE_REF = [(t[0].x,t[0].y),(t[1].x,t[1].y)]
@@ -89,17 +89,17 @@ class TouchArea(FloatLayout):
 
 
     def on_touch_move(self, touch):
-    
-        global V2SWIPE_REF
-        global H2SWIPE_REF
-        global ROTATE_REF
-        global PINCH_REF
-        global GTHRESHOLD
-        global GTHRESHOLD2
         
         g = None
 
         if len(EventLoop.touches) == 2:
+            global V2SWIPE_REF
+            global H2SWIPE_REF
+            global ROTATE_REF
+            global PINCH_REF
+            global GTHRESHOLD
+            global GTHRESHOLD2
+            
             t = EventLoop.touches
 
             #Check if qualified for horizontal two-point swipe
@@ -211,13 +211,11 @@ class TouchArea(FloatLayout):
 
     def on_touch_up(self, touch):
         
-        global V2SWIPE_REF
-        global H2SWIPE_REF
-        global ROTATE_REF
-        global PINCH_REF
-        global GTHRESHOLD
-        
         if len(EventLoop.touches) < 2:
+            global V2SWIPE_REF
+            global H2SWIPE_REF
+            global ROTATE_REF
+            global PINCH_REF
             #Clear multi-touch reference points
             V2SWIPE_REF = []
             H2SWIPE_REF = []
@@ -225,7 +223,6 @@ class TouchArea(FloatLayout):
             PINCH_REF = []
 
         return None    #TODO Return actual gesture object
-
 
 
 class MultitouchDetector(App):
