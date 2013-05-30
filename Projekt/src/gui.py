@@ -41,9 +41,8 @@ SCREEN_HEIGHT = Tkinter.Tk().winfo_screenheight()
 
 import win32api
 from win32api import GetSystemMetrics
-print "width =", GetSystemMetrics (0)
-print "height =",GetSystemMetrics (1)
-
+#print "width =", GetSystemMetrics (0)
+#print "height =",GetSystemMetrics (1)
 
 ##################################################################
 #---------------------- Config ----------------------------------#
@@ -227,7 +226,6 @@ class MappingDisplay(FloatLayout):
 
     def updateMappings(self):
         allMappings = getListOfMappings(getCurrentProfile())
-        print allMappings
         self.layout.clear_widgets()
         self.layout.size = (self.size[0], len(allMappings)*self.mappingHeight)
         for mapping in reversed(allMappings):
@@ -255,14 +253,10 @@ class MappingDisplay(FloatLayout):
 
     def getGestureInMappingNumber(self, index):
         i = len(self.layout.children) - index - 1
-        print "getGestureInMappingNumber"
-        print self.layout.children[i].children[1].text
         return self.layout.children[i].children[1].text
 
     def getMacroInMappingNumber(self, index):
         i = len(self.layout.children) - index - 1
-        print "getMacroInMappingNumber"
-        print self.layout.children[i].children[3].text
         return self.layout.children[i].children[3].text
 
 class MappingInstance(FloatLayout):
@@ -301,10 +295,10 @@ class GestureCreator(FloatLayout):
             return False
         self.canvas.clear()
         #print str(touch.device)
-        if str(touch.device) == "multitouchtable":
-            print "touch"
-        elif str(touch.device) == "mouse":
-            print "mouse click"
+        #if str(touch.device) == "multitouchtable":
+        #    print "touch"
+        #elif str(touch.device) == "mouse":
+        #    print "mouse click"
         # start collecting points in touch.ud
         # create a line to display the points
         userdata = touch.ud
@@ -357,23 +351,23 @@ class touchBlockedPopup(Popup):
     #On touch events
     def on_touch_down(self, touch):
         #print "Touch down!"
-        print "Touch uid: " + str(touch.uid)
+        #print "Touch uid: " + str(touch.uid)
 
-        if len(EventLoop.touches) > 1:
-            print "Multi touch!"
+        #if len(EventLoop.touches) > 1:
+        #    print "Multi touch!"
         
         if str(touch.device) == "mouse":
             super(touchBlockedPopup, self).on_touch_down(touch)
 
     def on_touch_move(self, touch):
         #print "Touch move!"
-        print "uid: " + str(touch.uid)
+        #print "uid: " + str(touch.uid)
         if str(touch.device) == "mouse":
             super(touchBlockedPopup, self).on_touch_move(touch)
 
     def on_touch_up(self, touch):
         #print "Touch up!"
-        print "uid: " + str(touch.uid)
+        #print "uid: " + str(touch.uid)
         if str(touch.device) == "mouse":
             super(touchBlockedPopup, self).on_touch_up(touch)
 
@@ -1418,12 +1412,6 @@ def createMappingButton_callback(btn):
     mappingBox.updateMappings()
 
 addMappingButton.bind(on_release=createMappingButton_callback)
-
-#TODO ta bort detta senare
-#def testErrorPopup(btn):
- #   errorPopup.open("Error!",
- #           "Many Problems Arise FroM The DestructiOnaaaaaaaaa Of CHAOS!!")
-#addMappingButton.bind(on_release=testErrorPopup)
 
 #popups from infobutton
 gesturePopup = EventPopup('gesture')
