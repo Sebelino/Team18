@@ -42,16 +42,20 @@ def getCommand(gesture):
             identifiedGesture = gi
 
     print "current_max="+str(current_max)
+    nop = Command.Command("No operation","Does nothing","nop")
     if identifiedGesture != None:
         strang = gdb.gesture_to_str(identifiedGesture)
         gesturename = kivygestures[strang]
-        (name,description,script) = db.query("SELECT\
+        table = db.query("SELECT\
                 commands.name,commands.description,commands.script FROM\
                 profiles,commands WHERE profiles.commandname = commands.name AND\
-                gesturename = '%s' AND profiles.name='%s'"% (gesturename,getCurrentProfile()))[0]
+                gesturename = '%s' AND profiles.name='%s'"% (gesturename,getCurrentProfile()))
+        if not table:
+            return nop
+        (name,description,script) = table[0]
         return Command.Command(name,description,script)
     print("NOP")
-    return Command.Command("No operation","Does nothing.","nop")
+    return nop
 
 def getMultitouchedCommand(gesture):
     print "GR '%s'"% gesture.stringRepresentation
