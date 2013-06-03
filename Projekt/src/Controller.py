@@ -9,10 +9,6 @@ def signalCommand(g):
         pass
     else:
         c = ProfileManager.getCommand(g)
-        print "AAAAAAAAAAAAAAAAAAAA"
-        print "AAAAAAAAAAAAAAAAAAAA"
-        print "AAAAAAAAAAAAAAAAAAAA"
-        print "AAAAA %s"% str(g.stringRepresentation)
         CommandHandler.execute(c)
 
 moveprinted = False

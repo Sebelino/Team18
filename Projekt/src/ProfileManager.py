@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 import Command
 import Gesture as OwnGesture
 import Profile
@@ -16,18 +17,24 @@ def setCurrentProfile(name):
 def getGestures(): return db.query("SELECT * FROM gestures ORDER BY LOWER(name)")
 def getCommands(): return db.query("SELECT * FROM commands ORDER BY LOWER(name)")
 def getCurrentGestures():
-    return filter(lambda r: r[0] != u'(No gesture)',getGestures())
+    gestures = db.query("SELECT gestures.name,gestures.description,gestures.representation\
+            FROM gestures,profiles,activeprofile WHERE profiles.name =\
+            activeprofile.name AND gestures.name = gesturename ORDER BY LOWER(gesturename)")
+    return filter(lambda r: r[0] != u'(No gesture)',gestures)
 def getCurrentCommands():
-    return filter(lambda r: r[0] != u'(No macro)',getCommands())
+    commands = db.query("SELECT commands.name,commands.description,commands.script\
+            FROM commands,profiles,activeprofile WHERE profiles.name =\
+            activeprofile.name AND commands.name = commandname ORDER BY LOWER(commandname)")
+    return filter(lambda r: r[0] != u'(No macro)',commands)
 
 gdb = GestureDatabase()
 
 kivygestures = dict()
-for row in getCurrentGestures():
-    if len(row[2]) < 20:
+for [name,description,representation] in getCurrentGestures():
+    if len(representation) < 20:    # Fulhack för att känna igen multitouch.
         continue
-    kivygestures.update({row[2]:row[0]})
-    gest = gdb.str_to_gesture(row[2].encode("ascii"))
+    kivygestures.update({representation:name})
+    gest = gdb.str_to_gesture(representation.encode("ascii"))
     gdb.add_gesture(gest)
 
 def getCommand(gesture):
@@ -41,7 +48,6 @@ def getCommand(gesture):
             current_max = g.get_score(gi)
             identifiedGesture = gi
 
-    print "current_max="+str(current_max)
     nop = Command.Command("No operation","Does nothing","nop")
     if identifiedGesture != None:
         strang = gdb.gesture_to_str(identifiedGesture)
@@ -54,17 +60,10 @@ def getCommand(gesture):
             return nop
         (name,description,script) = table[0]
         return Command.Command(name,description,script)
-    print("NOP")
+    print("That gesture was not recognized.")
     return nop
 
 def getMultitouchedCommand(gesture):
-    print "GR '%s'"% gesture.stringRepresentation
-    print "TABELL1 %s"% db.query("SELECT commandname FROM profiles,activeprofile WHERE\
-            gesturename = '%s'"% gesture.stringRepresentation)
-    print "TABELL2 %s"% db.query("SELECT commandname FROM profiles,activeprofile WHERE\
-            profiles.name = activeprofile.name")
-    print "TABELL3 %s"% db.query("SELECT commandname FROM profiles,activeprofile WHERE profiles.name = activeprofile.name AND\
-             gesturename='%s'"% gesture.stringRepresentation)
     table = db.query("SELECT name,description,script FROM commands WHERE name IN\
             (SELECT commandname FROM profiles,activeprofile WHERE profiles.name = activeprofile.name AND\
              gesturename=(SELECT name FROM gestures WHERE representation='%s'))"% gesture.stringRepresentation)
