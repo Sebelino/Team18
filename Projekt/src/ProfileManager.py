@@ -16,7 +16,7 @@ def setCurrentProfile(name):
 
 def getGestures(): return db.query("SELECT * FROM gestures ORDER BY LOWER(name)")
 
-def getDefaultGestures(): return db.query("SELECT name FROM defaultgestures ORDER BY LOWER(name)")
+def getDefaultGestures(): return [r[0] for r in db.query("SELECT name FROM defaultgestures ORDER BY LOWER(name)")]
 
 def getCommands(): return db.query("SELECT * FROM commands ORDER BY LOWER(name)")
 
