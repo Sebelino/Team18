@@ -1039,8 +1039,8 @@ class ErrorPopup(Popup):
         self.title = ""
         self.background = PICPATH+'/background_white.png'
         self.separator_color = (1, 1, 1, 0)
+        self.auto_dismiss = False
         self.content = BoxLayout(orientation='vertical')
-        #autodismiss is left True intentionally!
         self.content.add_widget(Label(font_name = font,
                                       color = (0.7,0,0,1), font_size = 18,
                                       text_size = (width, 100), bold = True,
