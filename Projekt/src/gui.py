@@ -1475,7 +1475,9 @@ class GestureMapper(App):
             if not profileNameTextBox.collide_point(touch.x, touch.y) \
                and profileNameTextBox.focus == True:
             
-                profileNameTextBoxAction(profileNameTextBox)
+                #profileNameTextBoxAction(profileNameTextBox)
+                profileNameTextBox.focus = False
+                profileNameTextBox.text = getCurrentProfile()
         
         topBar.bind(on_touch_down = touch_unfocus_profileNameBox)
 
