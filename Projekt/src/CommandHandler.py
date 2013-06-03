@@ -175,15 +175,18 @@ def interpret(statement):
     if command.lower() == "presskey":
         pressKey(VK_CODE[args[0]])
     if command.lower() == "leftclick":
-        leftClick(int(args[0]),int(args[1]))
+        leftClick()
 
-    #Lade till dessa
-    if command.lower() == "leftclickdown":
-        leftClickDown(int(args[0]),int(args[1]))
+    if command.lower() == "leftpress":
+        leftPress()
+    if command.lower() == "positionmouse":
+        mousePosition(int(args[0]),int(args[1]))
     if command.lower() == "movemouse":
         mouseMove(int(args[0]),int(args[1]))
-    if command.lower() == "leftclickup":
-        leftClickUp(int(args[0]),int(args[1]))
+    if command.lower() == "dragmouse":
+        mouseDrag(int(args[0]),int(args[1]),int(args[2]))
+    if command.lower() == "leftrelease":
+        leftRelease()
     
     if command.lower() == "rightclick":
         rightClick(int(args[0]),int(args[1]))
@@ -202,22 +205,49 @@ def interpret(statement):
 
 
 
-#Borde vi inte ha dessa separata?
-def leftClickDown(x,y):
-    win32api.SetCursorPos((x, y))
-    win32api.mouse_event(win32con.MOUSEEVENTF_LEFTDOWN,x,y,0,0)
+# Commands
+
+def sleep(ms):
+    time.sleep(ms/1000.0)
+
+def mousePosition(x,y):
+    win32api.SetCursorPos((x,y))
 
 def mouseMove(x,y):
-    win32api.SetCursorPos((x, y))
+    (absx,absy) = win32api.GetCursorPos()
+    mousePosition(absx+x,absy+y)
 
-def leftClickUp(x,y):
-    win32api.SetCursorPos((x, y))
-    win32api.mouse_event(win32con.MOUSEEVENTF_LEFTUP,x,y,0,0)
+def mouseDrag(x,y,t):
+    incr = [0,0]
+    for i in range(t):
+        incr = [float(x)/t+incr[0],float(y)/t+incr[1]]
+        if abs(incr[0]) > 1:
+            mouseMove(int(incr[0]),0)
+            incr[0] -= int(incr[0])
+        if abs(incr[1]) > 1:
+            mouseMove(0,int(incr[1]))
+            incr[1] -= int(incr[1])
+        sleep(1)
 
-def leftClick(x,y):
-    win32api.SetCursorPos((x, y))
+def leftPress(x = None,y = None):
+    if x and y:
+        mousePosition(x,y)
+    else:
+        (x,y) = win32api.GetCursorPos()
     win32api.mouse_event(win32con.MOUSEEVENTF_LEFTDOWN,x,y,0,0)
+
+def leftRelease(x = None,y = None):
+    if x and y:
+        mousePosition(x,y)
+    else:
+        (x,y) = win32api.GetCursorPos()
     win32api.mouse_event(win32con.MOUSEEVENTF_LEFTUP,x,y,0,0)
+
+def leftClick(x = None,y = None):
+    if x and y:
+        mousePosition(x,y)
+    leftPress()
+    leftRelease()
 
 def rightClick(x,y):
     win32api.SetCursorPos((x, y))
@@ -237,12 +267,6 @@ def press2Keys(w1,w2):
     win32api.keybd_event(w1,0 ,win32con.KEYEVENTF_KEYUP ,0)
     win32api.keybd_event(w2,0 ,win32con.KEYEVENTF_KEYUP ,0)
     
-def sleep(ms):
-    time.sleep(ms/1000.0)
-
-def openPath(w1):    
-    os.startfile(w1)
-    
 def press3Keys(w1,w2,w3):
     win32api.keybd_event(w1,0,0,0)
     win32api.keybd_event(w2,0,0,0)
@@ -250,6 +274,9 @@ def press3Keys(w1,w2,w3):
     win32api.keybd_event(w1,0,win32con.KEYEVENTF_KEYUP ,0)
     win32api.keybd_event(w2,0,win32con.KEYEVENTF_KEYUP ,0)
     win32api.keybd_event(w3,0,win32con.KEYEVENTF_KEYUP ,0)
+
+def openPath(w1):    
+    os.startfile(w1)
 
 def minimize():
     hwnd = win32gui.GetForegroundWindow()
