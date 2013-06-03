@@ -187,7 +187,7 @@ def interpret(statement):
         mouseDrag(int(args[0]),int(args[1]),int(args[2]))
     if command.lower() == "leftrelease":
         leftRelease()
-    
+
     if command.lower() == "rightclick":
         rightClick(int(args[0]),int(args[1]))
     if command.lower() == "press2keys":
@@ -202,6 +202,9 @@ def interpret(statement):
         press3Keys(VK_CODE[args[0]],VK_CODE[args[1]],VK_CODE[args[2]])
     if command.lower() == "minimize":
         minimize()
+    if command.lower() == "system":
+        cmd = statement.replace('system','').strip()[1:-1]
+        system(cmd)
 
 
 
@@ -281,6 +284,10 @@ def openPath(w1):
 def minimize():
     hwnd = win32gui.GetForegroundWindow()
     win32gui.ShowWindow(hwnd, win32con.SW_MINIMIZE)
+
+def system(cmd):    
+    print "Executing cmd command '%s'."% cmd
+    os.system(cmd)
 
     
 windows7 = True

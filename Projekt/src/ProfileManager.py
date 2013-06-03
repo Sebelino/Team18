@@ -15,12 +15,21 @@ def setCurrentProfile(name):
     db.update("activeprofile","name","'%s'"% name,"1=1")
 
 def getGestures(): return db.query("SELECT * FROM gestures ORDER BY LOWER(name)")
+
 def getCommands(): return db.query("SELECT * FROM commands ORDER BY LOWER(name)")
+
+def getCustomGestures():
+    return filter(lambda r: r[0] != u'(No gesture)',getGestures())
+
 def getCurrentGestures():
     gestures = db.query("SELECT gestures.name,gestures.description,gestures.representation\
             FROM gestures,profiles,activeprofile WHERE profiles.name =\
             activeprofile.name AND gestures.name = gesturename ORDER BY LOWER(gesturename)")
     return filter(lambda r: r[0] != u'(No gesture)',gestures)
+
+def getCustomCommands():
+    return filter(lambda r: r[0] != u'(No macro)',getCommands())
+
 def getCurrentCommands():
     commands = db.query("SELECT commands.name,commands.description,commands.script\
             FROM commands,profiles,activeprofile WHERE profiles.name =\

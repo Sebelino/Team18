@@ -1121,7 +1121,7 @@ def getListOfCustomGestures():
     """Returns a list of all Custom gestures,
     return value should be list of strings:
     [customGest1, customGest2, ...]"""
-    table = Controller.getCurrentGestures()
+    table = Controller.getCustomGestures()
     return [r[0] for r in table]
     
 
@@ -1137,7 +1137,7 @@ def getListOfCustomMacros():
     """Returns a list of all Custom macros.
     return value: list of strings of custom macro names:
     [customMacro1Name, customMacro2Name, ...]"""
-    table = Controller.getCurrentMacros()
+    table = Controller.getCustomMacros()
     return [r[0] for r in table]
 
 def getMacroInfo(macro):
