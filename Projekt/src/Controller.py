@@ -33,6 +33,11 @@ def on_touch_up(touch):
     print "Touch up"
     signalCommand(g)
 
+def sanitize(param):
+    if isinstance(param,basestring):
+        return param.replace("'","''")
+    return param
+
 
 # For the database
 def getListOfMappings(): return ProfileManager.getMappings()
@@ -42,20 +47,22 @@ def getListOfMacros(): return ProfileManager.getCommands()
 def getCustomMacros(): return ProfileManager.getCustomCommands()
 def getListOfProfiles(): return ProfileManager.getProfiles()
 def getCurrentProfile(): return ProfileManager.getCurrentProfile()
-def setCurrentProfile(newProfile): ProfileManager.setCurrentProfile(newProfile.replace("'","''"))
-def createProfile(profilename): ProfileManager.createProfile(profilename.replace("'","''"))
-def removeProfile(profilename): ProfileManager.removeProfile(profilename.replace("'","''"))
-def setProfile(profilename): ProfileManager.setCurrentProfile(profilename.replace("'","''"))
-def renameProfile(old,new): ProfileManager.renameProfile(old.replace("'","''"),new.replace("'","''"))
-def removeMacro(name): ProfileManager.removeMacro(name.replace("'","''"))
+def setCurrentProfile(newProfile): ProfileManager.setCurrentProfile(sanitize(newProfile))
+def createProfile(profilename): ProfileManager.createProfile(sanitize(profilename))
+def removeProfile(profilename): ProfileManager.removeProfile(sanitize(profilename))
+def setProfile(profilename): ProfileManager.setCurrentProfile(sanitize(profilename))
+def renameProfile(old,new): ProfileManager.renameProfile(sanitize(old),sanitize(new))
+def removeMacro(name): ProfileManager.removeMacro(sanitize(name))
 def createMapping(): ProfileManager.createMapping()
-def removeMapping(gesturename): ProfileManager.removeMapping(gesturename.replace("'","''"))
+def removeMapping(gesturename): ProfileManager.removeMapping(sanitize(gesturename))
 def editMapping(oldGesture,newGesture,newMacro):
-    ProfileManager.editMapping(oldGesture.replace("'","''"),newGesture.replace("'","''"),newMacro.replace("'","''"))
-def editMacro(oldMacro,newMacro,description,script): ProfileManager.editCommand(oldMacro.replace("'","''"),newMacro.replace("'","''"),description.replace("'","''"),script.replace("'","''"))
-def createGesture(name,description,representation): ProfileManager.createGesture(name.replace("'","''"),description.replace("'","''"),representation.replace("'","''"))
+    ProfileManager.editMapping(sanitize(oldGesture),sanitize(newGesture),sanitize(newMacro))
+def editMacro(oldMacro,newMacro,description,script):
+    ProfileManager.editCommand(sanitize(oldMacro),sanitize(newMacro),sanitize(description),sanitize(script))
+def createGesture(name,description,representation):
+    ProfileManager.createGesture(sanitize(name),sanitize(description),sanitize(representation))
 def createMacro(): ProfileManager.createCommand()
-def removeGesture(name): ProfileManager.removeGesture(name.replace("'","''"))
+def removeGesture(name): ProfileManager.removeGesture(sanitize(name))
 def popError(): return ProfileManager.popError()
 
 

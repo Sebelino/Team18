@@ -189,11 +189,11 @@ def interpret(statement):
         leftRelease()
 
     if command.lower() == "rightclick":
-        rightClick(int(args[0]),int(args[1]))
+        rightClick()
     if command.lower() == "press2keys":
         press2Keys(VK_CODE[args[0]],VK_CODE[args[1]])
     if command.lower() == "scroll":
-        press2Keys(int(args[0]),int(args[1]),int(args[2]))
+        scroll(int(args[0]),int(args[1]),int(args[2]))
     if command.lower() == "sleep":
         sleep(int(args[0]))
     if command.lower() == "open":
@@ -253,7 +253,6 @@ def leftClick(x = None,y = None):
     leftRelease()
 
 def rightClick(x,y):
-    win32api.SetCursorPos((x, y))
     win32api.mouse_event(win32con.MOUSEEVENTF_RIGHTDOWN,x,y,0,0)
     win32api.mouse_event(win32con.MOUSEEVENTF_RIGHTUP,x,y,0,0)
 
