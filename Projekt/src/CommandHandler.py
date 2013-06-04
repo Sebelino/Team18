@@ -178,15 +178,21 @@ def interpret(statement):
         leftClick()
 
     if command.lower() == "leftpress":
-        leftPress()
+        if len(args) > 1:
+            leftPress(int(float(args[0])),2400-int(float(args[1])))
+        else:
+            leftPress()
     if command.lower() == "positionmouse":
-        mousePosition(int(args[0]),int(args[1]))
+        mousePosition(int(float(args[0])),2400-int(float(args[1])))
     if command.lower() == "movemouse":
-        mouseMove(int(args[0]),int(args[1]))
+        mouseMove(int(float(args[0])),2400-int(float(args[1])))
     if command.lower() == "dragmouse":
-        mouseDrag(int(args[0]),int(args[1]),int(args[2]))
+        mouseDrag(int(args[0]),2400-int(args[1]),int(args[2]))
     if command.lower() == "leftrelease":
-        leftRelease()
+        if len(args) > 1:
+            leftRelease(int(float(args[0])),2400-int(float(args[1])))
+        else:
+            leftRelease()
 
     if command.lower() == "rightclick":
         rightClick()

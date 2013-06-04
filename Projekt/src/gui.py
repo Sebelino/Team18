@@ -41,6 +41,8 @@ SCREEN_HEIGHT = Tkinter.Tk().winfo_screenheight()
 
 import win32api
 from win32api import GetSystemMetrics
+SCREEN_WIDTH = GetSystemMetrics (0)
+SCREEN_HEIGHT = GetSystemMetrics (1)
 #print "width =", GetSystemMetrics (0)
 #print "height =",GetSystemMetrics (1)
 
@@ -1506,25 +1508,25 @@ class TouchArea(BoxLayout):
     def on_touch_down(self, touch):
         if str(touch.device) == "mouse":
             super(TouchArea, self).on_touch_down(touch)
-            Controller.on_touch_down(touch)
+            #Controller.on_touch_down(touch)
         elif str(touch.device) == "multitouchtable":
-            touch.scale_to_screen(SCREEN_WIDTH,SCREEN_HEIGHT)
+            touch.scale_for_screen(SCREEN_WIDTH,SCREEN_HEIGHT)
             Controller.on_touch_down(touch)
         
     def on_touch_move(self, touch):
         if str(touch.device) == "mouse":
             super(TouchArea, self).on_touch_move(touch)
-            Controller.on_touch_move(touch)
+            #Controller.on_touch_move(touch)
         elif str(touch.device) == "multitouchtable":
-            touch.scale_to_screen(SCREEN_WIDTH,SCREEN_HEIGHT)
+            touch.scale_for_screen(SCREEN_WIDTH,SCREEN_HEIGHT)
             Controller.on_touch_move(touch)
         
     def on_touch_up(self, touch):
         if str(touch.device) == "mouse":
             super(TouchArea, self).on_touch_up(touch)
-            Controller.on_touch_up(touch)
+            #Controller.on_touch_up(touch)
         elif str(touch.device) == "multitouchtable":
-            touch.scale_to_screen(SCREEN_WIDTH,SCREEN_HEIGHT)
+            touch.scale_for_screen(SCREEN_WIDTH,SCREEN_HEIGHT)
             Controller.on_touch_up(touch)
 
 #And main
